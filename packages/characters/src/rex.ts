@@ -27,7 +27,7 @@ export const rex: CharacterSpec = {
       surface: { kind: 'scales', scale: 24, strength: 0.5, color: '#4b9f5d', bone: 'head' },
     },
     bodyHide: {
-      color: '#78cf7f', f0: 0.04, spec: 0.7, shininess: 40, rim: 0.7, gloss: 0.35, sss: 0.2, sssColor: '#c8ffb0',
+      color: '#78cf7f', shadeOf: 'hide', f0: 0.04, spec: 0.7, shininess: 40, rim: 0.7, gloss: 0.35, sss: 0.2, sssColor: '#c8ffb0',
       surface: { kind: 'scales', scale: 24, strength: 0.5, color: '#4b9f5d' },
     },
     belly: { color: '#fff0c4', f0: 0.04, spec: 0.5, shininess: 30, rim: 0.5, gloss: 0.3, sss: 0.25, sssColor: '#fff6d8' },

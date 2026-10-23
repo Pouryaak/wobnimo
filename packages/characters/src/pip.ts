@@ -11,7 +11,7 @@ export const pip: CharacterSpec = {
   motion: { hop: 0.13, squash: 1.1, snap: 1.25, snapLook: 1, talkSquash: 0.5 },
   materials: {
     feather: { color: '#f4a63c', f0: 0.03, spec: 0.22, shininess: 14, rim: 0.9, sheen: 0.55 },
-    wing: { color: '#d8692a', f0: 0.03, spec: 0.25, shininess: 16, rim: 0.8, sheen: 0.5 },
+    wing: { color: '#d8692a', shadeOf: 'feather', f0: 0.03, spec: 0.25, shininess: 16, rim: 0.8, sheen: 0.5 },
     beak: { color: '#ff7a45', f0: 0.05, spec: 0.9, shininess: 70, rim: 0.4, gloss: 0.6 },
     feet: { color: '#e9683b', f0: 0.04, spec: 0.6, shininess: 40, rim: 0.3 },
     mouth: { color: '#6b1a26', f0: 0.04, spec: 0.6, shininess: 40, rim: 0 },

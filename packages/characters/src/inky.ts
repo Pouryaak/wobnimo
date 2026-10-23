@@ -34,9 +34,9 @@ function tentacleActing(): Acting {
     acting.surprised[`t${i}s0`] = { rx: -0.85 };
     acting.surprised[`t${i}s1`] = { rx: -0.25 };
     acting.surprised[`t${i}s2`] = { rx: -0.3 };
-    acting.celebrating[`t${i}s0`] = { rx: [-0.6, 0.45, 3, phase] };
-    acting.celebrating[`t${i}s1`] = { rx: [0, 0.4, 3, phase + 1] };
-    acting.celebrating[`t${i}s2`] = { rx: [0, 0.4, 3, phase + 2] };
+    acting.celebrating[`t${i}s0`] = { rx: [-0.5, 0.3, 3, phase] };
+    acting.celebrating[`t${i}s1`] = { rx: [0.15, 0.3, 3, phase + 1] };
+    acting.celebrating[`t${i}s2`] = { rx: [0.2, 0.3, 3, phase + 2] };
     /* limp, hanging straight down */
     acting.sad[`t${i}s0`] = { rx: 0.45 };
     acting.sad[`t${i}s1`] = { rx: 0.42 };
@@ -48,9 +48,14 @@ function tentacleActing(): Acting {
   acting.working.t0s1 = { rx: [0.7, 0.2, 5.5, 0.6] };
   acting.working.t5s0 = { rx: [-1.25, 0.22, 5.5, Math.PI] };
   acting.working.t5s1 = { rx: [0.7, 0.2, 5.5, Math.PI + 0.6] };
-  /* and cheer, waving high */
-  acting.celebrating.t0s0 = { rx: [-2.1, 0.35, 3.2, 0] };
-  acting.celebrating.t5s0 = { rx: [-2.1, 0.35, 3.2, Math.PI] };
+  /* and cheer, the front pair flung out to the sides (a swing across the
+     tentacle, rz), never forward and up where they would cross the face */
+  acting.celebrating.t0s0 = { rx: -0.3, rz: [1.05, 0.25, 3.2, 0] };
+  acting.celebrating.t0s1 = { rx: [0.5, 0.15, 3.2, 1] };
+  acting.celebrating.t0s2 = { rx: [0.6, 0.2, 3.2, 2] };
+  acting.celebrating.t5s0 = { rx: -0.3, rz: [-1.05, 0.25, 3.2, Math.PI] };
+  acting.celebrating.t5s1 = { rx: [0.5, 0.15, 3.2, Math.PI + 1] };
+  acting.celebrating.t5s2 = { rx: [0.6, 0.2, 3.2, Math.PI + 2] };
   /* tentacle 0 sits front-right: it curls up to the chin */
   acting.thinking.t0s0 = { rx: -1.75 };
   acting.thinking.t0s1 = { rx: 0.95 };

@@ -16,10 +16,10 @@ export const pebble: CharacterSpec = {
       surface: { kind: 'fur', scale: 130, strength: 0.28, bone: 'head' },
     },
     bodyCoat: {
-      color: '#27324f', f0: 0.04, spec: 0.7, shininess: 46, rim: 1, sheen: 0.55, gloss: 0.35,
+      color: '#27324f', shadeOf: 'coat', f0: 0.04, spec: 0.7, shininess: 46, rim: 1, sheen: 0.55, gloss: 0.35,
       surface: { kind: 'fur', scale: 130, strength: 0.28 },
     },
-    flipper: { color: '#222b45', f0: 0.04, spec: 0.8, shininess: 50, rim: 0.9, sheen: 0.5, gloss: 0.4 },
+    flipper: { color: '#222b45', shadeOf: 'coat', f0: 0.04, spec: 0.8, shininess: 50, rim: 0.9, sheen: 0.5, gloss: 0.4 },
     beak: { color: '#ffa53d', f0: 0.05, spec: 1, shininess: 80, rim: 0.4, gloss: 0.6 },
     mouth: { color: '#5d1a22', f0: 0.04, spec: 0.5, shininess: 30, rim: 0 },
     feet: { color: '#ff9b3d', f0: 0.04, spec: 0.7, shininess: 50, rim: 0.35, gloss: 0.4, sss: 0.25, sssColor: '#ffc68a' },

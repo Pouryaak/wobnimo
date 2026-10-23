@@ -10,18 +10,10 @@ export const miso: CharacterSpec = {
   bound: { y: 0.56, radius: 0.78 },
   motion: { hop: 0.14, squash: 1.2, snap: 1.1, talkSquash: 0.3 },
   materials: {
-    fur: {
-      color: '#eaa15c', f0: 0.03, spec: 0.25, shininess: 18, rim: 0.9, sheen: 0.65, gloss: 0.15, sss: 0.12, sssColor: '#ffcf9e',
-      surface: { kind: 'fur', scale: 95, strength: 0.55, bone: 'head' },
-    },
-    cream: {
-      color: '#fbe8d0', f0: 0.03, spec: 0.2, shininess: 16, rim: 0.8, sheen: 0.6, gloss: 0.15, sss: 0.12, sssColor: '#ffe6cc',
-      surface: { kind: 'fur', scale: 95, strength: 0.5 },
-    },
-    bodyFur: {
-      color: '#eaa15c', f0: 0.03, spec: 0.25, shininess: 18, rim: 0.9, sheen: 0.65, gloss: 0.15, sss: 0.12, sssColor: '#ffcf9e',
-      surface: { kind: 'fur', scale: 95, strength: 0.55 },
-    },
+    /* matte plush: almost no highlight, a velvet glow at the edges where
+       the fibres catch the light, and a little light through the fluff */
+    fur: { color: '#eaa15c', f0: 0.015, spec: 0.06, shininess: 6, rim: 1.1, sheen: 0.95, gloss: 0, sss: 0.18, sssColor: '#ffcf9e' },
+    cream: { color: '#fbe8d0', f0: 0.015, spec: 0.06, shininess: 6, rim: 1, sheen: 0.9, gloss: 0, sss: 0.18, sssColor: '#ffe6cc' },
     pink: { color: '#ff9fb2', f0: 0.04, spec: 0.5, shininess: 40, rim: 0.4, sss: 0.4, sssColor: '#ffc4cf' },
     nose: { color: '#f27a93', f0: 0.06, spec: 1.6, shininess: 160, rim: 0.3, gloss: 0.8 },
     whisker: { color: '#fff8ee', f0: 0.04, spec: 0.6, shininess: 60, rim: 0.5 },
@@ -47,9 +39,9 @@ export const miso: CharacterSpec = {
   ],
   parts: [
     /* a round sitting body with haunches and big back feet */
-    { bone: 'body', shape: 'ellipsoid', at: [0, 0.25, -0.02], radii: [0.29, 0.26, 0.26], material: 'bodyFur' },
-    { bone: 'body', shape: 'ellipsoid', at: [-0.17, 0.13, -0.02], radii: [0.14, 0.13, 0.19], blend: 0.08, material: 'bodyFur' },
-    { bone: 'body', shape: 'ellipsoid', at: [0.17, 0.13, -0.02], radii: [0.14, 0.13, 0.19], blend: 0.08, material: 'bodyFur' },
+    { bone: 'body', shape: 'ellipsoid', at: [0, 0.25, -0.02], radii: [0.29, 0.26, 0.26], material: 'fur' },
+    { bone: 'body', shape: 'ellipsoid', at: [-0.17, 0.13, -0.02], radii: [0.14, 0.13, 0.19], blend: 0.08, material: 'fur' },
+    { bone: 'body', shape: 'ellipsoid', at: [0.17, 0.13, -0.02], radii: [0.14, 0.13, 0.19], blend: 0.08, material: 'fur' },
     { bone: 'body', shape: 'ellipsoid', at: [-0.17, 0.04, 0.14], radii: [0.085, 0.05, 0.11], blend: 0.03, material: 'cream' },
     { bone: 'body', shape: 'ellipsoid', at: [0.17, 0.04, 0.14], radii: [0.085, 0.05, 0.11], blend: 0.03, material: 'cream' },
     /* a big head with chubby cheeks and a muzzle */
@@ -64,13 +56,13 @@ export const miso: CharacterSpec = {
     { bone: 'earR', shape: 'roundCone', from: [0, 0, 0], to: [0, 0.15, 0], r1: 0.1, r2: 0.022, blend: 0.05, material: 'fur' },
     { bone: 'earR', shape: 'ellipsoid', at: [0, 0.055, 0.045], radii: [0.05, 0.075, 0.03], material: 'pink' },
     /* front paws, cream mittens */
-    { bone: 'pawL', shape: 'capsule', from: [0, 0, 0], to: [0, -0.15, 0.03], radius: 0.065, blend: 0.05, material: 'bodyFur' },
+    { bone: 'pawL', shape: 'capsule', from: [0, 0, 0], to: [0, -0.15, 0.03], radius: 0.065, blend: 0.05, material: 'fur' },
     { bone: 'pawL', shape: 'ellipsoid', at: [0, -0.17, 0.05], radii: [0.07, 0.05, 0.075], blend: 0.03, material: 'cream' },
-    { bone: 'pawR', shape: 'capsule', from: [0, 0, 0], to: [0, -0.15, 0.03], radius: 0.065, blend: 0.05, material: 'bodyFur' },
+    { bone: 'pawR', shape: 'capsule', from: [0, 0, 0], to: [0, -0.15, 0.03], radius: 0.065, blend: 0.05, material: 'fur' },
     { bone: 'pawR', shape: 'ellipsoid', at: [0, -0.17, 0.05], radii: [0.07, 0.05, 0.075], blend: 0.03, material: 'cream' },
     /* the tail, thick at the root, with a cream tip */
-    { bone: 'tail0', shape: 'roundCone', from: [0, 0, 0], to: [0, 0.16, 0], r1: 0.055, r2: 0.05, blend: 0.04, material: 'bodyFur' },
-    { bone: 'tail1', shape: 'roundCone', from: [0, 0, 0], to: [0, 0.15, 0], r1: 0.05, r2: 0.047, blend: 0.02, material: 'bodyFur' },
+    { bone: 'tail0', shape: 'roundCone', from: [0, 0, 0], to: [0, 0.16, 0], r1: 0.055, r2: 0.05, blend: 0.04, material: 'fur' },
+    { bone: 'tail1', shape: 'roundCone', from: [0, 0, 0], to: [0, 0.15, 0], r1: 0.05, r2: 0.047, blend: 0.02, material: 'fur' },
     { bone: 'tail2', shape: 'roundCone', from: [0, 0, 0], to: [0, 0.12, 0], r1: 0.047, r2: 0.04, blend: 0.02, material: 'cream' },
     /* whiskers */
     { bone: 'head', shape: 'capsule', from: [-0.13, 0.1, 0.27], to: [-0.33, 0.13, 0.24], radius: 0.005, material: 'whisker' },
@@ -83,7 +75,7 @@ export const miso: CharacterSpec = {
     { bone: 'head', on: ['fur'], kind: 'ellipse', at: [0, 0.4, 0.2], radii: [0.022, 0.08], color: '#c4733a', soft: 0.5 },
     { bone: 'head', on: ['fur'], kind: 'ellipse', at: [-0.075, 0.38, 0.2], radii: [0.018, 0.065], color: '#c4733a', soft: 0.5 },
     { bone: 'head', on: ['fur'], kind: 'ellipse', at: [0.075, 0.38, 0.2], radii: [0.018, 0.065], color: '#c4733a', soft: 0.5 },
-    { bone: 'body', on: ['bodyFur'], kind: 'ellipse', at: [0, 0.24, 0.2], radii: [0.17, 0.2], color: '#fbe8d0', soft: 0.35 },
+    { bone: 'body', on: ['fur'], kind: 'ellipse', at: [0, 0.24, 0.2], radii: [0.17, 0.2], color: '#fbe8d0', soft: 0.35 },
     { bone: 'head', on: ['fur'], kind: 'sphere', at: [-0.21, 0.1, 0.24], radius: 0.06, color: '#ff9db0', soft: 0.6, opacity: 0.75 },
     { bone: 'head', on: ['fur'], kind: 'sphere', at: [0.21, 0.1, 0.24], radius: 0.06, color: '#ff9db0', soft: 0.6, opacity: 0.75 },
   ],

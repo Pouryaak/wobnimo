@@ -130,6 +130,12 @@ export interface Temperament {
 
 export interface MaterialSpec {
   color: Hex;
+  /**
+   * This material is a shade of another, by name: recolouring that one
+   * recolours this one too, keeping the same relation (a wing a little
+   * darker than the feathers, the body's fur the same as the head's).
+   */
+  shadeOf?: string;
   /** Clear-coat reflectance face on; it rises to 1 at grazing angles. */
   f0?: number;
   /** Strength and tightness of the key light's highlight. */

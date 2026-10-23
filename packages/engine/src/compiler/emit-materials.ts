@@ -73,10 +73,10 @@ function surfaceBody(kind: 'fur' | 'scales' | 'speckle' | 'ripple', color: strin
     case 'fur':
       return [
         ...tangentNoise('q'),
-        `    n = normalize(n + g * 0.9 * detail);`,
-        /* soft clumps: darker where the fur parts, lighter on the tufts */
+        `    n = normalize(n + g * 0.5 * detail);`,
+        /* barely-there clumps: the coat should read as a surface, not a pattern */
         `    float clump = noise3(q * 0.23);`,
-        `    m.albedo *= mix(1.0, 0.74 + 0.42 * clump, detail);`,
+        `    m.albedo *= mix(1.0, 0.9 + 0.2 * clump, detail);`,
       ];
     case 'scales': {
       const seamColor = color ? lin(color) : 'm.albedo * 0.55';

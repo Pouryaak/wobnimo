@@ -55,6 +55,9 @@ export function resolve(spec: CharacterSpec): Resolved {
   const materialId = (name: string, where: string) =>
     matByName.get(name) ?? fail(`${where} names material "${name}", which does not exist`);
 
+  materials.forEach((m) => {
+    if (m.spec.shadeOf !== undefined) materialId(m.spec.shadeOf, `materials.${m.name}.shadeOf`);
+  });
   spec.parts.forEach((p, i) => {
     boneIndex(p.bone, `parts[${i}]`);
     materialId(p.material, `parts[${i}]`);

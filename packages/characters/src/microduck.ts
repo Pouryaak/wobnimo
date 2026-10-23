@@ -23,7 +23,7 @@ export const microduck: CharacterSpec = {
       surface: { kind: 'ripple', scale: 70, strength: 0.12, bone: 'head' },
     },
     bodyShell: {
-      color: '#f3f1ec', f0: 0.04, spec: 1.1, shininess: 70, rim: 0.55, gloss: 0.5, sss: 0.12, sssColor: '#ffffff',
+      color: '#f3f1ec', shadeOf: 'shell', f0: 0.04, spec: 1.1, shininess: 70, rim: 0.55, gloss: 0.5, sss: 0.12, sssColor: '#ffffff',
       surface: { kind: 'ripple', scale: 70, strength: 0.12, bone: 'body' },
     },
     bill: { color: '#ff5f1f', f0: 0.05, spec: 1.3, shininess: 90, rim: 0.45, gloss: 0.65, sss: 0.2, sssColor: '#ffb27a' },
@@ -58,23 +58,23 @@ export const microduck: CharacterSpec = {
     },
     { name: 'head', parent: 'neck1', pivot: [0, 0.09, 0], drive: { rx: [['pitch', -0.35]], ry: [['yaw', 0.55]], rz: [['roll', 0.6]] } },
     /* the lower bill hinges at the back and drops to talk */
-    { name: 'jaw', parent: 'head', pivot: [0, 0.05, -0.13], drive: { rx: [['talk', 0.22]] } },
+    { name: 'jaw', parent: 'head', pivot: [0, 0.063, -0.18], drive: { rx: [['talk', 0.24]] } },
   ],
   parts: [
-    /* ── head: a helmet over a two-layer bill ── */
-    { bone: 'head', shape: 'ellipsoid', at: [0, 0.09, 0.08], radii: [0.22, 0.24, 0.37], clip: { normal: [0, -1, 0] }, material: 'shell' },
-    /* each half of the bill is cut flat where it meets the other and lined
-       dark, so the cut reads as the inside of the mouth when it opens */
-    { bone: 'head', shape: 'ellipsoid', at: [0, 0.075, 0.13], radii: [0.235, 0.05, 0.43], clip: { normal: [0, -1, 0], offset: 0.025 }, material: 'bill' },
-    { bone: 'head', shape: 'ellipsoid', at: [0, 0.075, 0.13], radii: [0.215, 0.042, 0.41], clip: { normal: [0, -1, 0], offset: 0.028 }, material: 'mouth' },
-    { bone: 'jaw', shape: 'ellipsoid', at: [0, 0, 0.26], radii: [0.215, 0.045, 0.39], clip: { normal: [0, 1, 0] }, material: 'bill' },
-    { bone: 'jaw', shape: 'ellipsoid', at: [0, 0, 0.26], radii: [0.195, 0.037, 0.37], clip: { normal: [0, 1, 0], offset: 0.003 }, material: 'mouth' },
-    /* lens eyes in orange rings, set on the sides and turned to the front */
-    { bone: 'head', shape: 'cylinder', at: [-0.18, 0.19, 0.23], rot: [R, -0.87, 0], radius: 0.085, half: 0.03, round: 0.018, material: 'ring' },
-    { bone: 'head', shape: 'cylinder', at: [0.18, 0.19, 0.23], rot: [R, 0.87, 0], radius: 0.085, half: 0.03, round: 0.018, material: 'ring' },
-    /* a dark sensor slot behind each eye */
-    { bone: 'head', shape: 'capsule', from: [-0.2, 0.2, -0.02], to: [-0.2, 0.16, -0.02], radius: 0.018, material: 'servo' },
-    { bone: 'head', shape: 'capsule', from: [0.2, 0.2, -0.02], to: [0.2, 0.16, -0.02], radius: 0.018, material: 'servo' },
+    /* ── head: a rounded hood over a bill of two flat plates ── */
+    { bone: 'head', shape: 'roundBox', at: [0, 0.245, 0.05], half: [0.2, 0.17, 0.3], round: 0.16, clip: { normal: [0, -1, 0], offset: 0.145 }, material: 'shell' },
+    /* the bill is two flat orange plates, like the real one: the top plate
+       is fixed under the hood and runs out past it, the lower one hinges
+       at the back and drops to talk. Behind them, a dark throat */
+    { bone: 'head', shape: 'roundBox', at: [0, 0.085, 0.1], half: [0.208, 0.022, 0.32], round: 0.016, material: 'bill' },
+    { bone: 'head', shape: 'roundBox', at: [0, 0.045, -0.06], half: [0.17, 0.035, 0.12], round: 0.02, material: 'mouth' },
+    { bone: 'jaw', shape: 'roundBox', at: [0, -0.017, 0.27], half: [0.192, 0.018, 0.285], round: 0.014, material: 'bill' },
+    /* lens eyes in orange rings on the flat sides of the hood, turned a little to the front */
+    { bone: 'head', shape: 'cylinder', at: [-0.205, 0.225, 0.15], rot: [R, -1.05, 0], radius: 0.08, half: 0.026, round: 0.016, material: 'ring' },
+    { bone: 'head', shape: 'cylinder', at: [0.205, 0.225, 0.15], rot: [R, 1.05, 0], radius: 0.08, half: 0.026, round: 0.016, material: 'ring' },
+    /* a dark sensor hole above and ahead of each eye */
+    { bone: 'head', shape: 'sphere', at: [-0.2, 0.31, 0.25], radius: 0.016, material: 'servo' },
+    { bone: 'head', shape: 'sphere', at: [0.2, 0.31, 0.25], radius: 0.016, material: 'servo' },
     /* the bracket the neck bolts into */
     { bone: 'head', shape: 'roundBox', at: [0, 0.01, 0], half: [0.07, 0.035, 0.07], round: 0.016, material: 'servo' },
 
@@ -105,8 +105,8 @@ export const microduck: CharacterSpec = {
   paints: [
     /* little red rivets on the bill and vent dots on the boots */
     ...[-1, 1].flatMap((s): PaintSpec[] => [
-      { bone: 'head', on: ['bill'], kind: 'sphere', at: [s * 0.19, 0.09, -0.12], radius: 0.014, color: '#c8261a', soft: 0.2 },
-      { bone: 'head', on: ['bill'], kind: 'sphere', at: [s * 0.163, 0.09, -0.18], radius: 0.014, color: '#c8261a', soft: 0.2 },
+      { bone: 'head', on: ['bill'], kind: 'sphere', at: [s * 0.208, 0.085, -0.13], radius: 0.013, color: '#c8261a', soft: 0.2 },
+      { bone: 'head', on: ['bill'], kind: 'sphere', at: [s * 0.208, 0.085, -0.18], radius: 0.013, color: '#c8261a', soft: 0.2 },
     ]),
     ...['shinL', 'shinR'].flatMap((bone) =>
       [[-0.03, 0.1], [0.03, 0.1], [0, 0.13], [-0.03, 0.06], [0.03, 0.06]].map(([x, z]): PaintSpec => ({
@@ -120,14 +120,14 @@ export const microduck: CharacterSpec = {
   eyes: {
     kind: 'bead',
     bone: 'head',
-    at: [[-0.201, 0.19, 0.248], [0.201, 0.19, 0.248]],
-    radii: [0.052, 0.052, 0.052],
+    at: [[-0.228, 0.225, 0.165], [0.228, 0.225, 0.165]],
+    radii: [0.048, 0.048, 0.048],
     material: 'lens',
   },
   anchors: {
-    top: { bone: 'head', at: [0.1, 0.34, 0.08] },
-    mouth: { bone: 'head', at: [0, 0.04, 0.56] },
-    ear: { bone: 'head', at: [-0.24, 0.17, 0.05] },
+    top: { bone: 'head', at: [0.1, 0.42, 0.08] },
+    mouth: { bone: 'head', at: [0, 0.06, 0.45] },
+    ear: { bone: 'head', at: [-0.24, 0.2, 0.05] },
     feet: { bone: 'root', at: [0, 0.02, 0.08] },
     chest: { bone: 'body', at: [0, 0.12, 0.16] },
     neck: { bone: 'neck0', at: [0.05, 0.08, 0.05] },

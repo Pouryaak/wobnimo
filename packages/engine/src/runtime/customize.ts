@@ -3,8 +3,8 @@
    compiler's cache keeps working and the cast stays reusable. */
 
 import type { CompiledCharacter } from '../compiler/compile';
-import { linear } from '../spec/color';
-import type { CharacterSpec, Hex } from '../spec/types';
+import { hex, linear } from '../spec/color';
+import type { CharacterSpec, Hex, Vec3 } from '../spec/types';
 
 /** New colours for materials, by name. Unknown names are an error, so typos don't fail silently. */
 export type Palette = Record<string, Hex>;
@@ -16,13 +16,34 @@ function check(id: string, names: string[], name: string, color: string) {
   if (!HEX.test(color)) throw new Error(`${id}: palette colour for "${name}" must look like #rrggbb, got "${color}".`);
 }
 
-/** A copy of the spec with new material colours. */
-export function recolor(spec: CharacterSpec, palette: Palette): CharacterSpec {
-  const materials = { ...spec.materials };
-  const names = Object.keys(materials);
+/**
+ * The palette with every shade filled in: a material that is a `shadeOf`
+ * a recoloured one takes the new colour, scaled by how it differed from
+ * the original. Entries the palette names itself always win.
+ */
+function expand(spec: CharacterSpec, palette: Palette): Map<string, Vec3> {
+  const names = Object.keys(spec.materials);
+  const out = new Map<string, Vec3>();
   for (const [name, color] of Object.entries(palette)) {
     check(spec.id, names, name, color);
-    materials[name] = { ...materials[name], color };
+    out.set(name, linear(color));
+  }
+  for (const [name, m] of Object.entries(spec.materials)) {
+    const base = m.shadeOf;
+    if (!base || out.has(name) || !(base in palette)) continue;
+    const from = linear(spec.materials[base].color);
+    const own = linear(m.color);
+    const to = out.get(base)!;
+    out.set(name, [0, 1, 2].map((k) => Math.min(1, from[k] > 1e-3 ? (to[k] * own[k]) / from[k] : own[k])) as Vec3);
+  }
+  return out;
+}
+
+/** A copy of the spec with new material colours (and their shades). */
+export function recolor(spec: CharacterSpec, palette: Palette): CharacterSpec {
+  const materials = { ...spec.materials };
+  for (const [name, color] of expand(spec, palette)) {
+    materials[name] = { ...materials[name], color: name in palette ? palette[name] : hex(color) };
   }
   return { ...spec, materials };
 }
@@ -35,10 +56,7 @@ export function recolor(spec: CharacterSpec, palette: Palette): CharacterSpec {
 export function albedo(character: CompiledCharacter, palette: Palette | undefined): Float32Array {
   const out = character.albedo.slice();
   if (!palette) return out;
-  for (const [name, color] of Object.entries(palette)) {
-    check(character.spec.id, character.materials, name, color);
-    out.set(linear(color), character.materials.indexOf(name) * 3);
-  }
+  for (const [name, color] of expand(character.spec, palette)) out.set(color, character.materials.indexOf(name) * 3);
   return out;
 }
 

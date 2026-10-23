@@ -16,7 +16,7 @@ export const tad: CharacterSpec = {
       surface: { kind: 'speckle', scale: 9, strength: 0.85, color: '#2f8a3a', bone: 'head' },
     },
     bodySkin: {
-      color: '#5fc24e', f0: 0.07, spec: 2, shininess: 260, rim: 0.7, gloss: 0.95, sss: 0.3, sssColor: '#c6ff8f',
+      color: '#5fc24e', shadeOf: 'skin', f0: 0.07, spec: 2, shininess: 260, rim: 0.7, gloss: 0.95, sss: 0.3, sssColor: '#c6ff8f',
       surface: { kind: 'speckle', scale: 9, strength: 0.85, color: '#2f8a3a' },
     },
     belly: { color: '#f3f0b6', f0: 0.06, spec: 1.6, shininess: 200, rim: 0.5, gloss: 0.9, sss: 0.45, sssColor: '#fffbd0' },
