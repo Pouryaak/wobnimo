@@ -1,4 +1,4 @@
-import type { CharacterSpec } from '@animo/engine';
+import type { CharacterSpec } from '@wobnimo/engine';
 
 /** A drop of jelly with a sprout on top: all squash, stretch and wobble. */
 export const mochi: CharacterSpec = {

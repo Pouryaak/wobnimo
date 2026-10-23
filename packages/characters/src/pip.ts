@@ -1,4 +1,4 @@
-import type { CharacterSpec } from '@animo/engine';
+import type { CharacterSpec } from '@wobnimo/engine';
 
 /** A round songbird chick: soft feathers, flapping wings, a beak that talks. */
 export const pip: CharacterSpec = {
@@ -21,8 +21,8 @@ export const pip: CharacterSpec = {
     { name: 'body', pivot: [0, 0, 0], drive: { rz: [['roll', 0.3]], rx: [['pitch', -0.12]] } },
     { name: 'head', parent: 'body', pivot: [0, 0.62, 0], drive: { rx: [['pitch', -1]], ry: [['yaw', 0.9]], rz: [['roll', 0.8]] } },
     /* the beak opens both ways: the jaw drops and the top lifts a little */
-    { name: 'beak', parent: 'head', pivot: [0, 0.155, 0.31], drive: { rx: [['talk', -0.2]] } },
-    { name: 'jaw', parent: 'head', pivot: [0, 0.122, 0.315], drive: { rx: [['talk', 0.85]] } },
+    { name: 'beak', parent: 'head', pivot: [0, 0.14, 0.33], drive: { rx: [['talk', -0.24]] } },
+    { name: 'jaw', parent: 'head', pivot: [0, 0.14, 0.33], drive: { rx: [['talk', 0.8]] } },
     { name: 'tuft', parent: 'head', pivot: [0, 0.5, 0.04], rest: { rx: 0.25 }, jiggle: { axis: [0, 1, 0], length: 0.14, freq: 3, damping: 0.14 } },
     {
       name: 'wingL', parent: 'body', pivot: [-0.38, 0.6, -0.02],
@@ -39,12 +39,15 @@ export const pip: CharacterSpec = {
   parts: [
     { bone: 'body', shape: 'ellipsoid', at: [0, 0.42, 0], radii: [0.45, 0.41, 0.42], material: 'feather' },
     { bone: 'head', shape: 'sphere', at: [0, 0.18, 0.03], radius: 0.35, blend: 0.18, material: 'feather' },
-    /* inside the beak: a dark mouth and a tongue, seen only when it opens */
-    { bone: 'head', shape: 'sphere', at: [0, 0.128, 0.322], radius: 0.044, material: 'mouth' },
-    /* a beak in two halves that hinge apart */
-    { bone: 'beak', shape: 'roundCone', from: [0, 0, 0], to: [0, -0.018, 0.15], r1: 0.062, r2: 0.01, material: 'beak' },
-    { bone: 'jaw', shape: 'roundCone', from: [0, -0.018, 0.0], to: [0, -0.032, 0.105], r1: 0.044, r2: 0.009, material: 'beak' },
-    { bone: 'jaw', shape: 'ellipsoid', at: [0, 0.018, 0.035], radii: [0.025, 0.012, 0.032], material: 'tongue' },
+    /* a chick's beak in two halves that hinge apart. Each half is lined
+       with a slightly smaller dark copy, so its cut face reads as the inside
+       of the mouth; a dark throat fills the gap behind them */
+    { bone: 'head', shape: 'ellipsoid', at: [0, 0.14, 0.37], radii: [0.05, 0.03, 0.035], material: 'mouth' },
+    { bone: 'beak', shape: 'ellipsoid', at: [0, 0, 0.06], rot: [0.12, 0, 0], radii: [0.076, 0.056, 0.1], clip: { normal: [0, -1, 0] }, material: 'beak' },
+    { bone: 'beak', shape: 'ellipsoid', at: [0, 0, 0.06], rot: [0.12, 0, 0], radii: [0.064, 0.048, 0.088], clip: { normal: [0, -1, 0], offset: 0.003 }, material: 'mouth' },
+    { bone: 'jaw', shape: 'ellipsoid', at: [0, 0, 0.045], radii: [0.064, 0.04, 0.08], clip: { normal: [0, 1, 0] }, material: 'beak' },
+    { bone: 'jaw', shape: 'ellipsoid', at: [0, 0, 0.045], radii: [0.053, 0.032, 0.068], clip: { normal: [0, 1, 0], offset: 0.003 }, material: 'mouth' },
+    { bone: 'jaw', shape: 'ellipsoid', at: [0, 0.002, 0.04], radii: [0.034, 0.01, 0.042], material: 'tongue' },
     /* a tuft of three feathers */
     { bone: 'tuft', shape: 'roundCone', from: [0, -0.04, 0], to: [0.015, 0.12, 0.03], r1: 0.045, r2: 0.01, blend: 0.03, material: 'feather' },
     { bone: 'tuft', shape: 'roundCone', from: [0, -0.04, -0.02], to: [-0.05, 0.08, -0.05], r1: 0.035, r2: 0.008, blend: 0.03, material: 'feather' },
@@ -123,7 +126,7 @@ export const pip: CharacterSpec = {
     replace: ['syllable'],
     /* it sings: a note on every other syllable */
     syllable: [
-      { glyph: 'note', anchor: 'mouth', rate: 1, offset: [0.06, 0.04, 0.04], velocity: [0.14, 0.2, 0.05], jitter: 0.06, wobble: 0.07, life: [1.1, 1.5], size: [0.045, 0.075], rotation: -0.15, color: '#f08a3c' },
+      { glyph: 'note', anchor: 'mouth', rate: 1, offset: [0.12, -0.03, 0.02], velocity: [0.2, 0.13, 0.05], jitter: 0.06, wobble: 0.07, life: [1.1, 1.5], size: [0.045, 0.075], rotation: -0.15, color: '#f08a3c' },
     ],
     happy: [{ glyph: 'note', anchor: 'mouth', rate: 1.6, velocity: [0, 0.24, 0.05], jitter: 0.25, wobble: 0.07, life: [1, 1.3], size: [0.04, 0.07], rotation: 0.15, color: '#e8664a' }],
     'enter:happy': [

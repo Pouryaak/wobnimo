@@ -1,4 +1,4 @@
-import type { BoneSpec, CharacterSpec, Expression, Motion, PartSpec } from '@animo/engine';
+import type { BoneSpec, CharacterSpec, Expression, Motion, PartSpec } from '@wobnimo/engine';
 
 /* Six tentacles, each a chain of three jiggle bones: every segment lags
    behind the one before it, so they trail and curl with no animation of
@@ -115,7 +115,7 @@ export const inky: CharacterSpec = {
     bone: 'mantle',
     on: ['skin'],
     at: [0, 0.13, 0.3],
-    width: 0.05,
+    width: 0.062,
     color: '#5a1430',
     tongue: '#ff8fa8',
   },

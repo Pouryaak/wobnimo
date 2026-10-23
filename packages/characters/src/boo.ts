@@ -1,4 +1,4 @@
-import type { CharacterSpec } from '@animo/engine';
+import type { CharacterSpec } from '@wobnimo/engine';
 
 /** A floating ghost with a rippling hem and little arms. */
 export const boo: CharacterSpec = {
@@ -50,7 +50,7 @@ export const boo: CharacterSpec = {
     bone: 'body',
     on: ['ghost'],
     at: [0, 0.77, 0.38],
-    width: 0.06,
+    width: 0.075,
     color: '#2a1a4a',
     tongue: '#ff7fa6',
   },

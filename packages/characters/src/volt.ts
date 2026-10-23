@@ -1,4 +1,4 @@
-import type { BoneSpec, CharacterSpec, PartSpec } from '@animo/engine';
+import type { BoneSpec, CharacterSpec, PartSpec } from '@wobnimo/engine';
 
 /* A jointed arm: shoulder, elbow, and a claw hand. `side` is -1 for the
    arm on screen left, 1 for screen right. */

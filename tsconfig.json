@@ -14,8 +14,8 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@animo/engine": ["packages/engine/src/index.ts"],
-      "@animo/characters": ["packages/characters/src/index.ts"]
+      "@wobnimo/engine": ["packages/engine/src/index.ts"],
+      "@wobnimo/characters": ["packages/characters/src/index.ts"]
     }
   },
   "include": ["packages/*/src", "apps/*/src"]

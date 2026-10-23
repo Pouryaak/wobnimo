@@ -11,6 +11,7 @@ import { clamp, easeInOut, mix, rng, smoothstep } from '../math/scalar';
 import { Spring } from '../math/spring';
 import type { Channels } from '../rig/rig';
 import type { Temperament, Vec3 } from '../spec/types';
+import { Speech } from './speech';
 import { EXPRESSION_ID, EXPRESSIONS, FACE, type Expression, type MascotState } from './states';
 
 export const DEFAULT_TEMPERAMENT: Temperament = { float: 0, hop: 0.16, squash: 1, snap: 1, look: 1, snapLook: 0, talkSquash: 0 };
@@ -90,6 +91,7 @@ export class Brain {
   private side = 1;
   private nextNod = 2.5;
   private reactUntil = -1;
+  private readonly speech: Speech;
   private lastTalk = 0;
   private syllableArmed = true;
   private readonly matrices = { a: mat4(), b: mat4() };
@@ -99,6 +101,7 @@ export class Brain {
   constructor(temperament: Partial<Temperament> = {}, seed = 0.5) {
     this.temperament = { ...DEFAULT_TEMPERAMENT, ...temperament };
     this.random = rng(seed);
+    this.speech = new Speech(this.random);
     this.nextBlink = 1 + this.random() * 3;
     this.nextHop = 6 + this.random() * 6;
     this.hover = new Spring(this.temperament.float);
@@ -117,6 +120,7 @@ export class Brain {
     if (s === this.state) return;
     this.state = s;
     this.since = 0;
+    if (s === 'speaking') this.speech.reset();
     this.nextLook = 0;
   }
 
@@ -222,10 +226,9 @@ export class Brain {
       case 'speaking': {
         yaw = Math.sin(t * 0.7) * 0.12;
         roll = Math.sin(t * 0.9) * 0.05;
-        /* syllables inside words, pauses between phrases, and vowel shapes */
-        const phrase = smoothstep(-0.55, -0.2, Math.sin(t * 1.3) + 0.4 * Math.sin(t * 3.1));
-        talk = phrase * (0.2 + 0.8 * Math.pow(Math.abs(Math.sin(t * 9.5 + Math.sin(t * 3.7) * 1.5)), 0.8));
-        round = phrase * (0.5 + 0.5 * Math.sin(t * 4.3 + Math.sin(t * 1.9) * 2.2));
+        this.speech.update(dt);
+        talk = this.speech.open;
+        round = this.speech.round;
         /* the head rides the stresses */
         pitch = 0.04 + talk * 0.07;
         bob += talk * 0.014;
@@ -286,7 +289,7 @@ export class Brain {
     fs.squint.step(target.squint, dt, 3, 0.8);
     fs.smile.step(target.smile, dt, 2.4, 0.75);
     fs.tilt.step(target.tilt * this.side, dt, 1.6, 0.8);
-    fs.talk.step(talk, dt, 10, 0.7);
+    fs.talk.step(talk, dt, 14, 0.8);
     fs.round.step(round, dt, 6, 0.8);
     fs.gazeX.step(gazeX, dt, 7, 0.85);
     fs.gazeY.step(gazeY, dt, 7, 0.85);

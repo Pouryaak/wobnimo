@@ -1,6 +1,6 @@
-# Animo architecture
+# Wobnimo architecture
 
-Animo is a runtime for animated, interactive mascots on the web. It takes a
+Wobnimo is a runtime for animated, interactive mascots on the web. It takes a
 small, declarative description of a character and makes it alive: lit like a
 studio product shot, moved by springs, and reacting to what an app (or an
 agent) is doing.
@@ -16,7 +16,7 @@ Rive and Lottie treat a character as an authored animation: a timeline of
 keyframes, plus a state machine that switches between clips. That makes every
 new character a new piece of hand work, and every new behavior a new clip.
 
-Animo splits a character into three independent things:
+Wobnimo splits a character into three independent things:
 
 | Layer | Question it answers | Where it lives |
 |---|---|---|
@@ -102,10 +102,18 @@ the state, the brain keeps a weight per **expression** (the five states plus
 `happy`), each easing toward 1 or 0, so acting can cross-fade.
 
 The brain also reports **beats**: one-frame events for the moments an
-animator would hit, a landing, a syllable, entering `happy`. Speech is a
-syllable generator, not a sine wave: each syllable picks an open and a
-roundness (an "ah" versus an "oo"), and the mouth, the jaw and a little
-squash all follow it. Birds turn their heads in snaps with holds between,
+animator would hit, a landing, a syllable, entering `happy`. Speech
+(`speech.ts`) is a syllable generator, not a sine wave: syllables grouped
+into words and phrases, each with its own stress and vowel ("ah", "ee",
+"oh", "oo"), closing on the consonant between them and resting shut
+between phrases. The mouth, the jaw and a little squash all follow it.
+
+Mouths are one shape, not a line plus a hole: two lips that meet at the
+corners and part as the mouth opens (`glsl/mouth.ts`), so a painted mouth
+morphs continuously from a smile to an open "ah" to a round "oo". Volt's
+LED mouth draws the same shape on its matrix, and Pip's beak is two
+hinged halves lined with the mouth colour, using a part `clip` to cut each
+half flat. Birds turn their heads in snaps with holds between,
 which is a temperament flag (`snapLook`), not bird code.
 
 ### Effects (`packages/engine/src/behavior/fx.ts`)
@@ -179,7 +187,7 @@ full-screen triangle per frame. In the shader:
 `Mascot` is the public API: `new Mascot(canvas, spec, options)` or
 `mount(container, spec, options)`, then `setState()`, `poke()`,
 `setPalette()`, `setSpeed()`, `setEffects()`, `setSpec()`, `on()`,
-`dispose()`. `element.ts` wraps it as `<animo-mascot>`, so any framework
+`dispose()`. `element.ts` wraps it as `<wobnimo-mascot>`, so any framework
 that renders tags can use it with no adapter. `customize.ts` makes new
 characters from old ones (`recolor`, `variant`) without mutating them, so
 compiled shaders stay cached by spec identity. A single shared
@@ -218,7 +226,7 @@ can see what it designed. We'd do it when we can measure a reason, not before.
 tags, and attributes are strings an agent or a CMS can write. Anything
 richer goes through the `Mascot` object the element exposes.
 
-**Zero runtime dependencies.** The engine is about 19 KB gzipped (the
+**Zero runtime dependencies.** The engine is about 20 KB gzipped (the
 playground prints the measured figure). No Three.js, no animation library.
 
 ## What the prototype doesn't do yet

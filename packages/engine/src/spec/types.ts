@@ -177,6 +177,12 @@ interface PartBase {
   /** Offset and rotation inside the bone's space. */
   at?: Vec3;
   rot?: Vec3;
+  /**
+   * Keeps only the side of a plane that `normal` points away from, in the
+   * part's own space: `{ normal: [0, -1, 0] }` keeps the top half. Halves a
+   * beak, flattens a base.
+   */
+  clip?: { normal: Vec3; offset?: number };
 }
 
 export type PartSpec = PartBase &

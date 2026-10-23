@@ -2,7 +2,7 @@
    of the nearest surface. Parts are combined in the order the spec lists
    them, so a subtraction carves everything declared before it. */
 
-import type { PartSpec } from '../spec/types';
+import type { PartSpec, Vec3 } from '../spec/types';
 import { f, inverseRotation, v2, v3 } from './format';
 import type { Resolved } from './resolve';
 
@@ -29,7 +29,7 @@ export function emitMap(r: Resolved): string {
       );
       return;
     }
-    const d = distance(part);
+    const d = part.clip ? `max(${distance(part)}, dot(l, ${v3(unit(part.clip.normal))}) - ${f(part.clip.offset ?? 0)})` : distance(part);
     const k = f(part.blend ?? 0);
     out.push(part.op === 'sub' ? `  opSub(r, ${d}, ${k});` : `  opAdd(r, ${d}, ${id}, ${k});`);
   });
@@ -37,6 +37,11 @@ export function emitMap(r: Resolved): string {
   out.push(...emitEyes(r, boneSpace));
   out.push('  r.x *= uScaleFix;', '  return r;', '}');
   return out.join('\n');
+}
+
+function unit(v: Vec3): Vec3 {
+  const n = Math.hypot(...v) || 1;
+  return [v[0] / n, v[1] / n, v[2] / n];
 }
 
 function distance(p: PartSpec): string {

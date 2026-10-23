@@ -1,22 +1,22 @@
-# animo.
+# wobnimo.
 
 Living mascots for the web. Describe a character as a few kilobytes of data,
-and Animo renders it in real time, lit like a studio product shot, acted
+and Wobnimo renders it in real time, lit like a studio product shot, acted
 like a cartoon, and reacting to what your app or agent is doing.
 
 ```html
 <script type="module">
-  import { defineAnimoElement } from '@animo/characters';
-  defineAnimoElement();
+  import { defineWobnimoElement } from '@wobnimo/characters';
+  defineWobnimoElement();
 </script>
 
-<animo-mascot character="volt" state="thinking"></animo-mascot>
+<wobnimo-mascot character="volt" state="thinking"></wobnimo-mascot>
 ```
 
 - **Characters are data.** A `CharacterSpec` is plain JSON: parts, materials,
   bones, eyes, face, acting and effects. No keyframes, no per-character code.
 - **One engine for any body.** A robot, a bird, a jelly, a ghost and an
-  octopus all run on the same ~19 KB (gzipped) runtime with no dependencies.
+  octopus all run on the same ~20 KB (gzipped) runtime with no dependencies.
 - **Premium by default.** Per-pixel studio lighting, clear coat, subsurface
   scattering, soft shadows and occlusion, all derived from the shape.
 - **Acted, not just animated.** Every state has a pose per character (Volt
@@ -34,16 +34,16 @@ pokes it (a happy hop).
 ### HTML, Vue, Svelte, anything that renders tags
 
 ```html
-<animo-mascot
+<wobnimo-mascot
   character="pip"
   state="speaking"
   palette="feather:#7ec8ff; wing:#3a7bd5"
   speed="1.2"
   style="width: 200px; height: 200px"
-></animo-mascot>
+></wobnimo-mascot>
 
 <script>
-  const pip = document.querySelector('animo-mascot');
+  const pip = document.querySelector('wobnimo-mascot');
   pip.state = 'listening';
   pip.addEventListener('poke', () => console.log('hi'));
   pip.addEventListener('statechange', (e) => console.log(e.detail));
@@ -57,8 +57,8 @@ you size it.
 ### JavaScript
 
 ```ts
-import { mount } from '@animo/engine';
-import { volt } from '@animo/characters';
+import { mount } from '@wobnimo/engine';
+import { volt } from '@wobnimo/characters';
 
 const mascot = mount(document.querySelector('#mascot'), volt, { state: 'idle' });
 
@@ -87,7 +87,7 @@ function Mascot({ state = 'idle' }) {
 }
 ```
 
-Or render `<animo-mascot>` directly; React 19 passes its props through.
+Or render `<wobnimo-mascot>` directly; React 19 passes its props through.
 
 ### Options
 
@@ -104,8 +104,8 @@ Or render `<animo-mascot>` directly; React 19 passes its props through.
 ### Your own character
 
 ```ts
-import { defineCharacter, variant } from '@animo/engine';
-import { pip } from '@animo/characters';
+import { defineCharacter, variant } from '@wobnimo/engine';
+import { pip } from '@wobnimo/characters';
 
 // a recoloured, calmer cousin
 const wren = variant(pip, {
@@ -128,11 +128,13 @@ its character, with a copy button.
 
 ```bash
 npm install
-npm run build        # dist/playground.html, one self-contained file
+npm run build        # dist/site/index.html, one self-contained page
 npm run typecheck
 ```
 
-Open `dist/playground.html` in a browser with WebGL2.
+Open `dist/site/index.html` in a browser with WebGL2. Every push to `main`
+rebuilds the playground and publishes it to GitHub Pages
+(`.github/workflows/pages.yml`).
 
 ## Read next
 

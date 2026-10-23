@@ -67,11 +67,20 @@ float faceFor(float state, vec2 c, float t, float soft) {
       v = max(v, lit(d, soft) * 0.9);
     }
   } else if (state < 3.5) {
-    /* speaking: a mouth that moves with the words */
+    /* speaking: the same two-lip mouth as the painted faces, drawn as a lit
+       outline over a dim fill; closed, the lips coincide in one bar */
     v = faceEyes(c, soft);
-    float talk = uFaceB.x;
-    float d = sdBox2(c - vec2(0.0, -4.4), vec2(2.5 - talk * 0.4 - uFaceD.y * 1.2, 0.3 + talk * 1.6)) - 0.25;
-    v = max(v, lit(d, soft));
+    float open = uFaceB.x * 3.4;
+    float round = uFaceD.y;
+    float opened = smoothstep(0.0, 0.8, open);
+    float w = 3.4 - 1.4 * round * opened;
+    vec2 m = c - vec2(0.0, -3.7 + 0.25 * open);
+    float u = clamp(m.x / w, -1.0, 1.0);
+    float bulge = sqrt(max(1.0 - u * u, 0.0));
+    float inside = max(m.y - open * (0.2 + 0.45 * round) * bulge, -open * bulge - m.y);
+    float body = abs(m.x) <= w ? inside : 1e3;
+    float rim = min(abs(body), length(vec2(abs(m.x) - w, m.y))) - 0.42;
+    v = max(v, max(lit(rim, soft), lit(body, soft) * 0.12 * opened));
   } else if (state < 4.5) {
     /* sleeping: closed eyes and rising z's */
     for (int i = 0; i < 2; i++) {

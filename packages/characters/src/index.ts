@@ -1,4 +1,4 @@
-import { defineMascotElement, type CharacterSpec } from '@animo/engine';
+import { defineMascotElement, type CharacterSpec } from '@wobnimo/engine';
 import { boo } from './boo';
 import { inky } from './inky';
 import { mochi } from './mochi';
@@ -10,7 +10,7 @@ export { boo, inky, mochi, pip, volt };
 /** Five body plans, chosen so each one stresses the engine somewhere new. */
 export const characters: CharacterSpec[] = [volt, pip, mochi, boo, inky];
 
-/** Registers <animo-mascot> with the whole cast: `<animo-mascot character="pip">`. */
-export function defineAnimoElement(tag = 'animo-mascot') {
+/** Registers <wobnimo-mascot> with the whole cast: `<wobnimo-mascot character="pip">`. */
+export function defineWobnimoElement(tag = 'wobnimo-mascot') {
   defineMascotElement(characters, tag);
 }

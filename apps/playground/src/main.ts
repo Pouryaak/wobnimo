@@ -2,8 +2,8 @@
    controls and code to take one home. Everything on screen runs through
    the public engine API, the same way a product would use it. */
 
-import { Mascot, STATES, type CharacterSpec, type MascotState, type Palette } from '@animo/engine';
-import { characters } from '@animo/characters';
+import { Mascot, STATES, type CharacterSpec, type MascotState, type Palette } from '@wobnimo/engine';
+import { characters } from '@wobnimo/characters';
 
 declare const __ENGINE_GZIP_BYTES__: number;
 
@@ -151,20 +151,20 @@ function snippet(tab: Tab): string {
 
   if (tab === 'html') {
     return `<script type="module">
-  import { defineAnimoElement } from '@animo/characters';
-  defineAnimoElement();
+  import { defineWobnimoElement } from '@wobnimo/characters';
+  defineWobnimoElement();
 </script>
 
-<animo-mascot ${attrs.join(' ')}></animo-mascot>
+<wobnimo-mascot ${attrs.join(' ')}></wobnimo-mascot>
 
 <script>
   // set state from whatever your agent is doing
-  document.querySelector('animo-mascot').state = 'speaking';
+  document.querySelector('wobnimo-mascot').state = 'speaking';
 </script>`;
   }
   if (tab === 'js') {
-    return `import { mount } from '@animo/engine';
-import { ${id} } from '@animo/characters';
+    return `import { mount } from '@wobnimo/engine';
+import { ${id} } from '@wobnimo/characters';
 
 const mascot = mount(document.querySelector('#mascot'), ${id}, {
   ${options.join(',\n  ')},
@@ -175,8 +175,8 @@ mascot.on('poke', () => console.log('${name} was poked'));`;
   }
   const opts = options.filter((o) => !o.startsWith('state'));
   return `import { useEffect, useRef } from 'react';
-import { mount } from '@animo/engine';
-import { ${id} } from '@animo/characters';
+import { mount } from '@wobnimo/engine';
+import { ${id} } from '@wobnimo/characters';
 
 export function ${name}({ state = '${view.state}' }) {
   const host = useRef(null);

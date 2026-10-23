@@ -8,6 +8,7 @@ import { emitMap } from './emit-map';
 import { emitMaterials } from './emit-materials';
 import { LIGHTING } from './glsl/lighting';
 import { MAIN } from './glsl/main';
+import { MOUTH } from './glsl/mouth';
 import { PARTICLES } from './glsl/particles';
 import { PRELUDE } from './glsl/prelude';
 import { SCREEN_FACE } from './glsl/screen-face';
@@ -51,6 +52,7 @@ export function compile(spec: CharacterSpec): CompiledCharacter {
     emitMap(r),
     LIGHTING,
     spec.face?.kind === 'screen' ? SCREEN_FACE : '',
+    spec.face?.kind === 'mouth' ? MOUTH : '',
     emitMaterials(r),
     PARTICLES,
     MAIN,

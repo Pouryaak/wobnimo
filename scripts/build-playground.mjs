@@ -1,5 +1,8 @@
 /* Builds the playground as one self-contained HTML file, and measures the
-   engine on its own (minified, gzipped) so the number on the page is real. */
+   engine on its own (minified, gzipped) so the number on the page is real.
+
+   dist/playground.html   the page body, for hosts that supply the document shell
+   dist/site/index.html   a complete document, for GitHub Pages or any static host */
 
 import { build } from 'esbuild';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
@@ -23,6 +26,22 @@ const html = (await readFile(`${root}apps/playground/index.html`, 'utf8'))
   .replace('/*__CSS__*/', () => css)
   .replace('/*__JS__*/', () => js);
 
-await mkdir(`${root}dist`, { recursive: true });
+/* the page's title, metadata and styles come before its first element */
+const split = html.indexOf('<div class="page">');
+const site = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+${html.slice(0, split).trim()}
+</head>
+<body>
+${html.slice(split).trim()}
+</body>
+</html>
+`;
+
+await mkdir(`${root}dist/site`, { recursive: true });
 await writeFile(`${root}dist/playground.html`, html);
+await writeFile(`${root}dist/site/index.html`, site);
 console.log(`engine ${(engineBytes / 1024).toFixed(1)} KB gzipped · playground ${(html.length / 1024).toFixed(1)} KB`);

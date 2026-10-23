@@ -1,4 +1,4 @@
-/* The public API. Most apps need only `mount` (or the <animo-mascot>
+/* The public API. Most apps need only `mount` (or the <wobnimo-mascot>
    element) and a character; the rest is for building characters and
    for other renderers. */
 

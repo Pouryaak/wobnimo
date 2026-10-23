@@ -1,8 +1,8 @@
-/* <animo-mascot>: the engine as a custom element, so it drops into plain
+/* <wobnimo-mascot>: the engine as a custom element, so it drops into plain
    HTML, React, Vue, Svelte or anything else that renders tags.
 
      defineMascotElement(characters);
-     <animo-mascot character="volt" state="thinking" style="width:160px;height:160px"></animo-mascot>
+     <wobnimo-mascot character="volt" state="thinking" style="width:160px;height:160px"></wobnimo-mascot>
 
    Attributes: character, state, seed, speed, palette ("shell:#e0457b; trim:#fff"),
    interactive="false", effects="false".
@@ -22,11 +22,11 @@ function parsePalette(text: string | null): Palette | undefined {
   return entries.length ? Object.fromEntries(entries) : undefined;
 }
 
-export function defineMascotElement(characters: CharacterSpec[], tag = 'animo-mascot') {
+export function defineMascotElement(characters: CharacterSpec[], tag = 'wobnimo-mascot') {
   if (typeof customElements === 'undefined' || customElements.get(tag)) return;
   const registry = new Map(characters.map((c) => [c.id, c]));
 
-  class AnimoMascotElement extends HTMLElement {
+  class WobnimoMascotElement extends HTMLElement {
     static observedAttributes = ATTRIBUTES;
     private instance: Mascot | null = null;
     private custom: CharacterSpec | null = null;
@@ -107,5 +107,5 @@ export function defineMascotElement(characters: CharacterSpec[], tag = 'animo-ma
     }
   }
 
-  customElements.define(tag, AnimoMascotElement);
+  customElements.define(tag, WobnimoMascotElement);
 }
