@@ -1,0 +1,60 @@
+<title>Animo Playground</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Five characters, one engine. Every mascot is a small spec compiled to a shader.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>/*__CSS__*/</style>
+
+<div class="page">
+  <header class="masthead">
+    <div class="brand">
+      <span class="wordmark">animo</span>
+      <span class="version">v0.1 · prototype</span>
+    </div>
+    <p class="lede">Five characters, one engine. Each mascot is a few kilobytes of data that compiles to its own shader, lit in a virtual studio and moved by springs.</p>
+  </header>
+
+  <main class="layout">
+    <section class="stage-card" aria-label="Stage">
+      <div class="stage-bar">
+        <div class="states" id="states" role="group" aria-label="State"></div>
+        <span class="hint">Move your cursor. Click to poke.</span>
+      </div>
+      <div class="stage">
+        <canvas id="stage-canvas"></canvas>
+        <div class="zz" id="zz" hidden aria-hidden="true"><span>z</span><span>z</span><span>z</span></div>
+        <div class="caption">
+          <h1 id="stage-name">Volt</h1>
+          <p id="stage-plan"></p>
+        </div>
+      </div>
+    </section>
+
+    <aside class="inspector" aria-label="Character spec">
+      <div class="inspector-head">
+        <h2>The whole character</h2>
+        <button type="button" class="ghost-button" id="copy-spec">Copy spec</button>
+      </div>
+      <dl class="stats">
+        <div><dt>Parts</dt><dd id="stat-parts">–</dd></div>
+        <div><dt>Bones</dt><dd id="stat-bones">–</dd></div>
+        <div><dt>Shader lines</dt><dd id="stat-lines">–</dd></div>
+        <div><dt>Spec, gzipped</dt><dd id="stat-spec">–</dd></div>
+      </dl>
+      <pre class="spec" id="spec" tabindex="0"></pre>
+      <div class="usage">
+        <h3>In your app</h3>
+<pre class="code"><span class="k">const</span> mascot = <span class="k">new</span> Mascot(canvas, <span id="snippet-name">volt</span>);
+mascot.setState(<span class="s" id="snippet-state">'idle'</span>);</pre>
+        <p class="footnote">Engine runtime: <strong id="engine-size">–</strong> gzipped, no dependencies. WebGL2.</p>
+      </div>
+    </aside>
+  </main>
+
+  <section class="roster-wrap" aria-label="Characters">
+    <h2 class="section-title">Cast</h2>
+    <div class="roster" id="roster"></div>
+  </section>
+</div>
+<script>/*__JS__*/</script>
