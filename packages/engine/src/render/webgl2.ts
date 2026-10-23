@@ -62,11 +62,17 @@ export class WebGL2Renderer implements Renderer {
     gl.uniform4fv(u.uFaceA, pose.faceA);
     gl.uniform4fv(u.uFaceB, pose.faceB);
     gl.uniform4fv(u.uFaceC, pose.faceC);
-    gl.uniform4f(u.uFaceD, pose.stateTime, 0, 0, 0);
+    gl.uniform4fv(u.uFaceD, pose.faceD);
     gl.uniform3fv(u.uGlow, pose.glow);
     gl.uniform3fv(u.uShadow, frame.shadow);
     gl.uniform1f(u.uLift, lift);
-    gl.uniform1f(u.uExposure, frame.exposure);
+    gl.uniform1f(u.uExposure, frame.exposure * pose.exposure);
+    gl.uniform3fv(u.uAlbedo, frame.albedo);
+    gl.uniform1f(u.uGlowPool, spec.glowPool ?? 0);
+    gl.uniform4fv(u.uFxA, frame.fx.a);
+    gl.uniform4fv(u.uFxB, frame.fx.b);
+    gl.uniform4fv(u.uFxC, frame.fx.c);
+    gl.uniform1i(u.uFxCount, frame.fx.count);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   }
 
@@ -97,7 +103,7 @@ export class WebGL2Renderer implements Renderer {
     gl.deleteShader(vs);
     gl.deleteShader(fs);
     const uniforms = Object.fromEntries(
-      (Object.keys(UNIFORMS) as UniformName[]).map((name) => [name, gl.getUniformLocation(program, UNIFORMS[name] === 'mat4[]' ? `${name}[0]` : name)]),
+      (Object.keys(UNIFORMS) as UniformName[]).map((name) => [name, gl.getUniformLocation(program, UNIFORMS[name].includes('[') ? `${name}[0]` : name)]),
     ) as Program['uniforms'];
     return { program, uniforms, character };
   }

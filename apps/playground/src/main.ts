@@ -1,8 +1,8 @@
 /* The playground: one large stage, a roster of every character, and the
-   spec of whichever is on stage. Everything on screen runs through the
-   public engine API, the same way a product would use it. */
+   controls and code to take one home. Everything on screen runs through
+   the public engine API, the same way a product would use it. */
 
-import { Mascot, STATES, type CharacterSpec, type MascotState } from '@animo/engine';
+import { Mascot, STATES, type CharacterSpec, type MascotState, type Palette } from '@animo/engine';
 import { characters } from '@animo/characters';
 
 declare const __ENGINE_GZIP_BYTES__: number;
@@ -17,10 +17,24 @@ const LABELS: Record<MascotState, string> = {
   sleeping: 'Sleeping',
 };
 
-let state: MascotState = 'idle';
-let selected = characters[0];
+type Tab = 'html' | 'js' | 'react';
 
-const stage = new Mascot($<HTMLCanvasElement>('#stage-canvas'), selected, { seed: 0.31, state });
+/* everything the visitor has chosen; the stage, the roster and the snippet all follow it */
+const view = {
+  state: 'idle' as MascotState,
+  selected: characters[0],
+  color: null as string | null,
+  speed: 1,
+  effects: true,
+  tab: 'html' as Tab,
+};
+
+/** The material the colour picker drives: the first one, which every character uses for its body. */
+const mainMaterial = (spec: CharacterSpec) => Object.keys(spec.materials)[0];
+const palette = (): Palette | undefined => (view.color ? { [mainMaterial(view.selected)]: view.color } : undefined);
+
+const stage = new Mascot($<HTMLCanvasElement>('#stage-canvas'), view.selected, { seed: 0.31, state: view.state });
+
 const roster = characters.map((spec, i) => {
   const button = document.createElement('button');
   button.className = 'tile';
@@ -28,7 +42,8 @@ const roster = characters.map((spec, i) => {
   button.style.setProperty('--tile-accent', spec.accent);
   button.innerHTML = `<canvas aria-hidden="true"></canvas><span class="tile-name">${spec.name}</span><span class="tile-plan">${spec.tagline}</span>`;
   $('#roster').append(button);
-  const mascot = new Mascot(button.querySelector('canvas')!, spec, { seed: 0.17 * (i + 1), state, interactive: true, maxPixelRatio: 1.5 });
+  const mascot = new Mascot(button.querySelector('canvas')!, spec, { seed: 0.17 * (i + 1), state: view.state, maxPixelRatio: 1.5 });
+  /* the click both pokes the tile's mascot and puts it on stage */
   button.addEventListener('click', () => select(spec));
   return { spec, button, mascot };
 });
@@ -40,36 +55,166 @@ for (const s of STATES) {
   b.type = 'button';
   b.textContent = LABELS[s];
   b.dataset.state = s;
-  b.setAttribute('aria-pressed', String(s === state));
   b.addEventListener('click', () => setState(s));
   stateBar.append(b);
 }
 
 function setState(s: MascotState) {
-  state = s;
+  view.state = s;
   stage.setState(s);
   roster.forEach((r) => r.mascot.setState(s));
   stateBar.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.state === s)));
-  $('#snippet-state').textContent = `'${s}'`;
-  renderSleep();
+  renderSnippet();
 }
 
 function select(spec: CharacterSpec) {
-  selected = spec;
+  view.selected = spec;
+  view.color = null;
   stage.setSpec(spec);
+  roster.forEach((r) => {
+    r.button.setAttribute('aria-current', String(r.spec === spec));
+    r.mascot.setPalette(undefined);
+  });
   document.documentElement.style.setProperty('--accent', spec.accent);
-  roster.forEach((r) => r.button.setAttribute('aria-current', String(r.spec === spec)));
   $('#stage-name').textContent = spec.name;
   $('#stage-plan').textContent = spec.tagline;
-  $('#snippet-name').textContent = spec.id;
+  renderCustom();
   renderInspector(spec);
-  renderSleep();
+  renderSnippet();
 }
 
-/* z's drift up from characters that have no screen to show them on */
-function renderSleep() {
-  $('#zz').hidden = !(state === 'sleeping' && selected.face?.kind !== 'screen');
+/* ---- make it yours ---- */
+
+const colorInput = $<HTMLInputElement>('#color-input');
+const speedInput = $<HTMLInputElement>('#speed-input');
+const fxInput = $<HTMLInputElement>('#fx-input');
+
+function renderCustom() {
+  const material = mainMaterial(view.selected);
+  colorInput.value = view.color ?? view.selected.materials[material].color;
+  $('#color-name').textContent = material;
+  speedInput.value = String(view.speed);
+  $('#speed-out').textContent = `${view.speed.toFixed(2).replace(/0$/, '')}×`;
+  fxInput.checked = view.effects;
 }
+
+function applyCustom() {
+  const p = palette();
+  stage.setPalette(p);
+  roster.find((r) => r.spec === view.selected)?.mascot.setPalette(p);
+  for (const m of [stage, ...roster.map((r) => r.mascot)]) {
+    m.setSpeed(view.speed);
+    m.setEffects(view.effects);
+  }
+  renderCustom();
+  renderSnippet();
+}
+
+colorInput.addEventListener('input', () => {
+  view.color = colorInput.value;
+  applyCustom();
+});
+speedInput.addEventListener('input', () => {
+  view.speed = Number(speedInput.value);
+  applyCustom();
+});
+fxInput.addEventListener('change', () => {
+  view.effects = fxInput.checked;
+  applyCustom();
+});
+$('#reset-custom').addEventListener('click', () => {
+  Object.assign(view, { color: null, speed: 1, effects: true });
+  applyCustom();
+});
+
+/* ---- use it ---- */
+
+function snippet(tab: Tab): string {
+  const { id } = view.selected;
+  const p = palette();
+  const material = mainMaterial(view.selected);
+  const attrs = [`character="${id}"`, `state="${view.state}"`];
+  const options = [`state: '${view.state}'`];
+  if (p) {
+    attrs.push(`palette="${material}:${view.color}"`);
+    options.push(`palette: { ${material}: '${view.color}' }`);
+  }
+  if (view.speed !== 1) {
+    attrs.push(`speed="${view.speed}"`);
+    options.push(`speed: ${view.speed}`);
+  }
+  if (!view.effects) {
+    attrs.push('effects="false"');
+    options.push('effects: false');
+  }
+  const name = view.selected.name;
+
+  if (tab === 'html') {
+    return `<script type="module">
+  import { defineAnimoElement } from '@animo/characters';
+  defineAnimoElement();
+</script>
+
+<animo-mascot ${attrs.join(' ')}></animo-mascot>
+
+<script>
+  // set state from whatever your agent is doing
+  document.querySelector('animo-mascot').state = 'speaking';
+</script>`;
+  }
+  if (tab === 'js') {
+    return `import { mount } from '@animo/engine';
+import { ${id} } from '@animo/characters';
+
+const mascot = mount(document.querySelector('#mascot'), ${id}, {
+  ${options.join(',\n  ')},
+});
+
+agent.on('status', (status) => mascot.setState(status));
+mascot.on('poke', () => console.log('${name} was poked'));`;
+  }
+  const opts = options.filter((o) => !o.startsWith('state'));
+  return `import { useEffect, useRef } from 'react';
+import { mount } from '@animo/engine';
+import { ${id} } from '@animo/characters';
+
+export function ${name}({ state = '${view.state}' }) {
+  const host = useRef(null);
+  const mascot = useRef(null);
+
+  useEffect(() => {
+    mascot.current = mount(host.current, ${id}${opts.length ? `, { ${opts.join(', ')} }` : ''});
+    return () => mascot.current.dispose();
+  }, []);
+
+  useEffect(() => mascot.current?.setState(state), [state]);
+
+  return <div ref={host} style={{ width: 160, height: 160 }} />;
+}`;
+}
+
+const escape = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+/* just enough colour to read: strings and comments */
+function highlight(code: string): string {
+  return escape(code).replace(/(\/\/.*$)|('[^'\n]*'|"[^"\n]*")/gm, (_, comment, str) =>
+    comment ? `<span class="c">${comment}</span>` : `<span class="s">${str}</span>`,
+  );
+}
+
+function renderSnippet() {
+  $('#snippet').innerHTML = highlight(snippet(view.tab));
+  for (const tab of ['html', 'js', 'react'] as const) $(`#tab-${tab}`).setAttribute('aria-selected', String(tab === view.tab));
+}
+
+for (const tab of ['html', 'js', 'react'] as const) {
+  $(`#tab-${tab}`).addEventListener('click', () => {
+    view.tab = tab;
+    renderSnippet();
+  });
+}
+
+/* ---- the spec ---- */
 
 async function gzipBytes(text: string): Promise<number | null> {
   if (typeof CompressionStream === 'undefined') return null;
@@ -93,25 +238,31 @@ async function renderInspector(spec: CharacterSpec) {
   $('#stat-lines').textContent = String(s.shaderLines);
   $('#stat-spec').textContent = '…';
   const gz = await gzipBytes(json);
-  if (selected === spec) $('#stat-spec').textContent = gz ? kb(gz) : kb(json.length);
+  if (view.selected === spec) $('#stat-spec').textContent = gz ? kb(gz) : kb(json.length);
 }
+
+/** Copies text, falling back to selecting `source` where the clipboard is off limits. */
+function copyButton(button: HTMLButtonElement, text: () => string, source: HTMLElement) {
+  const label = button.textContent;
+  button.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(text());
+      button.textContent = 'Copied';
+    } catch {
+      const range = document.createRange();
+      range.selectNodeContents(source);
+      getSelection()?.removeAllRanges();
+      getSelection()?.addRange(range);
+      button.textContent = 'Selected';
+    }
+    setTimeout(() => (button.textContent = label), 1600);
+  });
+}
+
+copyButton($('#copy-snippet'), () => snippet(view.tab), $('#snippet'));
+copyButton($('#copy-spec'), () => JSON.stringify(view.selected, null, 2), $('#spec'));
 
 $('#engine-size').textContent = kb(__ENGINE_GZIP_BYTES__);
 
-$('#copy-spec').addEventListener('click', async (e) => {
-  const button = e.currentTarget as HTMLButtonElement;
-  try {
-    await navigator.clipboard.writeText(JSON.stringify(selected, null, 2));
-    button.textContent = 'Copied';
-  } catch {
-    const range = document.createRange();
-    range.selectNodeContents($('#spec'));
-    getSelection()?.removeAllRanges();
-    getSelection()?.addRange(range);
-    button.textContent = 'Selected';
-  }
-  setTimeout(() => (button.textContent = 'Copy spec'), 1600);
-});
-
-select(selected);
-setState(state);
+select(view.selected);
+setState(view.state);

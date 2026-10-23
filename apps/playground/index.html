@@ -23,7 +23,6 @@
       </div>
       <div class="stage">
         <canvas id="stage-canvas"></canvas>
-        <div class="zz" id="zz" hidden aria-hidden="true"><span>z</span><span>z</span><span>z</span></div>
         <div class="caption">
           <h1 id="stage-name">Volt</h1>
           <p id="stage-plan"></p>
@@ -31,24 +30,53 @@
       </div>
     </section>
 
-    <aside class="inspector" aria-label="Character spec">
-      <div class="inspector-head">
-        <h2>The whole character</h2>
-        <button type="button" class="ghost-button" id="copy-spec">Copy spec</button>
-      </div>
+    <aside class="inspector" aria-label="Character">
       <dl class="stats">
         <div><dt>Parts</dt><dd id="stat-parts">–</dd></div>
         <div><dt>Bones</dt><dd id="stat-bones">–</dd></div>
         <div><dt>Shader lines</dt><dd id="stat-lines">–</dd></div>
         <div><dt>Spec, gzipped</dt><dd id="stat-spec">–</dd></div>
       </dl>
-      <pre class="spec" id="spec" tabindex="0"></pre>
-      <div class="usage">
-        <h3>In your app</h3>
-<pre class="code"><span class="k">const</span> mascot = <span class="k">new</span> Mascot(canvas, <span id="snippet-name">volt</span>);
-mascot.setState(<span class="s" id="snippet-state">'idle'</span>);</pre>
-        <p class="footnote">Engine runtime: <strong id="engine-size">–</strong> gzipped, no dependencies. WebGL2.</p>
-      </div>
+
+      <section class="panel" aria-labelledby="custom-title">
+        <h2 id="custom-title">Make it yours</h2>
+        <div class="controls">
+          <label class="control" for="color-input">
+            <span>Main colour</span>
+            <span class="color-field"><input type="color" id="color-input" value="#2f56c4"><code id="color-name">shell</code></span>
+          </label>
+          <label class="control" for="speed-input">
+            <span>Speed <output id="speed-out" for="speed-input">1.0×</output></span>
+            <input type="range" id="speed-input" min="0.25" max="2" step="0.05" value="1">
+          </label>
+          <label class="control switch" for="fx-input">
+            <input type="checkbox" id="fx-input" checked>
+            <span>Effects around it</span>
+          </label>
+          <button type="button" class="ghost-button" id="reset-custom">Reset</button>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="usage-title">
+        <div class="panel-head">
+          <h2 id="usage-title">Use it</h2>
+          <div class="tabs" role="tablist" aria-label="Snippet">
+            <button type="button" role="tab" id="tab-html" aria-selected="true" aria-controls="snippet">HTML</button>
+            <button type="button" role="tab" id="tab-js" aria-selected="false" aria-controls="snippet">JavaScript</button>
+            <button type="button" role="tab" id="tab-react" aria-selected="false" aria-controls="snippet">React</button>
+          </div>
+        </div>
+        <pre class="code" id="snippet" role="tabpanel" tabindex="0"></pre>
+        <button type="button" class="ghost-button" id="copy-snippet">Copy snippet</button>
+      </section>
+
+      <details class="panel spec-panel">
+        <summary>The whole character, as data</summary>
+        <pre class="spec" id="spec" tabindex="0"></pre>
+        <button type="button" class="ghost-button" id="copy-spec">Copy spec</button>
+      </details>
+
+      <p class="footnote">Engine runtime: <strong id="engine-size">–</strong> gzipped, no dependencies. WebGL2.</p>
     </aside>
   </main>
 

@@ -22,12 +22,13 @@ Animo splits a character into three independent things:
 |---|---|---|
 | **Body** | What does it look like? | The spec: parts, materials, paints, eyes, face |
 | **Rig** | How do the pieces hang together and wobble? | The spec: bones, drives, waves, jiggle |
+| **Acting** | What does this body do in each state? | The spec: a pose per state per bone, plus effects |
 | **Behavior** | What is it doing right now? | The engine, shared by every character |
 
 Behavior is written once and speaks a shared vocabulary of states (`idle`,
 `thinking`, `listening`, `speaking`, `sleeping`, plus a `happy` reaction). Each
-spec decides what those states look like on its own body, through which bones
-take which channels. That is why the fifth character costs no engine code,
+spec decides what those states look like on its own body: which bones take
+which channels, and how each bone acts in each state. That is why the fifth character costs no engine code,
 and why the five-hundredth won't either.
 
 ## Pipeline
@@ -40,9 +41,13 @@ CompiledCharacter ── fragment shader specialised to this body
    │                 + resolved bone list
    │
    │   every frame
-   │   ┌──────────────┐   channels    ┌─────┐  world→bone   ┌──────────┐
-   └──►│ Brain (state)│──────────────►│ Rig │──────────────►│ Renderer │──► pixels
-       └──────────────┘  root, face   └─────┘   matrices    └──────────┘
+   │   ┌──────────────┐  channels, weights  ┌─────┐  world→bone   ┌──────────┐
+   └──►│ Brain (state)│────────────────────►│ Rig │──────────────►│ Renderer │──► pixels
+       └──────┬───────┘   root, face        └──┬──┘   matrices    └────▲─────┘
+              │ beats (land, syllable…)        │ anchors               │ particles
+              └─────────────────────────►┌─────▼─┐───────────────────────┘
+                                         │  Fx   │
+                                         └───────┘
 ```
 
 ### 1. Spec (`packages/engine/src/spec`)
@@ -74,7 +79,13 @@ of primitives, which is what makes per-pixel ray marching affordable.
   then eyes, then the face.
 - `glsl/` holds the fixed parts of the shader: distance functions, lighting,
   the LED face, and `main()`.
+- `glsl/particles.ts` draws the effect glyphs (z, note, heart, bubble…) as
+  2D distance shapes on camera-facing quads.
 - `uniforms.ts` is the single list of uniforms both sides agree on.
+
+Shape is baked in; anything a product might change at runtime is a
+uniform. Material colours are one of those (`uAlbedo`), so a colour picker
+recolours a live mascot without building a new shader.
 
 ### 3. Behavior (`packages/engine/src/behavior`)
 
@@ -86,7 +97,34 @@ even mid-hop, eases across instead of snapping. Randomness is seeded, so a
 row of identical mascots don't blink in sync, and a given seed always
 behaves the same.
 
-`states.ts` holds the per-state targets as a table, not as code.
+`states.ts` holds the per-state targets as a table, not as code. Alongside
+the state, the brain keeps a weight per **expression** (the five states plus
+`happy`), each easing toward 1 or 0, so acting can cross-fade.
+
+The brain also reports **beats**: one-frame events for the moments an
+animator would hit, a landing, a syllable, entering `happy`. Speech is a
+syllable generator, not a sine wave: each syllable picks an open and a
+roundness (an "ah" versus an "oo"), and the mouth, the jaw and a little
+squash all follow it. Birds turn their heads in snaps with holds between,
+which is a temperament flag (`snapLook`), not bird code.
+
+### Effects (`packages/engine/src/behavior/fx.ts`)
+
+Emitters are data. Each one names a glyph, an anchor on the body (a point
+fixed to a bone, like `mouth` or `antenna`), and a trigger: a state or
+expression (emits continuously, `rate` per second), `ambient` (always), or a
+beat (`land`, `syllable`, `enter:happy`, which emit `rate` particles at
+once). Particles have velocity, drag, gravity, wobble, spin and a size
+curve, and live in world space, so they trail behind a moving character
+rather than sticking to it.
+
+Every character gets `DEFAULT_FX` (z's when asleep, thought dots, sound arcs
+when speaking, sparkles and hearts when happy, dust on landing). A spec adds
+to those, or replaces a trigger's defaults with `replace: ['land']`.
+
+Particles are drawn by the same shader as the body, sorted against the hit
+distance, so a bubble that drifts behind Inky is hidden by Inky. The pool
+holds 32 particles per mascot; when it's full, the oldest go first.
 
 ### 4. Rig (`packages/engine/src/rig`)
 
@@ -97,6 +135,21 @@ where the tip would be at rest. That one mechanism gives the antenna its
 whip on landing, the bird's wings their follow-through, and the octopus's
 tentacles their trailing curl, since a chain of jiggle bones is a soft rope.
 No keyframes anywhere.
+
+**Acting** layers on top. A spec gives each bone a pose per expression,
+each axis either a number or a motion `[base, amplitude, hz, phase, spin]`:
+
+```ts
+acting: {
+  thinking: { shoulderR: { rx: -1.5, ry: -0.8 }, foreR: { rx: [-0.95, 0.1, 1.8, 0] } },
+  happy:    { sprout: { ry: [0, 0, 0, 0, 16] } }, // a propeller, 16 rad/s
+}
+```
+
+The rig blends every expression's pose by the brain's weights, so Volt's
+hand rises to its chin over the same springs that tilt its head, and
+getting interrupted mid-gesture simply blends to the next pose. Spin
+accumulates, so a propeller winds down instead of snapping back to zero.
 
 The rig outputs one world → bone matrix per bone. That is the whole interface
 to the GPU.
@@ -123,8 +176,13 @@ full-screen triangle per frame. In the shader:
 
 ### 6. Runtime (`packages/engine/src/runtime`)
 
-`Mascot` is the public API: `new Mascot(canvas, spec, options)`, then
-`setState()`, `poke()`, `setSpec()`, `dispose()`. A single shared
+`Mascot` is the public API: `new Mascot(canvas, spec, options)` or
+`mount(container, spec, options)`, then `setState()`, `poke()`,
+`setPalette()`, `setSpeed()`, `setEffects()`, `setSpec()`, `on()`,
+`dispose()`. `element.ts` wraps it as `<animo-mascot>`, so any framework
+that renders tags can use it with no adapter. `customize.ts` makes new
+characters from old ones (`recolor`, `variant`) without mutating them, so
+compiled shaders stay cached by spec identity. A single shared
 `scheduler` drives every mascot on the page from one `requestAnimationFrame`
 loop. It skips mascots scrolled out of view, sleeps with the tab, and lowers
 the render resolution when frames run slow, raising it again once they're
@@ -156,15 +214,20 @@ their inputs. Either can move to Rust/WASM without touching anything else.
 That also lets a server-side build render previews headlessly, so an agent
 can see what it designed. We'd do it when we can measure a reason, not before.
 
-**Zero runtime dependencies.** The engine is about 14 KB gzipped (the
+**A custom element as the integration point.** Every framework renders
+tags, and attributes are strings an agent or a CMS can write. Anything
+richer goes through the `Mascot` object the element exposes.
+
+**Zero runtime dependencies.** The engine is about 19 KB gzipped (the
 playground prints the measured figure). No Three.js, no animation library.
 
 ## What the prototype doesn't do yet
 
 - An in-browser editor. The spec format is designed so an editor is a view
   over the same data. Nothing in the engine assumes hand-written specs.
-- Lip-sync from audio. `talk` is a channel, so feeding it from a Web Audio
-  analyser is a few lines in the app.
+- Lip-sync from audio. Speech is driven by a syllable generator today;
+  `talk` and the mouth's roundness are channels, so feeding them from a Web
+  Audio analyser is a small, contained change.
 - A WebGPU backend, and a worker/OffscreenCanvas mode. The renderer already
   accepts an `OffscreenCanvas`.
 - Tests. Deferred on purpose until the shape of the API settles.

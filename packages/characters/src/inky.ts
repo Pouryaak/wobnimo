@@ -1,4 +1,4 @@
-import type { BoneSpec, CharacterSpec, PartSpec } from '@animo/engine';
+import type { BoneSpec, CharacterSpec, Expression, Motion, PartSpec } from '@animo/engine';
 
 /* Six tentacles, each a chain of three jiggle bones: every segment lags
    behind the one before it, so they trail and curl with no animation of
@@ -8,6 +8,33 @@ const TENTACLES = 6;
 const SEGMENT = 0.17;
 const RADII = [0.085, 0.064, 0.044, 0.016];
 const CURL = [-0.6, -0.42, -0.62];
+
+type Acting = Partial<Record<Expression, Record<string, { rx?: Motion; rz?: Motion }>>>;
+
+/* How the tentacles act. Each state sets every segment's curl; a couple of
+   tentacles get their own business (one to the chin, one to the ear). */
+function tentacleActing(): Acting {
+  const acting: Required<Acting> = { idle: {}, thinking: {}, listening: {}, speaking: {}, sleeping: {}, happy: {} };
+  for (let i = 0; i < TENTACLES; i++) {
+    const phase = i * 1.05;
+    acting.speaking[`t${i}s0`] = { rx: [0, 0.2, 1.1, phase] };
+    acting.speaking[`t${i}s2`] = { rx: [0, 0.35, 1.6, phase + 1] };
+    acting.sleeping[`t${i}s0`] = { rx: 0.3 };
+    acting.sleeping[`t${i}s1`] = { rx: 0.35 };
+    acting.sleeping[`t${i}s2`] = { rx: 0.55 };
+    acting.happy[`t${i}s0`] = { rx: [-0.45, 0.35, 2.4, phase] };
+    acting.happy[`t${i}s1`] = { rx: [0, 0.3, 2.4, phase + 1] };
+  }
+  /* tentacle 0 sits front-right: it curls up to the chin */
+  acting.thinking.t0s0 = { rx: -1.75 };
+  acting.thinking.t0s1 = { rx: 0.95 };
+  acting.thinking.t0s2 = { rx: [1.0, 0.12, 1.6, 0] };
+  /* tentacle 5 sits front-left: it cups by the side of the head */
+  acting.listening.t5s0 = { rx: -1.6 };
+  acting.listening.t5s1 = { rx: -0.2 };
+  acting.listening.t5s2 = { rx: 0.7 };
+  return acting;
+}
 
 const bones: BoneSpec[] = [
   { name: 'mantle', pivot: [0, 0.42, 0], drive: { rx: [['pitch', -0.6]], ry: [['yaw', 0.6]], rz: [['roll', 0.6]] } },
@@ -47,7 +74,7 @@ export const inky: CharacterSpec = {
   accent: '#e04f7d',
   frame: { target: 0.86, radius: 0.98 },
   bound: { y: 0.64, radius: 1.0 },
-  motion: { float: 0.32, hop: 0.12, squash: 1.1, snap: 0.85, look: 0.8 },
+  motion: { float: 0.32, hop: 0.12, squash: 1.1, snap: 0.85, look: 0.8, talkSquash: 0.5 },
   materials: {
     skin: { color: '#f2647f', f0: 0.05, spec: 1.1, shininess: 90, rim: 0.8, sss: 0.35, sssColor: '#ffb0c4', gloss: 0.7 },
   },
@@ -91,5 +118,18 @@ export const inky: CharacterSpec = {
     width: 0.05,
     color: '#5a1430',
     tongue: '#ff8fa8',
+  },
+  anchors: {
+    top: { bone: 'mantle', at: [0.16, 0.86, 0.1] },
+    mouth: { bone: 'mantle', at: [0, 0.13, 0.33] },
+    ear: { bone: 'mantle', at: [-0.46, 0.4, 0] },
+    skirt: { bone: 'mantle', at: [0, 0.0, 0] },
+  },
+  acting: tentacleActing(),
+  fx: {
+    replace: ['syllable'],
+    /* it lives underwater: bubbles rise all the time, and it talks in bubbles */
+    ambient: [{ glyph: 'bubble', anchor: 'skirt', rate: 0.7, spread: 0.35, velocity: [0, 0.18, 0], jitter: 0.05, wobble: 0.06, life: [2.4, 3.2], size: [0.02, 0.045], color: '#8fcfff' }],
+    syllable: [{ glyph: 'bubble', anchor: 'mouth', rate: 2, offset: [0, 0, 0.04], velocity: [0.05, 0.2, 0.1], jitter: 0.1, wobble: 0.05, life: [1, 1.4], size: [0.014, 0.034], color: '#9ad7ff' }],
   },
 };

@@ -1,5 +1,6 @@
 /* The skeleton. Every frame each bone's rotation is its rest pose plus
-   the channels that drive it plus its idle wave; jiggle bones then let
+   the channels that drive it plus its idle wave plus the acting of the
+   current expression (cross-faded by weight); jiggle bones then let
    their tip lag behind on a spring, which gives antennas, ears, wings and
    tentacles their follow-through without a single keyframe. The output
    is one world → bone matrix per bone, which is what the shader reads. */
@@ -8,7 +9,7 @@ import type { ResolvedBone } from '../compiler/resolve';
 import { fromAxisAngle, fromEuler, fromTranslation, invert, mat4, multiply, transformDir, transformPoint, type Mat4 } from '../math/mat4';
 import { clamp } from '../math/scalar';
 import { add, cross, dot, length, normalize, scale, sub } from '../math/vec3';
-import type { Axis, Channel, Vec3 } from '../spec/types';
+import type { Axis, Channel, Expression, Motion, Vec3 } from '../spec/types';
 
 export type Channels = Record<Channel, number> & {
   /** Scales idle waves: low when asleep, high when excited. */
@@ -22,21 +23,44 @@ interface Tip {
 
 const AXES: Axis[] = ['rx', 'ry', 'rz'];
 
+/** Per bone: per expression, per axis, a motion. */
+export type BoneActing = Array<Array<[Expression, Axis, Motion]>>;
+
+function evaluate(m: Motion, time: number): number {
+  if (typeof m === 'number') return m;
+  const [base, amp = 0, hz = 0, phase = 0] = m;
+  return base + amp * Math.sin(time * hz * Math.PI * 2 + phase);
+}
+
 export class Rig {
   readonly world: Mat4[];
   /** World → bone, packed for upload: 16 floats per bone. */
   readonly inverse: Float32Array;
   private readonly tips: Array<Tip | null>;
+  /** Spin accumulated by acting, per bone and axis. */
+  private readonly spun: Array<Record<Axis, number>>;
   private readonly scratch = { t: mat4(), r: mat4(), j: mat4(), inv: mat4() };
 
-  constructor(private readonly bones: ResolvedBone[]) {
+  constructor(
+    private readonly bones: ResolvedBone[],
+    private readonly acting: BoneActing = bones.map(() => []),
+  ) {
     this.world = bones.map(() => mat4());
     this.inverse = new Float32Array(bones.length * 16);
     this.tips = bones.map(() => null);
+    this.spun = bones.map(() => ({ rx: 0, ry: 0, rz: 0 }));
   }
 
-  /** Poses the skeleton. `root` places the whole character; `dt` steps the jiggle springs. */
-  update(root: Mat4, ch: Channels, time: number, dt: number) {
+  /** A point in a bone's space, in world space, as of the last update. */
+  point(bone: number, at: Vec3): Vec3 {
+    return transformPoint(this.world[bone], at);
+  }
+
+  /**
+   * Poses the skeleton. `root` places the whole character, `weights` blends
+   * each expression's acting, `dt` steps the jiggle springs and spins.
+   */
+  update(root: Mat4, ch: Channels, weights: Record<Expression, number>, time: number, dt: number) {
     const { t, r, j, inv } = this.scratch;
     this.world[0].set(root);
     for (let i = 1; i < this.bones.length; i++) {
@@ -47,6 +71,13 @@ export class Rig {
         const w = bone.wave?.[axis];
         if (w) angle[axis] += w[0] * ch.energy * Math.sin(time * w[1] * Math.PI * 2 + w[2]);
       }
+      for (const [expression, axis, motion] of this.acting[i]) {
+        const weight = weights[expression];
+        if (weight < 1e-3 && !(Array.isArray(motion) && motion[4])) continue;
+        angle[axis] += weight * evaluate(motion, time);
+        if (Array.isArray(motion) && motion[4]) this.spun[i][axis] += weight * motion[4] * dt;
+      }
+      for (const axis of AXES) angle[axis] += this.spun[i][axis];
       const out = this.world[i];
       multiply(out, this.world[bone.parentIndex], fromTranslation(t, ...bone.pivot));
       multiply(out, out, fromEuler(r, angle.rx, angle.ry, angle.rz));

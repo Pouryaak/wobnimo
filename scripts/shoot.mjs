@@ -13,9 +13,16 @@ const names = { volt: 0, pip: 1, mochi: 2, boo: 3, inky: 4 };
 for (const w of which) {
   await page.click(`#roster .tile:nth-child(${names[w] + 1})`);
   for (const s of states) {
-    await page.click(`#states button[data-state="${s}"]`);
-    await page.mouse.move(640, 300);
-    await page.waitForTimeout(2500);
+    if (s === 'happy') {
+      await page.click('#states button[data-state="idle"]');
+      await page.waitForTimeout(1200);
+      await page.click('#stage-canvas');
+      await page.waitForTimeout(Number(process.env.HAPPY_WAIT ?? 700));
+    } else {
+      await page.click(`#states button[data-state="${s}"]`);
+      await page.mouse.move(640, 300);
+      await page.waitForTimeout(Number(process.env.WAIT ?? 2500));
+    }
     await page.locator('.stage').screenshot({ path: `${out}/${w}-${s}.png` });
   }
 }

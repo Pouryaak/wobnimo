@@ -70,7 +70,7 @@ float faceFor(float state, vec2 c, float t, float soft) {
     /* speaking: a mouth that moves with the words */
     v = faceEyes(c, soft);
     float talk = uFaceB.x;
-    float d = sdBox2(c - vec2(0.0, -4.4), vec2(2.4 - talk * 0.7, 0.3 + talk * 1.5)) - 0.25;
+    float d = sdBox2(c - vec2(0.0, -4.4), vec2(2.5 - talk * 0.4 - uFaceD.y * 1.2, 0.3 + talk * 1.6)) - 0.25;
     v = max(v, lit(d, soft));
   } else if (state < 4.5) {
     /* sleeping: closed eyes and rising z's */

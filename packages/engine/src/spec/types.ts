@@ -34,7 +34,68 @@ export interface CharacterSpec {
   paints?: PaintSpec[];
   eyes?: EyesSpec;
   face?: FaceSpec;
+  /** Named points on the body that effects come from: `top`, `mouth`, `ear`, `feet`, or your own. */
+  anchors?: Record<string, AnchorSpec>;
+  /** How each state moves each bone, on top of the rig. This is where a character acts. */
+  acting?: Partial<Record<Expression, Record<string, Partial<Record<Axis, Motion>>>>>;
+  /** Effects around the character, added to (or, with `replace`, instead of) the shared defaults. */
+  fx?: FxSpec;
+  /** The state's light spills onto the floor in a soft pool. */
+  glowPool?: number;
 }
+
+/** Every state a character can be in, plus the short happy reaction to a poke. */
+export type Expression = 'idle' | 'thinking' | 'listening' | 'speaking' | 'sleeping' | 'happy';
+
+/**
+ * A rotation over time: `base + amp · sin(2π · hz · t + phase)`, plus `spin`
+ * radians per second accumulated for as long as the state lasts.
+ * A bare number is a held angle.
+ */
+export type Motion = number | [base: number, amp?: number, hz?: number, phase?: number, spin?: number];
+
+export interface AnchorSpec {
+  bone: string;
+  at: Vec3;
+}
+
+/** The shapes an effect particle can take. */
+export type Glyph = 'z' | 'bubble' | 'sparkle' | 'heart' | 'note' | 'arc' | 'puff' | 'ring' | 'drop' | 'spark' | 'mote' | 'feather' | 'dot';
+
+/** When an emitter fires: continuously in a state, always, or on a beat of the animation. */
+export type FxTrigger = Expression | 'ambient' | 'land' | 'syllable' | 'enter:happy';
+
+export interface EmitterSpec {
+  glyph: Glyph;
+  anchor: string;
+  /** Particles per second while active, or how many at once for an event. */
+  rate: number;
+  /** Where particles start, relative to the anchor, and how far apart. */
+  offset?: Vec3;
+  spread?: number;
+  /** Starting velocity, units per second, with random variation. */
+  velocity: Vec3;
+  jitter?: number;
+  /** Mirror half the particles across x (sound from both sides of a mouth). */
+  mirror?: boolean;
+  gravity?: number;
+  drag?: number;
+  /** Side-to-side drift, like a bubble or a falling feather. */
+  wobble?: number;
+  life: [number, number];
+  /** Size at birth and at death. */
+  size: [number, number];
+  /** Starting angle and spin, radians and radians per second. */
+  rotation?: number;
+  spin?: number;
+  /** Point along the direction of travel: sparks streak, drops trail their tips. */
+  align?: boolean;
+  color: Hex;
+  /** Adds light instead of covering what is behind it. */
+  glow?: boolean;
+}
+
+export type FxSpec = Partial<Record<FxTrigger, EmitterSpec[]>> & { replace?: FxTrigger[] };
 
 /** How a character moves, independent of what it looks like. */
 export interface Temperament {
@@ -48,6 +109,10 @@ export interface Temperament {
   snap: number;
   /** How far the head turns toward things. */
   look: number;
+  /** How the head moves between glances: 0 eases like a person, 1 snaps and holds like a bird. */
+  snapLook: number;
+  /** How much the body squashes on each syllable. */
+  talkSquash: number;
 }
 
 export interface MaterialSpec {

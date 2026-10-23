@@ -8,9 +8,9 @@ import type { Resolved } from './resolve';
 
 const lin = (hex: string) => v3(linear(hex));
 
-function base(m: MaterialSpec): string {
+function base(m: MaterialSpec, slot: number): string {
   const glow = m.glows ? `uGlow * ${f(m.emitStrength ?? 1)}` : m.emit ? `${lin(m.emit)} * ${f(m.emitStrength ?? 1)}` : 'vec3(0.0)';
-  return `Material(${lin(m.color)}, ${f(m.f0 ?? 0.04)}, ${f(m.spec ?? 0.5)}, ${f(m.shininess ?? 40)}, ${f(m.metal ?? 0)}, ${f(m.rim ?? 0.5)}, ${f(m.sheen ?? 0)}, ${f(m.sss ?? 0)}, ${m.sssColor ? lin(m.sssColor) : 'vec3(0.0)'}, ${glow}, ${f(m.gloss ?? 0.3)})`;
+  return `Material(uAlbedo[${slot}], ${f(m.f0 ?? 0.04)}, ${f(m.spec ?? 0.5)}, ${f(m.shininess ?? 40)}, ${f(m.metal ?? 0)}, ${f(m.rim ?? 0.5)}, ${f(m.sheen ?? 0)}, ${f(m.sss ?? 0)}, ${m.sssColor ? lin(m.sssColor) : 'vec3(0.0)'}, ${glow}, ${f(m.gloss ?? 0.3)})`;
 }
 
 const anyOf = (ids: number[]) => ids.map((id) => `k == ${id}`).join(' || ');
@@ -18,7 +18,7 @@ const anyOf = (ids: number[]) => ids.map((id) => `k == ${id}`).join(' || ');
 export function emitMaterials(r: Resolved): string {
   const out: string[] = ['Material getMaterial(float id, vec3 p, vec3 n) {', '  int k = int(id + 0.5);', '  Material m = material(vec3(0.5));'];
 
-  r.materials.forEach(({ id, spec }, i) => out.push(`  ${i ? 'else ' : ''}if (k == ${id}) m = ${base(spec)};`));
+  r.materials.forEach(({ id, spec }, i) => out.push(`  ${i ? 'else ' : ''}if (k == ${id}) m = ${base(spec, i)};`));
 
   r.spec.paints?.forEach((paint, i) => {
     const b = r.boneIndex(paint.bone, `paints[${i}]`);
@@ -90,16 +90,19 @@ function emitFace(r: Resolved): string[] {
     `  if (${anyOf(ids)}) {`,
     `    vec3 q = (uBones[${b}] * vec4(p, 1.0)).xyz - ${v3(face.at)};`,
     `    if (q.z > -0.02) {`,
+    /* vowels: a round mouth is narrower and taller, a wide one flatter */
     `      float smile = uFaceA.w;`,
-    `      float h = uFaceB.x * ${f(w * 0.95)};`,
-    `      float curve = smile * 0.55 * q.x * q.x / ${f(w)};`,
-    `      float line = length(vec2(max(abs(q.x) - ${f(w)}, 0.0), q.y - curve)) - ${f(w * 0.12)};`,
+    `      float round = uFaceD.y;`,
+    `      float w = ${f(w)} * (1.0 - 0.38 * round * step(0.003, uFaceB.x));`,
+    `      float h = uFaceB.x * ${f(w * 0.95)} * (1.0 + 0.35 * round);`,
+    `      float curve = smile * 0.55 * q.x * q.x / w;`,
+    `      float line = length(vec2(max(abs(q.x) - w, 0.0), q.y - curve)) - ${f(w * 0.12)};`,
     `      float hh = max(h, 1e-3);`,
-    `      float open = (length(vec2(q.x / ${f(w * 0.8)}, (q.y - curve * 0.4 + hh * 0.55) / hh)) - 1.0) * min(${f(w * 0.8)}, hh);`,
+    `      float open = (length(vec2(q.x / (w * 0.8), (q.y - curve * 0.4 + hh * 0.55) / hh)) - 1.0) * min(w * 0.8, hh);`,
     `      float dm = h > 0.003 ? min(line, open) : line;`,
     `      float aa = gPixel * 0.8;`,
     `      float a = 1.0 - smoothstep(-aa, aa, dm);`,
-    `      float tongue = (1.0 - smoothstep(-aa, aa, length(vec2(q.x / ${f(w * 0.5)}, (q.y - curve * 0.4 + hh * 1.15) / (hh * 0.7))) - 1.0)) * (1.0 - smoothstep(-aa, aa, open)) * step(0.003, h);`,
+    `      float tongue = (1.0 - smoothstep(-aa, aa, length(vec2(q.x / (w * 0.5), (q.y - curve * 0.4 + hh * 1.15) / (hh * 0.7))) - 1.0)) * (1.0 - smoothstep(-aa, aa, open)) * step(0.003, h);`,
     `      m.albedo = mix(m.albedo, mix(${lin(face.color)}, ${lin(face.tongue)}, tongue), a);`,
     `      m.spec *= 1.0 - 0.6 * a; m.sss *= 1.0 - a; m.sheen *= 1.0 - a; m.emit *= 1.0 - a;`,
     `    }`,

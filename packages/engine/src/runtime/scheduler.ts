@@ -43,9 +43,11 @@ class Scheduler {
 
   private readonly loop = (now: number) => {
     this.frame = requestAnimationFrame(this.loop);
-    /* a long gap means the tab was hidden: carry on from where it was */
-    const dt = Math.min((now - this.last) / 1000, 1 / 20);
-    this.adapt(now - this.last);
+    /* a long gap means the tab was hidden: carry on from where it was. The
+       first frame's timestamp can predate start(), so never step backwards. */
+    const elapsed = Math.max(0, now - this.last);
+    const dt = Math.min(elapsed / 1000, 1 / 20);
+    this.adapt(elapsed);
     this.last = now;
     this.time += dt;
     for (const m of this.members) if (m.active) m.tick(dt, this.time, this.quality);

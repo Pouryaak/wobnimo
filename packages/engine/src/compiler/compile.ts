@@ -2,20 +2,30 @@
    own body: its parts become straight-line distance code with constants
    baked in, so the GPU runs no interpreter and no loops over a scene. */
 
+import { linear } from '../spec/color';
 import type { CharacterSpec } from '../spec/types';
 import { emitMap } from './emit-map';
 import { emitMaterials } from './emit-materials';
 import { LIGHTING } from './glsl/lighting';
 import { MAIN } from './glsl/main';
+import { PARTICLES } from './glsl/particles';
 import { PRELUDE } from './glsl/prelude';
 import { SCREEN_FACE } from './glsl/screen-face';
+import type { BoneActing } from '../rig/rig';
+import type { Vec3 } from '../spec/types';
 import { resolve, type ResolvedBone } from './resolve';
 import { uniformHeader } from './uniforms';
 
 export interface CompiledCharacter {
   spec: CharacterSpec;
   bones: ResolvedBone[];
+  acting: BoneActing;
+  anchors: Record<string, { bone: number; at: Vec3 }>;
   fragment: string;
+  /** Material names, in the order of their colours in `albedo`. */
+  materials: string[];
+  /** The spec's material colours, linear RGB, three floats each. */
+  albedo: Float32Array;
   stats: { parts: number; bones: number; materials: number; shaderLines: number };
 }
 
@@ -31,7 +41,7 @@ export function compile(spec: CharacterSpec): CompiledCharacter {
     '#version 300 es',
     'precision highp float;',
     'precision highp int;',
-    uniformHeader(r.bones.length),
+    uniformHeader(r.bones.length, r.materials.length),
     'out vec4 fragColor;',
     /* the size of a pixel at the current hit, for antialiasing painted detail */
     'float gPixel = 0.001;',
@@ -42,13 +52,18 @@ export function compile(spec: CharacterSpec): CompiledCharacter {
     LIGHTING,
     spec.face?.kind === 'screen' ? SCREEN_FACE : '',
     emitMaterials(r),
+    PARTICLES,
     MAIN,
   ].join('\n');
 
   return {
     spec,
     bones: r.bones,
+    acting: r.acting,
+    anchors: r.anchors,
     fragment,
+    materials: r.materials.map((m) => m.name),
+    albedo: new Float32Array(r.materials.flatMap((m) => linear(m.spec.color))),
     stats: {
       parts: spec.parts.length + (spec.eyes ? 2 : 0),
       bones: r.bones.length,

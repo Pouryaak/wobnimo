@@ -1,6 +1,8 @@
 /* The contract between the runtime and every compiled shader. One list,
    so the GLSL header and the renderer's uniform lookups cannot drift. */
 
+import { MAX_PARTICLES } from '../behavior/fx';
+
 export const UNIFORMS = {
   uResolution: 'vec2',
   uTime: 'float',
@@ -18,22 +20,34 @@ export const UNIFORMS = {
   uFaceB: 'vec4',
   /** state, previous state, cross-fade, glitch */
   uFaceC: 'vec4',
-  /** seconds in the state */
+  /** seconds in the state, mouth roundness */
   uFaceD: 'vec4',
   /** The state's light, for bulbs and lamps. */
   uGlow: 'vec3',
   uShadow: 'vec3',
   /** How far the root is above the floor. */
   uLift: 'float',
+  /** How strongly the state's light pools on the floor. */
+  uGlowPool: 'float',
   uExposure: 'float',
+  /** Every material's base colour, linear RGB, so recolouring needs no recompile. */
+  uAlbedo: 'vec3[materials]',
+  /** Effect particles: position + size; glyph, alpha, rotation, glow; colour, seed. */
+  uFxA: 'vec4[fx]',
+  uFxB: 'vec4[fx]',
+  uFxC: 'vec4[fx]',
+  uFxCount: 'int',
 } as const;
 
 export type UniformName = keyof typeof UNIFORMS;
 
-export function uniformHeader(boneCount: number): string {
+export function uniformHeader(boneCount: number, materialCount: number): string {
   return Object.entries(UNIFORMS)
-    .map(([name, type]) =>
-      type === 'mat4[]' ? `uniform mat4 ${name}[${boneCount}];` : `uniform ${type} ${name};`,
-    )
+    .map(([name, type]) => {
+      if (type === 'mat4[]') return `uniform mat4 ${name}[${boneCount}];`;
+      if (type === 'vec3[materials]') return `uniform vec3 ${name}[${Math.max(1, materialCount)}];`;
+      if (type === 'vec4[fx]') return `uniform vec4 ${name}[${MAX_PARTICLES}];`;
+      return `uniform ${type} ${name};`;
+    })
     .join('\n');
 }

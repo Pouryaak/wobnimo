@@ -2,7 +2,8 @@
    this works on numbers. Errors say which character and which field, so
    an agent writing specs can fix its own mistakes. */
 
-import type { BoneSpec, CharacterSpec, MaterialSpec } from '../spec/types';
+import type { BoneActing } from '../rig/rig';
+import type { Axis, BoneSpec, CharacterSpec, Expression, MaterialSpec, Motion, Vec3 } from '../spec/types';
 
 export interface ResolvedBone extends BoneSpec {
   index: number;
@@ -18,6 +19,9 @@ export interface Resolved {
   materials: Array<{ name: string; id: number; spec: MaterialSpec }>;
   materialId(name: string, where: string): number;
   eyeIds: [number, number];
+  /** The spec's acting, regrouped by bone index for the rig. */
+  acting: BoneActing;
+  anchors: Record<string, { bone: number; at: Vec3 }>;
 }
 
 export class SpecError extends Error {
@@ -60,5 +64,22 @@ export function resolve(spec: CharacterSpec): Resolved {
     p.on.forEach((m) => materialId(m, `paints[${i}]`));
   });
 
-  return { spec, bones, boneIndex, materials, materialId, eyeIds };
+  const acting: BoneActing = bones.map(() => []);
+  for (const [expression, perBone] of Object.entries(spec.acting ?? {}) as Array<[Expression, Record<string, Partial<Record<Axis, Motion>>>]>) {
+    for (const [name, axes] of Object.entries(perBone)) {
+      const i = boneIndex(name, `acting.${expression}`);
+      for (const [axis, motion] of Object.entries(axes) as Array<[Axis, Motion]>) acting[i].push([expression, axis, motion]);
+    }
+  }
+
+  const anchors: Resolved['anchors'] = {};
+  for (const [name, a] of Object.entries(spec.anchors ?? {})) anchors[name] = { bone: boneIndex(a.bone, `anchors.${name}`), at: a.at };
+  for (const [trigger, emitters] of Object.entries(spec.fx ?? {})) {
+    if (trigger === 'replace') continue;
+    (emitters as Array<{ anchor: string }>).forEach((e, i) => {
+      if (!anchors[e.anchor]) fail(`fx.${trigger}[${i}] names anchor "${e.anchor}", which does not exist`);
+    });
+  }
+
+  return { spec, bones, boneIndex, materials, materialId, eyeIds, acting, anchors };
 }

@@ -4,11 +4,11 @@ import type { CharacterSpec } from '@animo/engine';
 export const mochi: CharacterSpec = {
   id: 'mochi',
   name: 'Mochi',
-  tagline: 'Translucent jelly that squashes, with a sprout that wobbles',
+  tagline: 'Translucent jelly that squashes and splashes, with a propeller sprout',
   accent: '#1fae8a',
   frame: { target: 0.56, radius: 0.8 },
   bound: { y: 0.5, radius: 0.82 },
-  motion: { hop: 0.17, squash: 1.9, snap: 0.9 },
+  motion: { hop: 0.17, squash: 1.9, snap: 0.9, talkSquash: 1.3 },
   materials: {
     jelly: { color: '#3fcf9f', f0: 0.06, spec: 1.6, shininess: 140, rim: 0.7, sss: 0.55, sssColor: '#9effd9', gloss: 0.9 },
     bead: { color: '#120d18', f0: 0.06, spec: 2.2, shininess: 400, rim: 0.2, gloss: 1 },
@@ -45,5 +45,26 @@ export const mochi: CharacterSpec = {
     width: 0.065,
     color: '#173528',
     tongue: '#ff7d97',
+  },
+  anchors: {
+    top: { bone: 'body', at: [0.16, 0.86, 0.1] },
+    mouth: { bone: 'body', at: [0, 0.32, 0.42] },
+    ear: { bone: 'body', at: [-0.42, 0.45, 0] },
+    feet: { bone: 'root', at: [0, 0.05, 0.25] },
+  },
+  acting: {
+    idle: { sprout: { rz: [0, 0.1, 0.6, 0] } },
+    /* the sprout spins like a propeller while it thinks */
+    thinking: { sprout: { rx: -0.15, ry: [0, 0, 0, 0, 7] } },
+    listening: { sprout: { rx: -0.4, rz: 0.15 } },
+    speaking: { sprout: { rz: [0, 0.2, 2.4, 0] } },
+    sleeping: { sprout: { rx: 0.85, rz: 0.35 } },
+    happy: { sprout: { ry: [0, 0, 0, 0, 16] } },
+  },
+  fx: {
+    replace: ['land'],
+    /* it splashes when it lands */
+    land: [{ glyph: 'drop', anchor: 'feet', rate: 7, spread: 0.18, velocity: [0, 0.65, 0.05], jitter: 0.7, gravity: 3.2, life: [0.45, 0.6], size: [0.035, 0.022], color: '#55d6ad', align: true }],
+    'enter:happy': [{ glyph: 'drop', anchor: 'top', rate: 5, velocity: [0, 0.7, 0.05], jitter: 0.9, gravity: 3, life: [0.5, 0.7], size: [0.035, 0.02], color: '#6fe3bd', align: true }],
   },
 };
