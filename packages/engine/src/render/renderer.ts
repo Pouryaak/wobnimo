@@ -18,14 +18,17 @@ export interface Frame {
   width: number;
   height: number;
   shadow: Vec3;
+  /** Strength of the floor shadow, 0–1. */
+  floor: number;
   exposure: number;
   /** Room around the character: 1 fits it snugly, 1.2 pulls the camera back a fifth. */
   framing: number;
 }
 
 export interface Renderer {
-  /** Compiles (or reuses) the character's program; cheap to call again with the same character. */
+  /** Starts building (or reuses) the character's program; cheap to call again with the same character. */
   load(character: CompiledCharacter): void;
-  render(frame: Frame): void;
+  /** Draws a frame. False while the character's program is still being built. */
+  render(frame: Frame): boolean;
   dispose(): void;
 }

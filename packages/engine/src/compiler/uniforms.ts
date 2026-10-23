@@ -25,6 +25,8 @@ export const UNIFORMS = {
   /** The state's light, for bulbs and lamps. */
   uGlow: 'vec3',
   uShadow: 'vec3',
+  /** Strength of the floor shadow and light pool; 0 leaves no floor at all. */
+  uFloor: 'float',
   /** How far the root is above the floor. */
   uLift: 'float',
   /** How strongly the state's light pools on the floor. */

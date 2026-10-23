@@ -65,7 +65,7 @@ void main() {
   }
 
   vec4 floorLayer = vec4(0.0);
-  if (body.a < 1.0 && rd.y < 0.0) {
+  if (uFloor > 0.0 && body.a < 1.0 && rd.y < 0.0) {
     vec3 fp = ro + rd * (-ro.y / rd.y);
     float r = length(fp.xz - uBound.xz);
     float reach = uBound.w * 1.15;
@@ -78,7 +78,7 @@ void main() {
       dark *= mix(1.0, 0.5, smoothstep(0.0, 0.45, uLift));
       /* the state's light pooling on the floor */
       vec3 pool = uGlow * uGlowPool * exp(-r * r * 5.0) * (1.0 - dark);
-      floorLayer = vec4(uShadow * dark + pool, dark);
+      floorLayer = vec4(uShadow * dark + pool, dark) * uFloor;
     }
   }
 

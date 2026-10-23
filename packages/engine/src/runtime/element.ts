@@ -14,7 +14,7 @@ import type { CharacterSpec } from '../spec/types';
 import type { Palette } from './customize';
 import { Mascot } from './mascot';
 
-const ATTRIBUTES = ['character', 'state', 'seed', 'speed', 'palette', 'interactive', 'effects', 'framing'] as const;
+const ATTRIBUTES = ['character', 'state', 'seed', 'speed', 'palette', 'interactive', 'effects', 'framing', 'floor'] as const;
 
 function parsePalette(text: string | null): Palette | undefined {
   if (!text) return undefined;
@@ -101,9 +101,11 @@ export function defineMascotElement(characters: CharacterSpec[], tag = 'wobnimo-
         interactive: this.getAttribute('interactive') !== 'false',
         effects: this.getAttribute('effects') !== 'false',
         framing: Number(this.getAttribute('framing') ?? 1),
+        floor: Number(this.getAttribute('floor') ?? 1),
       });
       m.on('poke', () => this.dispatchEvent(new CustomEvent('poke', { bubbles: true, composed: true })));
       m.on('state', (s) => this.dispatchEvent(new CustomEvent('statechange', { detail: s, bubbles: true, composed: true })));
+      m.on('ready', () => this.dispatchEvent(new CustomEvent('ready', { bubbles: true, composed: true })));
       this.instance = m;
     }
   }

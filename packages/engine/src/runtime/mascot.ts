@@ -36,6 +36,8 @@ export interface MascotOptions {
   maxPixelRatio?: number;
   /** The floor shadow's colour, linear RGB. */
   shadow?: Vec3;
+  /** Strength of the floor shadow, 0–1. 0 suits a mascot laid over text or a busy background. Default 1. */
+  floor?: number;
   /** Overall brightness. Default 1. */
   exposure?: number;
   /** Room around the character: 1 fits it snugly, larger values make it smaller in its canvas. Default 1. */
@@ -48,6 +50,8 @@ export interface MascotEvents {
   /** Clicked or poked. */
   poke: void;
   state: MascotState;
+  /** The first frame is on screen: its shader is built. Fade it in from here. */
+  ready: void;
 }
 
 type Listener<T> = (value: T) => void;
@@ -75,7 +79,8 @@ export class Mascot implements Animated {
   private time = 0;
   private readonly reducedMotion: MediaQueryList | null;
   private stillFrames = 0;
-  private readonly listeners: { [K in keyof MascotEvents]: Set<Listener<MascotEvents[K]>> } = { poke: new Set(), state: new Set() };
+  private drawn = false;
+  private readonly listeners: { [K in keyof MascotEvents]: Set<Listener<MascotEvents[K]>> } = { poke: new Set(), state: new Set(), ready: new Set() };
   private readonly cleanup: Array<() => void> = [];
   private source!: CharacterSpec;
 
@@ -88,6 +93,7 @@ export class Mascot implements Animated {
       speed: options.speed ?? 1,
       maxPixelRatio: options.maxPixelRatio ?? 2,
       shadow: options.shadow ?? [0.05, 0.06, 0.12],
+      floor: options.floor ?? 1,
       exposure: options.exposure ?? 1,
       framing: options.framing ?? 1,
       respectReducedMotion: options.respectReducedMotion ?? true,
@@ -183,7 +189,6 @@ export class Mascot implements Animated {
     if (still) {
       /* jump straight to where the springs would settle, with no waves */
       for (let i = 0; i < 90; i++) this.brain.update(1 / 60);
-      this.stillFrames++;
     } else {
       this.brain.update(step);
       this.time += step;
@@ -196,7 +201,7 @@ export class Mascot implements Animated {
     pose.events.length = 0;
 
     const ratio = Math.min(devicePixelRatio || 1, this.options.maxPixelRatio) * quality;
-    this.renderer.render({
+    const drew = this.renderer.render({
       pose,
       bones: this.rig.inverse,
       fx: this.fx,
@@ -205,9 +210,21 @@ export class Mascot implements Animated {
       width: Math.max(1, Math.round(this.canvas.clientWidth * ratio)),
       height: Math.max(1, Math.round(this.canvas.clientHeight * ratio)),
       shadow: this.options.shadow,
+      floor: this.options.floor,
       exposure: this.options.exposure,
       framing: this.options.framing,
     });
+    /* with reduced motion, count only frames that reached the screen */
+    if (drew && still) this.stillFrames++;
+    if (drew && !this.drawn) {
+      this.drawn = true;
+      this.emit('ready', undefined);
+    }
+  }
+
+  /** Whether the first frame has been drawn. */
+  get ready() {
+    return this.drawn;
   }
 
   dispose() {
@@ -215,6 +232,7 @@ export class Mascot implements Animated {
     this.cleanup.forEach((fn) => fn());
     this.listeners.poke.clear();
     this.listeners.state.clear();
+    this.listeners.ready.clear();
     this.renderer.dispose();
   }
 

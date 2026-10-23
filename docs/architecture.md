@@ -168,7 +168,20 @@ to the GPU.
 ### 5. Renderer (`packages/engine/src/render`)
 
 `Renderer` is a three-method interface. `WebGL2Renderer` draws one
-full-screen triangle per frame. In the shader:
+full-screen triangle per frame.
+
+Every mascot on a page shares **one WebGL2 context** (`gpu.ts`). Browsers
+allow only a handful of live contexts, and each would compile its own copy
+of every shader, so a mascot draws into a corner of the shared drawing
+buffer and copies that onto its own 2D canvas, which stays an ordinary
+element in the layout. Each character's program is compiled once for the
+page, in the background with `KHR_parallel_shader_compile` where the browser
+has it (and spaced a few frames apart where it doesn't), so a page full of
+new characters never freezes while it loads. `render()` returns false until
+the program is ready, which is when a mascot fires `ready`. A lost context
+drops every program and they're rebuilt as they're asked for.
+
+In the shader:
 
 - **Ray marching** a perspective camera with a long lens (a product shot),
   clipped to the character's bounding sphere.
@@ -187,7 +200,8 @@ full-screen triangle per frame. In the shader:
   space, so the pattern rides on the body. It fades with the pixel
   footprint, so a small mascot never shimmers.
 - **Framing**: the camera backs off by the `framing` option, so a page can
-  set characters smaller in their canvases without resizing them.
+  set characters smaller in their canvases without resizing them. The
+  `floor` option fades the floor shadow, and at 0 skips it entirely.
 - Output is **premultiplied alpha**, so the page's own background shows
   through. No backdrop is baked in.
 
@@ -196,7 +210,9 @@ full-screen triangle per frame. In the shader:
 `Mascot` is the public API: `new Mascot(canvas, spec, options)` or
 `mount(container, spec, options)`, then `setState()`, `poke()`,
 `setPalette()`, `setSpeed()`, `setEffects()`, `setSpec()`, `on()`,
-`dispose()`. `element.ts` wraps it as `<wobnimo-mascot>`, so any framework
+`dispose()`. `snapshot(spec, options)` settles a character into a state
+and draws a single frame onto a new canvas, for avatars and galleries that
+don't need to move. `element.ts` wraps it as `<wobnimo-mascot>`, so any framework
 that renders tags can use it with no adapter. `customize.ts` makes new
 characters from old ones (`recolor`, `variant`) without mutating them, so
 compiled shaders stay cached by spec identity. A single shared
@@ -235,7 +251,7 @@ can see what it designed. We'd do it when we can measure a reason, not before.
 tags, and attributes are strings an agent or a CMS can write. Anything
 richer goes through the `Mascot` object the element exposes.
 
-**Zero runtime dependencies.** The engine is about 20 KB gzipped (the
+**Zero runtime dependencies.** The engine is about 25 KB gzipped (the
 playground prints the measured figure). No Three.js, no animation library.
 
 ## What the prototype doesn't do yet
@@ -245,8 +261,7 @@ playground prints the measured figure). No Three.js, no animation library.
 - Lip-sync from audio. Speech is driven by a syllable generator today;
   `talk` and the mouth's roundness are channels, so feeding them from a Web
   Audio analyser is a small, contained change.
-- A WebGPU backend, and a worker/OffscreenCanvas mode. The renderer already
-  accepts an `OffscreenCanvas`.
+- A WebGPU backend, and a worker/OffscreenCanvas mode.
 - Tests. Deferred on purpose until the shape of the API settles.
 
 ## Layout

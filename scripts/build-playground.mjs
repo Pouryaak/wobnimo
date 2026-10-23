@@ -2,10 +2,12 @@
    engine on its own (minified, gzipped) so the number on the page is real.
 
    dist/playground.html   the page body, for hosts that supply the document shell
-   dist/site/index.html   a complete document, for GitHub Pages or any static host */
+   dist/site/index.html   a complete document, for GitHub Pages or any static host
+
+   Images in apps/playground/public are copied next to both. */
 
 import { build } from 'esbuild';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { gzipSync } from 'node:zlib';
 
 const root = new URL('..', import.meta.url).pathname;
@@ -44,4 +46,7 @@ ${html.slice(split).trim()}
 await mkdir(`${root}dist/site`, { recursive: true });
 await writeFile(`${root}dist/playground.html`, html);
 await writeFile(`${root}dist/site/index.html`, site);
+/* images and other static files sit next to the page in both outputs */
+await cp(`${root}apps/playground/public`, `${root}dist/site`, { recursive: true });
+await cp(`${root}apps/playground/public`, `${root}dist`, { recursive: true });
 console.log(`engine ${(engineBytes / 1024).toFixed(1)} KB gzipped · playground ${(html.length / 1024).toFixed(1)} KB`);

@@ -15,10 +15,13 @@ like a cartoon, and reacting to what your app or agent is doing.
 
 - **Characters are data.** A `CharacterSpec` is plain JSON: parts, materials,
   bones, eyes, face, acting and effects. No keyframes, no per-character code.
-- **One engine for any body.** Eleven characters (a robot, a songbird, a
+- **One engine for any body.** Ten characters (a robot, a songbird, a
   jelly, a ghost, an octopus, a plush cat, a tree frog, a penguin, a baby
-  dino, a rain cloud and a robot duck) all run on the same ~24 KB (gzipped)
-  runtime with no dependencies.
+  dino and a robot duck) all run on the same ~25 KB (gzipped) runtime with
+  no dependencies.
+- **Any number on a page.** Every mascot shares one WebGL context, each
+  character's shader is built once in the background, and `snapshot()`
+  draws stills for galleries that cost nothing after the first frame.
 - **Real surfaces.** Fur, pebbled scales, speckled wet skin and a rippled
   sheen are procedural detail on a material (`surface`), fixed to a bone so
   they move with the body.
@@ -85,10 +88,22 @@ mascot.on('poke', () => openChat());
 mascot.setPalette({ shell: '#e0457b' }); // live, no shader rebuild
 mascot.setSpeed(0.8);
 mascot.setEffects(false);
+mascot.on('ready', () => fadeIn()); // first frame is on screen
 mascot.dispose(); // removes the canvas too
 ```
 
 `new Mascot(canvas, spec, options)` does the same on a canvas you own.
+The element fires the same `ready` event.
+
+For a still (an avatar, a thumbnail, a picker), draw one frame instead of
+running a mascot:
+
+```ts
+import { snapshot } from '@wobnimo/engine';
+
+const canvas = await snapshot(volt, { state: 'celebrating', size: 96 });
+avatar.append(canvas);
+```
 
 ### React
 
@@ -117,6 +132,7 @@ Or render `<wobnimo-mascot>` directly; React 19 passes its props through.
 | `effects` | `true` | Particles around the character. |
 | `interactive` | `true` | Follows the pointer, hops when clicked. |
 | `framing` | `1` | Room around the character; above 1 makes it smaller in its canvas. |
+| `floor` | `1` | Strength of the floor shadow; `0` for a mascot laid over text or a busy background. |
 | `seed` | random | Desyncs blinks and glances between mascots; fixed seeds behave the same every time. |
 | `exposure`, `shadow`, `maxPixelRatio`, `respectReducedMotion` | | Rendering. |
 
@@ -138,10 +154,13 @@ const wren = variant(pip, {
 const blob = defineCharacter({ id: 'blob', /* parts, materials, bones… */ });
 ```
 
+A material can be a shade of another (`wing: { color: '#e8962e', shadeOf:
+'feather' }`), so recolouring the body carries the wings and belly along
+with it, keeping their own lightness.
+
 Spec mistakes fail loudly and name the field (`pip: acting.thinking names
 bone "jaw2", which does not exist`), so a person or an agent writing a spec
-can fix it from the message alone. The playground shows every spec next to
-its character, with a copy button.
+can fix it from the message alone.
 
 ## Run it
 
@@ -159,7 +178,7 @@ rebuilds the playground and publishes it to GitHub Pages
 
 - [`docs/architecture.md`](docs/architecture.md): how it works and why.
 - [`packages/engine/src/spec/types.ts`](packages/engine/src/spec/types.ts): the character format.
-- [`packages/characters/src`](packages/characters/src): the eleven specs.
+- [`packages/characters/src`](packages/characters/src): the ten specs.
 
 ## Layout
 

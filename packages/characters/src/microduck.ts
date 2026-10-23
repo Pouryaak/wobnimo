@@ -13,8 +13,8 @@ export const microduck: CharacterSpec = {
   name: 'Microduck',
   tagline: 'A bipedal robot duck: servo neck, lens eyes, a bill that clacks when it talks, and boots it marches in',
   accent: '#ff6a1f',
-  frame: { target: 0.53, radius: 0.78 },
-  bound: { y: 0.55, radius: 0.84 },
+  frame: { target: 0.57, radius: 0.8 },
+  bound: { y: 0.58, radius: 0.88 },
   motion: { hop: 0.12, squash: 0.45, snap: 1.4, look: 0.9, snapLook: 1, talkSquash: 0.12 },
   materials: {
     /* injection-moulded plastic: satin, with a faint printed grain */

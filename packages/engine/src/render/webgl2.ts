@@ -1,51 +1,45 @@
-/* The WebGL2 backend: one full-screen triangle, one program per
-   character, uniforms straight from the pose. */
+/* The WebGL2 backend: one full-screen triangle and one program per
+   character, drawn in the page's shared context (see gpu.ts) and copied
+   onto the mascot's own canvas. Uniforms come straight from the pose. */
 
 import type { CompiledCharacter } from '../compiler/compile';
-import { VERTEX_SHADER } from '../compiler/compile';
-import { UNIFORMS, type UniformName } from '../compiler/uniforms';
+import { Gpu } from './gpu';
 import type { Frame, Renderer } from './renderer';
 
 /** The camera's half field of view, as a tangent: a long lens, like a product shot. */
 const TAN_HALF_FOV = 0.2;
 const CAMERA_PITCH = 0.1;
 
-interface Program {
-  program: WebGLProgram;
-  uniforms: Record<UniformName, WebGLUniformLocation | null>;
-  character: CompiledCharacter;
-}
-
 export class WebGL2Renderer implements Renderer {
-  private readonly gl: WebGL2RenderingContext;
-  private readonly programs = new Map<CompiledCharacter, Program>();
-  private current: Program | null = null;
+  private readonly gpu = Gpu.shared();
+  private readonly target: CanvasRenderingContext2D;
+  private character: CompiledCharacter | null = null;
 
-  constructor(private readonly canvas: HTMLCanvasElement | OffscreenCanvas) {
-    const gl = canvas.getContext('webgl2', { alpha: true, premultipliedAlpha: true, antialias: false, depth: false, stencil: false, powerPreference: 'high-performance' });
-    if (!gl) throw new Error('WebGL2 is not available');
-    this.gl = gl as WebGL2RenderingContext;
+  constructor(private readonly canvas: HTMLCanvasElement) {
+    const target = canvas.getContext('2d');
+    if (!target) throw new Error('Canvas 2D is not available');
+    this.target = target;
   }
 
   load(character: CompiledCharacter) {
-    let p = this.programs.get(character);
-    if (!p) {
-      p = this.build(character);
-      this.programs.set(character, p);
-    }
-    this.current = p;
+    this.character = character;
+    /* start building now, so it's likely ready by the first frame */
+    this.gpu.program(character);
   }
 
-  render(frame: Frame) {
-    const p = this.current;
-    if (!p) return;
-    const { gl } = this;
-    if (this.canvas.width !== frame.width || this.canvas.height !== frame.height) {
-      this.canvas.width = frame.width;
-      this.canvas.height = frame.height;
+  render(frame: Frame): boolean {
+    const p = this.character && this.gpu.program(this.character);
+    if (!p) return false;
+    const { gpu } = this;
+    const { gl } = gpu;
+    const { width, height } = frame;
+    if (this.canvas.width !== width || this.canvas.height !== height) {
+      this.canvas.width = width;
+      this.canvas.height = height;
     }
-    gl.viewport(0, 0, frame.width, frame.height);
-    gl.clearColor(0, 0, 0, 0);
+    gpu.reserve(width, height);
+    gl.viewport(0, 0, width, height);
+    gl.scissor(0, 0, width, height);
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.useProgram(p.program);
 
@@ -65,6 +59,7 @@ export class WebGL2Renderer implements Renderer {
     gl.uniform4fv(u.uFaceD, pose.faceD);
     gl.uniform3fv(u.uGlow, pose.glow);
     gl.uniform3fv(u.uShadow, frame.shadow);
+    gl.uniform1f(u.uFloor, frame.floor);
     gl.uniform1f(u.uLift, lift);
     gl.uniform1f(u.uExposure, frame.exposure * pose.exposure);
     gl.uniform3fv(u.uAlbedo, frame.albedo);
@@ -74,37 +69,15 @@ export class WebGL2Renderer implements Renderer {
     gl.uniform4fv(u.uFxC, frame.fx.c);
     gl.uniform1i(u.uFxCount, frame.fx.count);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+    /* GL's origin is bottom left, so the drawing sits at the bottom of the shared buffer */
+    this.target.globalCompositeOperation = 'copy';
+    this.target.drawImage(gpu.canvas, 0, gpu.canvas.height - height, width, height, 0, 0, width, height);
+    return true;
   }
 
+  /* programs belong to the page and stay cached for the next mascot of the same character */
   dispose() {
-    for (const p of this.programs.values()) this.gl.deleteProgram(p.program);
-    this.programs.clear();
-    this.gl.getExtension('WEBGL_lose_context')?.loseContext();
-  }
-
-  private build(character: CompiledCharacter): Program {
-    const { gl } = this;
-    const shader = (type: number, source: string) => {
-      const s = gl.createShader(type)!;
-      gl.shaderSource(s, source);
-      gl.compileShader(s);
-      return s;
-    };
-    const vs = shader(gl.VERTEX_SHADER, VERTEX_SHADER);
-    const fs = shader(gl.FRAGMENT_SHADER, character.fragment);
-    const program = gl.createProgram()!;
-    gl.attachShader(program, vs);
-    gl.attachShader(program, fs);
-    gl.linkProgram(program);
-    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-      const log = gl.getShaderInfoLog(fs) || gl.getProgramInfoLog(program);
-      throw new Error(`${character.spec.id}: shader failed to build\n${log}`);
-    }
-    gl.deleteShader(vs);
-    gl.deleteShader(fs);
-    const uniforms = Object.fromEntries(
-      (Object.keys(UNIFORMS) as UniformName[]).map((name) => [name, gl.getUniformLocation(program, UNIFORMS[name].includes('[') ? `${name}[0]` : name)]),
-    ) as Program['uniforms'];
-    return { program, uniforms, character };
+    this.character = null;
   }
 }

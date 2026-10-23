@@ -1,12 +1,14 @@
-/* The Wobnimo site: an opening scene, the cast on a strip of film, a sound
-   stage to direct one character on, the install steps, and the numbers.
-   Every mascot on the page goes through the public engine API, exactly as
-   a product would use it. */
+/* The Wobnimo site. The opening scene, the studio, the code and the cast
+   all go through the public engine API, exactly as a product would.
 
-import { STATES, compileCached, type CharacterSpec, type MascotState, type Palette } from '@wobnimo/engine';
+   First impressions are the point of the page, so the work is ordered:
+   the opening scene starts at once, everything else waits until the
+   browser is idle or until it scrolls near the screen, and the stills
+   (avatars and cast posters) are drawn once and never animate. All of it
+   shares one WebGL context, and each character's shader is built once. */
+
+import { Mascot, STATES, snapshot, type CharacterSpec, type MascotState, type Palette } from '@wobnimo/engine';
 import { characters } from '@wobnimo/characters';
-import { Pool, type Slot } from './pool';
-import { playScene } from './scene';
 import { highlight, snippet, type Scene, type Tab } from './snippets';
 
 declare const __ENGINE_GZIP_BYTES__: number;
@@ -14,6 +16,56 @@ declare const __ENGINE_GZIP_BYTES__: number;
 const $ = <T extends HTMLElement>(sel: string) => document.querySelector<T>(sel)!;
 const byId = (id: string) => characters.find((c) => c.id === id)!;
 const kb = (n: number) => `${(n / 1024).toFixed(1)} KB`;
+
+/** Runs `fn` when the browser has a moment, or soon anyway. */
+const idle = (fn: () => void) => ('requestIdleCallback' in window ? requestIdleCallback(fn, { timeout: 1500 }) : setTimeout(fn, 200));
+
+/** Runs `fn` once, when `el` comes within a screen or so of the viewport. */
+function whenNear(el: Element, fn: () => void) {
+  const io = new IntersectionObserver(
+    (entries) => {
+      if (!entries.some((e) => e.isIntersecting)) return;
+      io.disconnect();
+      fn();
+    },
+    { rootMargin: '400px 0px' },
+  );
+  io.observe(el);
+}
+
+/** A live mascot in `host`, which fades in once its first frame is drawn. */
+function live(host: HTMLElement, spec: CharacterSpec, options: ConstructorParameters<typeof Mascot>[2] = {}) {
+  const canvas = document.createElement('canvas');
+  host.append(canvas);
+  const mascot = new Mascot(canvas, spec, options);
+  mascot.on('ready', () => host.classList.add('is-ready'));
+  return mascot;
+}
+
+/* ---- opening scene ---- */
+
+const actors = [...document.querySelectorAll<HTMLElement>('[data-actor]')];
+actors.forEach((host, i) => {
+  host.style.setProperty('--i', String(i));
+  live(host, byId(host.dataset.actor!), {
+    state: (host.dataset.state as MascotState) ?? 'idle',
+    seed: 0.21 + i * 0.29,
+    maxPixelRatio: host.classList.contains('lead') ? 1.25 : 1.5,
+    effects: host.dataset.effects !== 'false',
+    /* they stand on the lettering, not on a floor */
+    floor: 0,
+  });
+});
+
+document.querySelectorAll('.engine-size').forEach((el) => (el.textContent = kb(__ENGINE_GZIP_BYTES__)));
+{
+  /* the giant number splits around the dot, where Volt hops */
+  const [whole, tenths] = kb(__ENGINE_GZIP_BYTES__).split('.');
+  $('#kb-int').textContent = `${whole}.`;
+  $('#kb-rest').textContent = tenths;
+}
+
+/* ---- the studio ---- */
 
 const LABELS: Record<MascotState, string> = {
   idle: 'Idle',
@@ -28,203 +80,209 @@ const LABELS: Record<MascotState, string> = {
   sad: 'Sad',
 };
 
-/** When an app or agent would use each state. */
-const WHEN: Record<MascotState, string> = {
-  idle: 'Waiting for the user',
-  thinking: 'Planning, before it answers',
-  listening: 'The user is talking or typing',
-  speaking: 'Streaming a reply',
-  sleeping: 'Nothing has happened for a while',
-  working: 'Running a tool, a build or a long task',
-  error: 'Something failed',
-  surprised: 'Something unexpected arrived',
-  celebrating: 'A task finished, the tests passed',
-  sad: 'It could not help, or the user is unhappy',
-};
+/** Colours to try on each character's main material; the first swatch is its own. */
+const SWATCHES = ['#ff5d8f', '#4f7cff', '#ffb021', '#2fcf8f', '#a774ff'];
 
-const SURFACES: Record<string, string> = { fur: 'Fur', scales: 'Scales', speckle: 'Speckled', ripple: 'Rippled' };
-
-/* every mascot on the page shares one budget of live WebGL contexts */
-const pool = new Pool(11);
-
-/* frames per second, measured, for the viewfinder and the live meter */
-let fps = 60;
-{
-  let last = performance.now();
-  const sample = (now: number) => {
-    const dt = now - last;
-    last = now;
-    if (dt > 0 && dt < 250) fps += (1000 / dt - fps) * 0.05;
-    requestAnimationFrame(sample);
-  };
-  requestAnimationFrame(sample);
-}
-
-/* ---- opening scene ---- */
-
-const actors = new Map<string, Slot>();
-document.querySelectorAll<HTMLElement>('[data-actor]').forEach((host, i) => {
-  const spec = byId(host.dataset.actor!);
-  host.style.setProperty('--pool', spec.accent);
-  actors.set(spec.id, pool.add(host, spec, { seed: 0.21 + i * 0.29, framing: 1.02 }));
-});
-playScene($('.viewfinder'), actors, () => fps);
-
-/* ---- the studio ---- */
+/** How long the timeline holds each state, in seconds. */
+const BEAT = 2.4;
 
 const view = {
+  spec: byId('mochi'),
   state: 'idle' as MascotState,
-  selected: byId('microduck'),
   color: null as string | null,
-  speed: 1,
-  effects: true,
-  tab: 'html' as Tab,
+  tab: 'react' as Tab,
 };
 
-/** The material the colour picker drives: the first one, which is each character's main body. */
+/** The material the swatches drive: the first one, which is each character's main body. */
 const mainMaterial = (spec: CharacterSpec) => Object.keys(spec.materials)[0];
-const palette = (): Palette | undefined => (view.color ? { [mainMaterial(view.selected)]: view.color } : undefined);
-const scene = (): Scene => ({ spec: view.selected, state: view.state, material: mainMaterial(view.selected), color: view.color, speed: view.speed, effects: view.effects });
+const palette = (): Palette | undefined => (view.color ? { [mainMaterial(view.spec)]: view.color } : undefined);
+const scene = (): Scene => ({ spec: view.spec, state: view.state, material: mainMaterial(view.spec), color: view.color, speed: 1, effects: true });
 
-const stage = pool.add($('#stage'), view.selected, { seed: 0.31, framing: 1.18, pinned: true });
-
-/* ---- the cast, on film ---- */
-
-const strip = $('#filmstrip');
-const frames = characters.map((spec, i) => {
-  const { parts, bones } = compileCached(spec).stats;
-  const surfaces = [...new Set(Object.values(spec.materials).flatMap((m) => (m.surface ? [SURFACES[m.surface.kind]] : [])))];
-  const chips = [...surfaces, `${parts} parts`, `${bones} bones`];
-  const frame = document.createElement('button');
-  frame.type = 'button';
-  frame.className = 'frame';
-  frame.style.setProperty('--frame-accent', spec.accent);
-  frame.innerHTML = `
-    <span class="frame-shot"><span class="slot-host"></span><span class="frame-code">WBN ${String(i + 1).padStart(2, '0')}</span></span>
-    <span class="frame-body">
-      <span class="frame-name">${spec.name}</span>
-      <span class="frame-plan">${spec.tagline}</span>
-      <span class="chips">${chips.map((c) => `<span class="chip">${c}</span>`).join('')}</span>
-    </span>`;
-  strip.append(frame);
-  const slot = pool.add(frame.querySelector('.slot-host')!, spec, { seed: 0.13 * (i + 1), framing: 1.12, maxPixelRatio: 1.5 });
-  /* a frame perks up when you point at it, and puts its character on stage when picked */
-  frame.addEventListener('pointerenter', () => slot.setState('listening'));
-  frame.addEventListener('pointerleave', () => slot.setState('idle'));
-  frame.addEventListener('click', () => {
-    select(spec);
-    $('#studio').scrollIntoView();
-  });
-  return { spec, frame };
+let stage: Mascot | null = null;
+whenNear($('#studio'), () => {
+  stage = live($('#stage'), view.spec, { state: view.state, palette: palette(), seed: 0.31, framing: 1.05, maxPixelRatio: 1.5 });
 });
 
-/* ---- character picker and states ---- */
-
-const picker = $('#picker');
-const chips = characters.map((spec) => {
-  const b = document.createElement('button');
-  b.type = 'button';
-  b.textContent = spec.name;
-  b.style.setProperty('--dot', spec.accent);
-  b.addEventListener('click', () => select(spec));
-  picker.append(b);
-  return { spec, b };
-});
-
-const clapper = $('#states');
-for (const s of STATES) {
+const stateList = $('#states');
+const stateButtons = STATES.map((s) => {
+  const li = document.createElement('li');
   const b = document.createElement('button');
   b.type = 'button';
   b.textContent = LABELS[s];
-  b.dataset.state = s;
-  b.addEventListener('click', () => setState(s));
-  clapper.append(b);
-}
-
-$('#state-table').innerHTML = STATES.map((s) => `<tr data-state="${s}"><td><code>${s}</code></td><td>${WHEN[s]}</td></tr>`).join('');
-$('#state-table').addEventListener('click', (e) => {
-  const row = (e.target as HTMLElement).closest<HTMLElement>('tr[data-state]');
-  if (!row) return;
-  setState(row.dataset.state as MascotState);
-  $('#studio').scrollIntoView();
+  b.addEventListener('click', () => {
+    stop();
+    setState(s);
+  });
+  li.append(b);
+  stateList.append(li);
+  return b;
 });
+
+const avatarRow = $('#avatars');
+const avatars = characters.map((spec) => {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'avatar';
+  b.innerHTML = `<span class="avatar-face"></span>${spec.name}`;
+  b.addEventListener('click', () => select(spec));
+  avatarRow.append(b);
+  return b;
+});
+
+const step = (by: number) => select(characters[(characters.indexOf(view.spec) + by + characters.length) % characters.length]);
+$('#cast-prev').addEventListener('click', () => step(-1));
+$('#cast-next').addEventListener('click', () => step(1));
+
+const swatchRow = $('#swatches');
+function renderSwatches() {
+  const own = view.spec.materials[mainMaterial(view.spec)].color;
+  $('#material-name').textContent = mainMaterial(view.spec);
+  swatchRow.replaceChildren(
+    ...[null, ...SWATCHES].map((color) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'swatch';
+      b.style.setProperty('--c', color ?? own);
+      b.setAttribute('aria-label', color ? `Recolour to ${color}` : `${view.spec.name}'s own colour`);
+      b.setAttribute('aria-pressed', String(color === view.color));
+      b.addEventListener('click', () => {
+        view.color = color;
+        stage?.setPalette(palette());
+        renderSwatches();
+        renderSnippet();
+      });
+      return b;
+    }),
+  );
+}
 
 function setState(s: MascotState) {
   view.state = s;
-  stage.setState(s);
-  clapper.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.state === s)));
+  stage?.setState(s);
+  const at = STATES.indexOf(s);
+  stateButtons.forEach((b, i) => b.setAttribute('aria-pressed', String(i === at)));
+  ticks.forEach((t, i) => t.classList.toggle('on', i === at * 4));
+  $('#track-now').textContent = LABELS[s];
+  if (!playing) movePlayhead(at / STATES.length);
   renderSnippet();
 }
 
 function select(spec: CharacterSpec) {
-  view.selected = spec;
+  view.spec = spec;
   view.color = null;
-  stage.setSpec(spec);
-  stage.setState(view.state);
-  chips.forEach((c) => c.b.setAttribute('aria-pressed', String(c.spec === spec)));
-  frames.forEach((f) => f.frame.setAttribute('aria-current', String(f.spec === spec)));
-  $('.studio').style.setProperty('--gel', spec.accent);
-  $('#stage-name').textContent = spec.name;
-  $('#stage-plan').textContent = spec.tagline;
-  renderCustom();
-  renderSpec(spec);
+  stage?.setSpec(spec);
+  const at = characters.indexOf(spec);
+  avatars.forEach((b, i) => b.setAttribute('aria-pressed', String(i === at)));
+  /* keep the picked avatar in view without moving the page */
+  const b = avatars[at];
+  avatarRow.scrollTo({ left: b.offsetLeft - (avatarRow.clientWidth - b.offsetWidth) / 2, behavior: 'smooth' });
+  renderSwatches();
   renderSnippet();
 }
 
-/* ---- make it yours ---- */
+/* ---- the timeline: plays through every state in turn ---- */
 
-const colorInput = $<HTMLInputElement>('#color-input');
-const speedInput = $<HTMLInputElement>('#speed-input');
-const fxInput = $<HTMLInputElement>('#fx-input');
+const track = $('#track-now').closest<HTMLElement>('.track')!;
+const playhead = $('#playhead');
+const ticks = Array.from({ length: STATES.length * 4 + 1 }, (_, i) => {
+  const t = document.createElement('span');
+  if (i % 4 === 0) t.className = 'major';
+  t.style.left = `${(i / (STATES.length * 4)) * 100}%`;
+  $('#ticks').append(t);
+  return t;
+});
+$('#track-end').textContent = `${(STATES.length * BEAT).toFixed(1)}s`;
 
-function renderCustom() {
-  const material = mainMaterial(view.selected);
-  colorInput.value = view.color ?? view.selected.materials[material].color;
-  $('#color-hex').textContent = colorInput.value;
-  $('#color-name').textContent = material;
-  speedInput.value = String(view.speed);
-  $('#speed-out').textContent = `${view.speed.toFixed(2).replace(/\.?0+$/, '')}×`;
-  fxInput.checked = view.effects;
+let playing = false;
+let playStart = 0;
+
+function movePlayhead(progress: number) {
+  playhead.style.transform = `translateX(${progress * track.clientWidth}px)`;
 }
 
-function applyCustom() {
-  stage.setPalette(palette());
-  stage.setSpeed(view.speed);
-  stage.setEffects(view.effects);
-  renderCustom();
-  renderSnippet();
+function frame(now: number) {
+  if (!playing) return;
+  const total = STATES.length * BEAT * 1000;
+  const progress = ((now - playStart) % total) / total;
+  movePlayhead(progress);
+  const s = STATES[Math.floor(progress * STATES.length)];
+  if (s !== view.state) setState(s);
+  requestAnimationFrame(frame);
 }
 
-colorInput.addEventListener('input', () => {
-  view.color = colorInput.value;
-  applyCustom();
+function play(from = STATES.indexOf(view.state)) {
+  playing = true;
+  playStart = performance.now() - from * BEAT * 1000;
+  $('#play').setAttribute('aria-pressed', 'true');
+  $('#play-icon').setAttribute('d', 'M6 4.5h3v11H6zM11 4.5h3v11h-3z');
+  requestAnimationFrame(frame);
+}
+
+function stop() {
+  if (!playing) return;
+  playing = false;
+  $('#play').setAttribute('aria-pressed', 'false');
+  $('#play-icon').setAttribute('d', 'M7 4.5v11l9-5.5z');
+  movePlayhead(STATES.indexOf(view.state) / STATES.length);
+}
+
+$('#play').addEventListener('click', () => (playing ? stop() : play()));
+track.addEventListener('click', (e) => {
+  const at = Math.min(STATES.length - 1, Math.floor(((e.clientX - track.getBoundingClientRect().left) / track.clientWidth) * STATES.length));
+  setState(STATES[Math.max(0, at)]);
+  if (playing) play(at);
 });
-speedInput.addEventListener('input', () => {
-  view.speed = Number(speedInput.value);
-  applyCustom();
-});
-fxInput.addEventListener('change', () => {
-  view.effects = fxInput.checked;
-  applyCustom();
-});
-$('#reset-custom').addEventListener('click', () => {
-  Object.assign(view, { color: null, speed: 1, effects: true });
-  applyCustom();
-});
+addEventListener('resize', () => playing || movePlayhead(STATES.indexOf(view.state) / STATES.length));
 
 /* ---- code ---- */
 
+const TABS: Tab[] = ['react', 'js', 'html'];
+
 function renderSnippet() {
-  $('#snippet').innerHTML = highlight(snippet(view.tab, scene()));
-  for (const tab of ['html', 'js', 'react'] as const) $(`#tab-${tab}`).setAttribute('aria-selected', String(tab === view.tab));
+  const code = highlight(snippet(view.tab, scene()));
+  $('#snippet').innerHTML = code
+    .split('\n')
+    .map((line) => `<span class="ln">${line || ' '}</span>`)
+    .join('');
+  for (const tab of TABS) $(`#tab-${tab}`).setAttribute('aria-selected', String(tab === view.tab));
 }
 
-for (const tab of ['html', 'js', 'react'] as const) {
+for (const tab of TABS) {
   $(`#tab-${tab}`).addEventListener('click', () => {
     view.tab = tab;
     renderSnippet();
   });
 }
+
+const copy = $<HTMLButtonElement>('#copy');
+copy.addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(snippet(view.tab, scene()));
+    copy.classList.add('done');
+    copy.setAttribute('aria-label', 'Copied');
+  } catch {
+    /* the clipboard can be off limits in frames: select the code instead */
+    getSelection()?.selectAllChildren($('#snippet'));
+  }
+  setTimeout(() => {
+    copy.classList.remove('done');
+    copy.setAttribute('aria-label', 'Copy code');
+  }, 1600);
+});
+
+/* ---- the cast ---- */
+
+const castGrid = $('#cast-grid');
+const posters = characters.map((spec) => {
+  const li = document.createElement('li');
+  li.innerHTML = `<button type="button" class="cast-card"><span class="poster"></span><h3>${spec.name}</h3><p>${spec.tagline}</p></button>`;
+  li.querySelector('button')!.addEventListener('click', () => {
+    select(spec);
+    $('#studio').scrollIntoView();
+  });
+  castGrid.append(li);
+  return li.querySelector<HTMLElement>('.poster')!;
+});
 
 async function gzipBytes(text: string): Promise<number> {
   if (typeof CompressionStream === 'undefined') return text.length;
@@ -232,84 +290,44 @@ async function gzipBytes(text: string): Promise<number> {
   return (await new Response(stream).arrayBuffer()).byteLength;
 }
 
-/* number arrays on one line, so the spec reads like a table */
-function prettySpec(spec: CharacterSpec): string {
-  return JSON.stringify(spec, null, 2).replace(/\[\s+([-\d.,\s"a-z]*?)\s+\]/gi, (_, inner: string) => `[${inner.replace(/\s+/g, ' ')}]`);
-}
-
-async function renderSpec(spec: CharacterSpec) {
-  const { parts, bones, shaderLines } = compileCached(spec).stats;
-  $('#spec').textContent = prettySpec(spec);
-  $('#stat-parts').textContent = String(parts);
-  $('#stat-bones').textContent = String(bones);
-  $('#stat-lines').textContent = String(shaderLines);
-  const gz = await gzipBytes(JSON.stringify(spec));
-  if (view.selected === spec) $('#stat-spec').textContent = `${kb(gz)} gzipped`;
-}
-
-/** Copies text, falling back to selecting `source` where the clipboard is off limits. */
-function copyButton(button: HTMLButtonElement, text: () => string, source: HTMLElement) {
-  const label = button.textContent;
-  button.addEventListener('click', async () => {
-    try {
-      await navigator.clipboard.writeText(text());
-      button.textContent = 'Copied';
-    } catch {
-      const range = document.createRange();
-      range.selectNodeContents(source);
-      getSelection()?.removeAllRanges();
-      getSelection()?.addRange(range);
-      button.textContent = 'Selected';
-    }
-    setTimeout(() => (button.textContent = label), 1600);
-  });
-}
-
-copyButton($('#copy-snippet'), () => snippet(view.tab, scene()), $('#snippet'));
-copyButton($('#copy-spec'), () => JSON.stringify(view.selected, null, 2), $('#spec'));
-document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((b) => {
-  const source = $(`#${b.dataset.copy}`);
-  copyButton(b, () => source.textContent ?? '', source);
+idle(async () => {
+  const sizes = await Promise.all(characters.map((spec) => gzipBytes(JSON.stringify(spec))));
+  $('#spec-average').textContent = `~${kb(sizes.reduce((a, b) => a + b, 0) / sizes.length)}`;
 });
 
-/* ---- supporting cast around the page ---- */
+/* Stills for the avatars and the cast, one character at a time, once the
+   opening scene is up: each is drawn once, then the avatar reuses it. */
+async function drawStills() {
+  for (const [i, spec] of characters.entries()) {
+    const still = await snapshot(spec, { size: 240, pixelRatio: Math.min(devicePixelRatio || 1, 2), seed: 0.4 + i * 0.07, framing: 1.04 });
+    still.classList.add('is-ready');
+    posters[i].append(still);
 
-pool.add($('#desk-buddy'), byId('rex'), { seed: 0.58, state: 'working', framing: 1.05 });
-pool.add($('#footer-cloud'), byId('nimbus'), { seed: 0.77, state: 'sleeping', framing: 1.05 });
+    const face = document.createElement('canvas');
+    face.width = face.height = 136;
+    face.getContext('2d')!.drawImage(still, 0, 0, face.width, face.height);
+    face.className = 'is-ready';
+    avatars[i].querySelector('.avatar-face')!.append(face);
+    await new Promise((resolve) => idle(() => resolve(null)));
+  }
+}
 
-/* ---- size and speed ---- */
+let stillsStarted = false;
+const startStills = () => {
+  if (stillsStarted) return;
+  stillsStarted = true;
+  idle(drawStills);
+};
+/* start as soon as the opening scene is on screen, or straight away when it has no live actors */
+if (actors.length) {
+  let waiting = actors.length;
+  actors.forEach((a) => {
+    const done = () => --waiting || startStills();
+    a.classList.contains('is-ready') ? done() : new MutationObserver((_, mo) => a.classList.contains('is-ready') && (mo.disconnect(), done())).observe(a, { attributes: true, attributeFilter: ['class'] });
+  });
+  setTimeout(startStills, 2500);
+} else startStills();
+whenNear($('#studio'), startStills);
 
-document.querySelectorAll('.engine-size').forEach((el) => (el.textContent = kb(__ENGINE_GZIP_BYTES__)));
-
-(async () => {
-  const sizes = await Promise.all(characters.map(async (spec) => ({ spec, bytes: await gzipBytes(JSON.stringify(spec)) })));
-  sizes.sort((a, b) => a.bytes - b.bytes);
-  const total = await gzipBytes(JSON.stringify(characters));
-  const average = sizes.reduce((sum, s) => sum + s.bytes, 0) / sizes.length;
-  $('#spec-average').textContent = kb(average);
-
-  const smallest = sizes[0];
-  const largest = sizes[sizes.length - 1];
-  const rows: Array<[string, number, string]> = [
-    ['Engine runtime', __ENGINE_GZIP_BYTES__, 'var(--ink)'],
-    ['All eleven characters', total, 'var(--brand)'],
-    [`Largest: ${largest.spec.name}`, largest.bytes, largest.spec.accent],
-    [`Smallest: ${smallest.spec.name}`, smallest.bytes, smallest.spec.accent],
-  ];
-  const max = Math.max(...rows.map((r) => r[1]));
-  $('#bars').innerHTML = rows
-    .map(
-      ([label, bytes, color]) =>
-        `<div class="bar"><span>${label}</span><span class="track"><span class="fill" style="--w:${((bytes / max) * 100).toFixed(1)}%;--bar:${color}"></span></span><span class="bar-value tabular">${kb(bytes)}</span></div>`,
-    )
-    .join('');
-})();
-
-setInterval(() => {
-  const n = pool.running;
-  $('#live-count').textContent = `${n} live ${n === 1 ? 'mascot' : 'mascots'}`;
-  $('#live-fps').textContent = `${Math.round(fps)} fps`;
-}, 500);
-
-select(view.selected);
+select(view.spec);
 setState(view.state);
