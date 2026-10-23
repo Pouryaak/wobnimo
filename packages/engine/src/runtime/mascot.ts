@@ -38,6 +38,8 @@ export interface MascotOptions {
   shadow?: Vec3;
   /** Overall brightness. Default 1. */
   exposure?: number;
+  /** Room around the character: 1 fits it snugly, larger values make it smaller in its canvas. Default 1. */
+  framing?: number;
   /** Respect `prefers-reduced-motion`: hold the state's pose instead of animating. Default true. */
   respectReducedMotion?: boolean;
 }
@@ -87,6 +89,7 @@ export class Mascot implements Animated {
       maxPixelRatio: options.maxPixelRatio ?? 2,
       shadow: options.shadow ?? [0.05, 0.06, 0.12],
       exposure: options.exposure ?? 1,
+      framing: options.framing ?? 1,
       respectReducedMotion: options.respectReducedMotion ?? true,
     };
     this.renderer = new WebGL2Renderer(canvas);
@@ -203,6 +206,7 @@ export class Mascot implements Animated {
       height: Math.max(1, Math.round(this.canvas.clientHeight * ratio)),
       shadow: this.options.shadow,
       exposure: this.options.exposure,
+      framing: this.options.framing,
     });
   }
 

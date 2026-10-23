@@ -20,7 +20,7 @@ const CROUCH = 0.11;
 const REACTION = 1.8;
 
 /** Moments in the animation that effects can react to. */
-export type BeatEvent = 'land' | 'syllable' | 'enter:happy';
+export type BeatEvent = 'land' | 'syllable' | `enter:${Expression}`;
 
 interface Jump {
   age: number;
@@ -47,7 +47,7 @@ export interface Pose {
   faceB: [number, number, number, number];
   /** expression, previous expression, cross-fade, glitch */
   faceC: [number, number, number, number];
-  /** seconds in the state, mouth roundness, -, - */
+  /** seconds in the state, mouth roundness, wide eyes, asymmetry (signed by side) */
   faceD: [number, number, number, number];
   glow: Vec3;
   exposure: number;
@@ -76,7 +76,7 @@ export class Brain {
   private readonly face = {
     lid: new Spring(), squint: new Spring(), smile: new Spring(0.3), tilt: new Spring(), talk: new Spring(),
     round: new Spring(), gazeX: new Spring(), gazeY: new Spring(), flap: new Spring(), energy: new Spring(1),
-    exposure: new Spring(1),
+    exposure: new Spring(1), wide: new Spring(), asym: new Spring(),
   };
   private readonly weights: Record<Expression, Spring>;
   private glow: Vec3 = [...FACE.idle.glow];
@@ -90,6 +90,9 @@ export class Brain {
   private nextSide = 4;
   private side = 1;
   private nextNod = 2.5;
+  /* a shake (error, a fright) and a sigh (sad), each an envelope from its start */
+  private shake = { start: -10, amount: 0, next: 0 };
+  private sigh = { start: -10, next: 0 };
   private reactUntil = -1;
   private readonly speech: Speech;
   private lastTalk = 0;
@@ -137,6 +140,31 @@ export class Brain {
     for (let i = 0; i < steps; i++) this.step(dt / steps);
   }
 
+  /* what happens on the first frame of an expression */
+  private enter(shown: Expression, t: number) {
+    const tm = this.temperament;
+    if (shown === 'surprised') {
+      /* a start: a small jump straight up and a shiver */
+      this.hop(tm.hop * 0.6, 0);
+      this.pitch.v += 1.2;
+      this.startShake(t, 0.35, Infinity);
+    } else if (shown === 'error') {
+      this.side = this.random() < 0.5 ? 1 : -1;
+      this.squash.v -= 2.5;
+      this.startShake(t, 1, t + 2 + this.random());
+    } else if (shown === 'celebrating') {
+      this.nextHop = t;
+    } else if (shown === 'sad') {
+      this.sigh.next = t + 1.2;
+    }
+  }
+
+  private startShake(t: number, amount: number, next: number) {
+    this.shake.start = t;
+    this.shake.amount = amount;
+    this.shake.next = next;
+  }
+
   private hop(height: number, spin: number) {
     if (this.jump) return;
     const floats = this.temperament.float > 0;
@@ -160,7 +188,8 @@ export class Brain {
       this.previous = this.shown;
       this.shown = shown;
       this.switched = 0;
-      if (shown === 'happy') events.push('enter:happy');
+      events.push(`enter:${shown}`);
+      this.enter(shown, t);
     }
     const target = FACE[shown];
 
@@ -185,7 +214,8 @@ export class Brain {
     let freq = 1.3, damping = 0.62;
     let hover = tm.float;
     const p = this.pointer;
-    const follows = p && shown !== 'thinking' && shown !== 'sleeping';
+    /* only some states look back at the viewer; the rest are busy with something */
+    const follows = p && (shown === 'idle' || shown === 'listening' || shown === 'speaking' || shown === 'surprised');
 
     switch (shown) {
       case 'idle':
@@ -251,6 +281,68 @@ export class Brain {
           this.nextNod = t + 5 + rand() * 4;
         }
         break;
+      case 'working':
+        /* eyes reading across the task, small nods in the rhythm of typing */
+        yaw = Math.sin(t * 0.8) * 0.07;
+        pitch = -0.13 + Math.abs(Math.sin(t * 5.2)) * 0.03;
+        roll = Math.sin(t * 0.6) * 0.04;
+        gazeX = Math.sin(t * 1.6) * 0.45;
+        gazeY = -0.55;
+        flap += Math.sin(t * 11) * 0.06;
+        freq = 1.6;
+        break;
+      case 'error': {
+        /* a wince toward one side, and a shudder that comes back now and then */
+        if (t > this.shake.next) this.startShake(t, 0.55, 2.4 + rand() * 1.4);
+        const s = this.side;
+        roll = 0.16 * s;
+        yaw = -0.1 * s;
+        pitch = 0.05;
+        gazeX = 0.45 * s;
+        gazeY = 0.3;
+        talk = 0.16;
+        freq = 1.5;
+        break;
+      }
+      case 'surprised':
+        /* frozen, staring straight out with a little "o" */
+        pitch = 0.1;
+        talk = 0.42;
+        round = 1;
+        freq = 2.2;
+        damping = 0.5;
+        break;
+      case 'celebrating':
+        yaw = Math.sin(t * 3.1) * 0.22;
+        roll = Math.sin(t * 6.2) * 0.1;
+        pitch = 0.14;
+        talk = 0.6 + 0.12 * Math.sin(t * 7);
+        round = 0.05;
+        flap += Math.sin(t * 9) * 0.25;
+        freq = 2;
+        if (t > this.nextHop) {
+          this.hop(tm.hop * 1.25, rand() < 0.3 ? (rand() < 0.5 ? 1 : -1) : 0);
+          this.nextHop = t + 0.85 + rand() * 0.4;
+        }
+        break;
+      case 'sad': {
+        /* head down, and every few seconds a sigh that lifts it and lets it fall */
+        if (t > this.sigh.next) {
+          this.sigh.start = t;
+          this.sigh.next = t + 4 + rand() * 2.5;
+        }
+        const sigh = Math.sin(clamp((t - this.sigh.start) / 1.7, 0, 1) * Math.PI);
+        pitch = -0.24 + sigh * 0.1;
+        yaw = Math.sin(t * 0.3) * 0.1;
+        roll = 0.08;
+        gazeX = -0.15;
+        gazeY = -0.65 + sigh * 0.3;
+        bob += sigh * 0.018;
+        hover *= 0.7;
+        freq = 0.7;
+        damping = 0.85;
+        break;
+      }
       case 'happy':
         yaw = Math.sin(t * 2.2) * 0.18;
         roll = Math.sin(t * 4.4) * 0.12;
@@ -296,10 +388,17 @@ export class Brain {
     fs.flap.step(flap, dt, 2.4 * tm.snap, 0.5);
     fs.energy.step(target.energy, dt, 0.8, 1);
     fs.exposure.step(target.exposure, dt, 0.4, 1);
+    fs.wide.step(target.wide, dt, 5, 0.6);
+    fs.asym.step(target.asym * this.side, dt, 3, 0.8);
     for (const e of EXPRESSIONS) this.weights[e].step(e === shown ? 1 : 0, dt, 1.6 * tm.snap, 0.95);
 
     const g = 1 - Math.exp(-dt * 4);
-    const pulse = shown === 'thinking' ? 0.55 + 0.45 * Math.sin(t * 4.2) : shown === 'speaking' ? 0.6 + 0.6 * fs.talk.x : 1;
+    const pulse =
+      shown === 'thinking' ? 0.55 + 0.45 * Math.sin(t * 4.2)
+      : shown === 'speaking' ? 0.6 + 0.6 * fs.talk.x
+      : shown === 'working' ? 0.75 + 0.25 * Math.sin(t * 7)
+      : shown === 'error' ? (Math.sin(t * 7) > 0 ? 1.1 : 0.45)
+      : 1;
     for (let k = 0; k < 3; k++) this.glow[k] = mix(this.glow[k], target.glow[k] * pulse, g);
 
     /* a syllable is the mouth opening past a threshold, once per opening */
@@ -370,9 +469,11 @@ export class Brain {
     pose.lift = totalLift;
     pose.expression = shown;
     const ch = pose.channels;
-    ch.yaw = this.yaw.x;
+    /* the shake rides on top of the springs, which would smooth it away */
+    const shaking = this.shake.amount * Math.max(0, 1 - (t - this.shake.start) / 0.6);
+    ch.yaw = this.yaw.x + Math.sin(t * 31) * 0.06 * shaking;
     ch.pitch = this.pitch.x;
-    ch.roll = this.roll.x;
+    ch.roll = this.roll.x + Math.sin(t * 38) * 0.07 * shaking;
     ch.flap = fs.flap.x;
     ch.talk = fs.talk.x;
     ch.energy = fs.energy.x;
@@ -382,7 +483,7 @@ export class Brain {
     pose.faceA = [sleeping ? 0 : blink, fs.lid.x, fs.squint.x, fs.smile.x];
     pose.faceB = [fs.talk.x, fs.gazeX.x, fs.gazeY.x, fs.tilt.x];
     pose.faceC = [EXPRESSION_ID[this.shown], EXPRESSION_ID[this.previous], clamp(this.switched / 0.35, 0, 1), this.switched < 0.3 ? 1 - this.switched / 0.3 : 0];
-    pose.faceD = [this.since, fs.round.x, 0, 0];
+    pose.faceD = [this.since, fs.round.x, fs.wide.x, fs.asym.x];
     pose.exposure = fs.exposure.x;
   }
 }

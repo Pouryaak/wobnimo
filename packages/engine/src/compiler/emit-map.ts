@@ -87,7 +87,9 @@ function emitEyes(r: Resolved, boneSpace: (i: number) => string): string[] {
         `    float tilt = uFaceB.w * ${side};`,
         `    vec3 q = vec3(mat2(cos(tilt), sin(tilt), -sin(tilt), cos(tilt)) * l.xy, l.z);`,
         `    float shell = length(q) - ${f(R * 1.1)};`,
-        `    float top = mix(${f(R * 1.18)}, ${f(-R * 0.14)}, max(uFaceA.x, uFaceA.y));`,
+        /* asymmetry closes one lid and opens the other; wide eyes pull both lids back */
+        `    float lid = clamp(uFaceA.y + uFaceD.w * ${side} * 0.38 - uFaceD.z * 0.1, 0.0, 1.0);`,
+        `    float top = mix(${f(R * 1.18)}, ${f(-R * 0.14)}, max(uFaceA.x, lid));`,
         `    float bottom = mix(${f(-R * 1.18)}, ${f(-R * 0.02)}, uFaceA.z * 0.85);`,
         `    opAdd(r, min(max(shell, top - q.y), max(shell, q.y - bottom)), ${lid}, 0.0);`,
         `  }`,
@@ -96,11 +98,14 @@ function emitEyes(r: Resolved, boneSpace: (i: number) => string): string[] {
   } else {
     const id = f(r.materialId(eyes.material, 'eyes.material'));
     const [rx, ry, rz] = eyes.radii;
-    out.push(`  float open = max(0.12, (1.0 - max(uFaceA.x, uFaceA.y)) * (1.0 - 0.6 * uFaceA.z));`);
-    eyes.at.forEach((at) => {
+    /* wide eyes grow; asymmetry squeezes one bead and opens the other */
+    out.push(`  float grow = 1.0 + 0.2 * uFaceD.z;`);
+    eyes.at.forEach((at, i) => {
+      const side = i === 0 ? '-1.0' : '1.0';
       out.push(
+        `  float open${i} = max(0.12, (1.0 - max(uFaceA.x, clamp(uFaceA.y + uFaceD.w * ${side} * 0.45, 0.0, 1.0))) * (1.0 - 0.6 * uFaceA.z));`,
         `  l = ${b} - ${v3(at)} - vec3(uFaceB.y * ${f(rx * 0.45)}, uFaceB.z * ${f(ry * 0.3)}, 0.0);`,
-        `  opAdd(r, sdEllipsoid(l, vec3(${f(rx)}, ${f(ry)} * open, ${f(rz)})), ${id}, 0.0);`,
+        `  opAdd(r, sdEllipsoid(l, vec3(${f(rx)} * grow, ${f(ry)} * grow * open${i}, ${f(rz)})), ${id}, 0.0);`,
       );
     });
   }

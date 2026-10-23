@@ -2,10 +2,12 @@
    own body: its parts become straight-line distance code with constants
    baked in, so the GPU runs no interpreter and no loops over a scene. */
 
+import { EXPRESSION_ID, EXPRESSIONS } from '../behavior/states';
 import { linear } from '../spec/color';
+import { f } from './format';
 import type { CharacterSpec } from '../spec/types';
 import { emitMap } from './emit-map';
-import { emitMaterials } from './emit-materials';
+import { emitMaterials, emitSurfaces } from './emit-materials';
 import { LIGHTING } from './glsl/lighting';
 import { MAIN } from './glsl/main';
 import { MOUTH } from './glsl/mouth';
@@ -36,6 +38,9 @@ void main() {
   gl_Position = vec4(p * 2.0 - 1.0, 0.0, 1.0);
 }`;
 
+/* the expression numbers, named, so the LED faces read as words */
+const expressionDefines = () => EXPRESSIONS.map((e) => `#define E_${e.toUpperCase()} ${f(EXPRESSION_ID[e])}`).join('\n') + '\n';
+
 export function compile(spec: CharacterSpec): CompiledCharacter {
   const r = resolve(spec);
   const fragment = [
@@ -51,9 +56,10 @@ export function compile(spec: CharacterSpec): CompiledCharacter {
     PRELUDE,
     emitMap(r),
     LIGHTING,
-    spec.face?.kind === 'screen' ? SCREEN_FACE : '',
+    spec.face?.kind === 'screen' ? expressionDefines() + SCREEN_FACE : '',
     spec.face?.kind === 'mouth' ? MOUTH : '',
     emitMaterials(r),
+    emitSurfaces(r),
     PARTICLES,
     MAIN,
   ].join('\n');

@@ -152,6 +152,44 @@ export const volt: CharacterSpec = {
       foreL: { rx: -0.4 },
       foreR: { rx: -0.4 },
     },
+    /* typing: arms forward, claws tapping in turn, ears turning like drives */
+    working: {
+      shoulderL: { rx: -0.85, rz: -0.12 },
+      shoulderR: { rx: -0.85, rz: 0.12 },
+      foreL: { rx: [-0.95, 0.2, 6, 0] },
+      foreR: { rx: [-0.95, 0.2, 6, Math.PI] },
+      earL: { rx: [0, 0, 0, 0, 3] },
+      earR: { rx: [0, 0, 0, 0, -3] },
+    },
+    /* arms thrown out, shaking; the ears seize up */
+    error: {
+      shoulderL: { rz: [-0.95, 0.1, 11, 0], rx: -0.2 },
+      shoulderR: { rz: [0.95, 0.1, 11, 1], rx: -0.2 },
+      foreL: { rx: -1.1 },
+      foreR: { rx: -1.1 },
+    },
+    surprised: {
+      shoulderL: { rz: -1.55, rx: -0.3 },
+      shoulderR: { rz: 1.55, rx: -0.3 },
+      foreL: { rx: -0.35 },
+      foreR: { rx: -0.35 },
+    },
+    /* fists pumping overhead, ears spinning */
+    celebrating: {
+      shoulderL: { rz: [-2.55, 0.28, 4, 0] },
+      shoulderR: { rz: [2.55, 0.28, 4, Math.PI] },
+      foreL: { rz: [0.2, 0.4, 8, 0] },
+      foreR: { rz: [-0.2, 0.4, 8, Math.PI] },
+      earL: { rx: [0, 0, 0, 0, 12] },
+      earR: { rx: [0, 0, 0, 0, -12] },
+    },
+    /* arms hanging, a little behind the body */
+    sad: {
+      shoulderL: { rz: 0.04, rx: 0.22 },
+      shoulderR: { rz: -0.04, rx: 0.22 },
+      foreL: { rx: -0.05 },
+      foreR: { rx: -0.05 },
+    },
     /* both arms up, claws waving */
     happy: {
       shoulderL: { rz: [-2.5, 0.22, 2.2, 0] },

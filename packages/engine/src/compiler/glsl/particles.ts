@@ -28,6 +28,34 @@ float fxTeardrop(vec2 p, float r1, float r2, float h) {
   return dot(p, vec2(a, b)) - r1;
 }
 
+float fxStar(vec2 p, float r, float rf) {
+  const vec2 k1 = vec2(0.809016994375, -0.587785252292);
+  const vec2 k2 = vec2(-k1.x, k1.y);
+  p.x = abs(p.x);
+  p -= 2.0 * max(dot(k1, p), 0.0) * k1;
+  p -= 2.0 * max(dot(k2, p), 0.0) * k2;
+  p.x = abs(p.x);
+  p.y -= r;
+  vec2 ba = rf * vec2(-k1.y, k1.x) - vec2(0.0, 1.0);
+  float h = clamp(dot(p, ba) / dot(ba, ba), 0.0, r);
+  return length(p - ba * h) * sign(p.y * ba.x - p.x * ba.y);
+}
+
+float fxTriangle(vec2 p, float r) {
+  const float k = 1.7320508;
+  p.x = abs(p.x) - r;
+  p.y = p.y + r / k;
+  if (p.x + k * p.y > 0.0) p = vec2(p.x - k * p.y, -k * p.x - p.y) / 2.0;
+  p.x -= clamp(p.x, -2.0 * r, 0.0);
+  return -length(p) * sign(p.y);
+}
+
+/* an exclamation mark, tapering toward its dot */
+float fxExclaim(vec2 p) {
+  float bar = fxSegment(p, vec2(0.0, -0.2), vec2(0.0, 0.8)) - mix(0.11, 0.19, clamp((p.y + 0.2), 0.0, 1.0));
+  return min(bar, length(p - vec2(0.0, -0.66)) - 0.15);
+}
+
 /* coverage, highlight */
 vec2 glyph(int g, vec2 p, float px) {
   float d = 1e9;
@@ -75,6 +103,29 @@ vec2 glyph(int g, vec2 p, float px) {
   } else if (g == 11) {
     d = (length(p / vec2(0.3, 0.95)) - 1.0) * 0.3;
     light = -0.35 * (1.0 - smoothstep(0.0, 0.05 + px, abs(p.x + 0.04 * p.y)));
+  } else if (g == 13) {
+    d = fxExclaim(p);
+    light = 0.3 * (1.0 - smoothstep(-px, px, fxSegment(p, vec2(-0.05, 0.1), vec2(-0.05, 0.7)) - 0.035));
+  } else if (g == 14) {
+    d = fxTriangle(p - vec2(0.0, -0.12), 0.82) - 0.14;
+    /* a white mark on the coloured sign */
+    light = 1.0 - smoothstep(-px, px, fxExclaim((p - vec2(0.0, -0.08)) / 0.52) * 0.52);
+  } else if (g == 15) {
+    vec2 q = abs(p) - vec2(0.32, 0.78);
+    d = length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - 0.06;
+    light = 0.35 * step(0.0, p.x);
+  } else if (g == 16) {
+    float c = min(min(length(p - vec2(-0.48, -0.08)) - 0.4, length(p - vec2(0.08, 0.18)) - 0.55), length(p - vec2(0.56, -0.1)) - 0.36);
+    d = max(c, -p.y - 0.44);
+    light = 0.45 * smoothstep(-0.2, 0.7, p.y) - 0.25 * (1.0 - smoothstep(-0.45, -0.1, p.y));
+  } else if (g == 17) {
+    d = fxStar(p, 0.92, 0.46) - 0.06;
+    light = 0.5 * (1.0 - smoothstep(0.0, 0.45, length(p - vec2(-0.12, 0.18))));
+  } else if (g == 18) {
+    float r = length(p);
+    float teeth = 0.66 + 0.2 * smoothstep(-0.25, 0.25, cos(atan(p.y, p.x) * 8.0));
+    d = max(r - teeth, 0.26 - r);
+    light = 0.3 * (1.0 - smoothstep(0.3, 0.7, length(p - vec2(-0.2, 0.25))));
   } else {
     d = length(p) - 0.9;
     light = 0.35 * (1.0 - smoothstep(0.0, 0.6, length(p - vec2(-0.3, 0.35))));

@@ -59,6 +59,12 @@ export const mochi: CharacterSpec = {
     listening: { sprout: { rx: -0.4, rz: 0.15 } },
     speaking: { sprout: { rz: [0, 0.2, 2.4, 0] } },
     sleeping: { sprout: { rx: 0.85, rz: 0.35 } },
+    working: { sprout: { ry: [0, 0, 0, 0, 3] } },
+    error: { sprout: { rx: 0.45, rz: [0.3, 0.15, 12, 0] } },
+    surprised: { sprout: { rx: -0.3 } },
+    celebrating: { sprout: { ry: [0, 0, 0, 0, 18] } },
+    /* the sprout wilts */
+    sad: { sprout: { rx: 1.1, rz: 0.5 } },
     happy: { sprout: { ry: [0, 0, 0, 0, 16] } },
   },
   fx: {

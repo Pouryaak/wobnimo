@@ -55,7 +55,7 @@ export class WebGL2Renderer implements Renderer {
     const lift = pose.lift;
     gl.uniform2f(u.uResolution, frame.width, frame.height);
     gl.uniform1f(u.uTime, frame.time);
-    gl.uniform4f(u.uCamera, spec.frame.target, spec.frame.radius / TAN_HALF_FOV, TAN_HALF_FOV, CAMERA_PITCH);
+    gl.uniform4f(u.uCamera, spec.frame.target, (spec.frame.radius * frame.framing) / TAN_HALF_FOV, TAN_HALF_FOV, CAMERA_PITCH);
     gl.uniform4f(u.uBound, 0, spec.bound.y + lift, 0, spec.bound.radius);
     gl.uniformMatrix4fv(u.uBones, false, frame.bones);
     gl.uniform1f(u.uScaleFix, pose.minScale);

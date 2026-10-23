@@ -98,11 +98,14 @@ row of identical mascots don't blink in sync, and a given seed always
 behaves the same.
 
 `states.ts` holds the per-state targets as a table, not as code. Alongside
-the state, the brain keeps a weight per **expression** (the five states plus
+the state, the brain keeps a weight per **expression** (the ten states plus
 `happy`), each easing toward 1 or 0, so acting can cross-fade.
 
 The brain also reports **beats**: one-frame events for the moments an
-animator would hit, a landing, a syllable, entering `happy`. Speech
+animator would hit, a landing, a syllable, entering any expression
+(`enter:error`, `enter:celebrating`). Entering a state can also start an
+envelope: a startled shake for `error` and `surprised`, repeated hops for
+`celebrating`, slow sighs for `sad`. Speech
 (`speech.ts`) is a syllable generator, not a sine wave: syllables grouped
 into words and phrases, each with its own stress and vowel ("ah", "ee",
 "oh", "oo"), closing on the consonant between them and resting shut
@@ -179,6 +182,12 @@ full-screen triangle per frame. In the shader:
   lighter one.
 - **Antialiasing** from how closely a missed ray passed the surface, plus
   pixel-footprint-aware filtering on painted detail (mouths, iris edges, LEDs).
+- **Surface detail** (`surface` on a material): fur fibres, pebbled scales
+  with darker seams, speckles or a wet ripple, from 3D noise in a bone's
+  space, so the pattern rides on the body. It fades with the pixel
+  footprint, so a small mascot never shimmers.
+- **Framing**: the camera backs off by the `framing` option, so a page can
+  set characters smaller in their canvases without resizing them.
 - Output is **premultiplied alpha**, so the page's own background shows
   through. No backdrop is baked in.
 

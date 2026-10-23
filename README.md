@@ -15,8 +15,13 @@ like a cartoon, and reacting to what your app or agent is doing.
 
 - **Characters are data.** A `CharacterSpec` is plain JSON: parts, materials,
   bones, eyes, face, acting and effects. No keyframes, no per-character code.
-- **One engine for any body.** A robot, a bird, a jelly, a ghost and an
-  octopus all run on the same ~20 KB (gzipped) runtime with no dependencies.
+- **One engine for any body.** Eleven characters (a robot, a songbird, a
+  jelly, a ghost, an octopus, a plush cat, a tree frog, a penguin, a baby
+  dino, a rain cloud and a robot duck) all run on the same ~24 KB (gzipped)
+  runtime with no dependencies.
+- **Real surfaces.** Fur, pebbled scales, speckled wet skin and a rippled
+  sheen are procedural detail on a material (`surface`), fixed to a bone so
+  they move with the body.
 - **Premium by default.** Per-pixel studio lighting, clear coat, subsurface
   scattering, soft shadows and occlusion, all derived from the shape.
 - **Acted, not just animated.** Every state has a pose per character (Volt
@@ -27,9 +32,22 @@ like a cartoon, and reacting to what your app or agent is doing.
 
 ## Use it
 
-Five states, shared by every character, made to follow an agent:
-`idle`, `thinking`, `listening`, `speaking`, `sleeping`. Clicking a mascot
-pokes it (a happy hop).
+Ten states, shared by every character, made to follow an agent:
+
+| State | When |
+|---|---|
+| `idle` | Waiting for the user |
+| `thinking` | Planning, before it answers |
+| `listening` | The user is talking or typing |
+| `speaking` | Streaming a reply |
+| `sleeping` | Nothing has happened for a while |
+| `working` | Running a tool, a build or a long task |
+| `error` | Something failed |
+| `surprised` | Something unexpected arrived |
+| `celebrating` | A task finished, the tests passed |
+| `sad` | It could not help, or the user is unhappy |
+
+Clicking a mascot pokes it (a happy hop).
 
 ### HTML, Vue, Svelte, anything that renders tags
 
@@ -98,6 +116,7 @@ Or render `<wobnimo-mascot>` directly; React 19 passes its props through.
 | `speed` | `1` | Pace of everything: acting, springs, effects. |
 | `effects` | `true` | Particles around the character. |
 | `interactive` | `true` | Follows the pointer, hops when clicked. |
+| `framing` | `1` | Room around the character; above 1 makes it smaller in its canvas. |
 | `seed` | random | Desyncs blinks and glances between mascots; fixed seeds behave the same every time. |
 | `exposure`, `shadow`, `maxPixelRatio`, `respectReducedMotion` | | Rendering. |
 
@@ -140,7 +159,7 @@ rebuilds the playground and publishes it to GitHub Pages
 
 - [`docs/architecture.md`](docs/architecture.md): how it works and why.
 - [`packages/engine/src/spec/types.ts`](packages/engine/src/spec/types.ts): the character format.
-- [`packages/characters/src`](packages/characters/src): the five specs.
+- [`packages/characters/src`](packages/characters/src): the eleven specs.
 
 ## Layout
 

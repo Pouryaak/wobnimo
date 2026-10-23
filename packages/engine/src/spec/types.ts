@@ -45,7 +45,18 @@ export interface CharacterSpec {
 }
 
 /** Every state a character can be in, plus the short happy reaction to a poke. */
-export type Expression = 'idle' | 'thinking' | 'listening' | 'speaking' | 'sleeping' | 'happy';
+export type Expression =
+  | 'idle'
+  | 'thinking'
+  | 'listening'
+  | 'speaking'
+  | 'sleeping'
+  | 'working'
+  | 'error'
+  | 'surprised'
+  | 'celebrating'
+  | 'sad'
+  | 'happy';
 
 /**
  * A rotation over time: `base + amp · sin(2π · hz · t + phase)`, plus `spin`
@@ -60,10 +71,12 @@ export interface AnchorSpec {
 }
 
 /** The shapes an effect particle can take. */
-export type Glyph = 'z' | 'bubble' | 'sparkle' | 'heart' | 'note' | 'arc' | 'puff' | 'ring' | 'drop' | 'spark' | 'mote' | 'feather' | 'dot';
+export type Glyph =
+  | 'z' | 'bubble' | 'sparkle' | 'heart' | 'note' | 'arc' | 'puff' | 'ring' | 'drop' | 'spark' | 'mote' | 'feather' | 'dot'
+  | 'exclaim' | 'warning' | 'confetti' | 'cloud' | 'star' | 'gear';
 
 /** When an emitter fires: continuously in a state, always, or on a beat of the animation. */
-export type FxTrigger = Expression | 'ambient' | 'land' | 'syllable' | 'enter:happy';
+export type FxTrigger = Expression | 'ambient' | 'land' | 'syllable' | `enter:${Expression}`;
 
 export interface EmitterSpec {
   glyph: Glyph;
@@ -138,6 +151,26 @@ export interface MaterialSpec {
   emitStrength?: number;
   /** Takes its light from the state's glow colour: antenna bulbs, chest lamps. */
   glows?: boolean;
+  /** Fine detail on top of the shape: fur, scales, freckles, a wet ripple. */
+  surface?: SurfaceSpec;
+}
+
+/**
+ * Procedural surface detail, fixed to a bone so it moves with the body.
+ * `fur`: fine fibres and soft clumps. `scales`: a pebbled hide with darker
+ * seams. `speckle`: scattered spots. `ripple`: a gentle unevenness that
+ * makes a glossy coat read as wet.
+ */
+export interface SurfaceSpec {
+  kind: 'fur' | 'scales' | 'speckle' | 'ripple';
+  /** Features per unit; a mascot is about one unit tall. */
+  scale: number;
+  /** 0–1. */
+  strength?: number;
+  /** Seams for scales, spots for speckle. */
+  color?: Hex;
+  /** The bone the pattern is fixed to. Default the root. */
+  bone?: string;
 }
 
 export interface BoneSpec {

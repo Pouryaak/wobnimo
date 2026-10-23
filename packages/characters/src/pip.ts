@@ -115,6 +115,38 @@ export const pip: CharacterSpec = {
       wingR: { ry: -0.5, rz: -0.12 },
       tuft: { rx: 0.75 },
     },
+    /* pecking away: wing tips tapping, head bobbing over the work */
+    working: {
+      wingL: { rz: [-0.4, 0.18, 6, 0], rx: -0.6 },
+      wingR: { rz: [0.4, 0.18, 6, Math.PI], rx: -0.6 },
+      head: { rx: [0.1, 0.07, 5.2, 0] },
+    },
+    /* feathers on end: wings stiff and trembling, tuft and tail up */
+    error: {
+      wingL: { rz: [-1.0, 0.1, 12, 0] },
+      wingR: { rz: [1.0, 0.1, 12, 1] },
+      tuft: { rx: -0.5 },
+      tail: { rx: -0.45 },
+    },
+    surprised: {
+      wingL: { rz: -1.7 },
+      wingR: { rz: 1.7 },
+      tuft: { rx: -0.6 },
+      tail: { rx: -0.5 },
+    },
+    celebrating: {
+      wingL: { rz: [-1.4, 0.5, 9, 0] },
+      wingR: { rz: [1.4, 0.5, 9, 0] },
+      tail: { rx: [0, 0.3, 6, 0] },
+      tuft: { rx: [0, 0.25, 6, 0] },
+    },
+    /* everything droops: wings, tuft, tail */
+    sad: {
+      wingL: { rz: 0.25 },
+      wingR: { rz: -0.25 },
+      tuft: { rx: 0.9 },
+      tail: { rx: 0.5 },
+    },
     happy: {
       wingL: { rz: [-0.9, 0.75, 7, 0] },
       wingR: { rz: [0.9, 0.75, 7, 0] },

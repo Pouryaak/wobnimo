@@ -14,7 +14,9 @@ type Acting = Partial<Record<Expression, Record<string, { rx?: Motion; rz?: Moti
 /* How the tentacles act. Each state sets every segment's curl; a couple of
    tentacles get their own business (one to the chin, one to the ear). */
 function tentacleActing(): Acting {
-  const acting: Required<Acting> = { idle: {}, thinking: {}, listening: {}, speaking: {}, sleeping: {}, happy: {} };
+  const acting: Required<Acting> = {
+    idle: {}, thinking: {}, listening: {}, speaking: {}, sleeping: {}, working: {}, error: {}, surprised: {}, celebrating: {}, sad: {}, happy: {},
+  };
   for (let i = 0; i < TENTACLES; i++) {
     const phase = i * 1.05;
     acting.speaking[`t${i}s0`] = { rx: [0, 0.2, 1.1, phase] };
@@ -24,7 +26,31 @@ function tentacleActing(): Acting {
     acting.sleeping[`t${i}s2`] = { rx: 0.55 };
     acting.happy[`t${i}s0`] = { rx: [-0.45, 0.35, 2.4, phase] };
     acting.happy[`t${i}s1`] = { rx: [0, 0.3, 2.4, phase + 1] };
+    /* a jolt: every tentacle splays and trembles */
+    acting.error[`t${i}s0`] = { rx: -0.35 };
+    acting.error[`t${i}s1`] = { rx: [0.35, 0.18, 9, phase] };
+    acting.error[`t${i}s2`] = { rx: [0.2, 0.22, 11, phase + 2] };
+    /* a fright flings them all up and out */
+    acting.surprised[`t${i}s0`] = { rx: -0.85 };
+    acting.surprised[`t${i}s1`] = { rx: -0.25 };
+    acting.surprised[`t${i}s2`] = { rx: -0.3 };
+    acting.celebrating[`t${i}s0`] = { rx: [-0.6, 0.45, 3, phase] };
+    acting.celebrating[`t${i}s1`] = { rx: [0, 0.4, 3, phase + 1] };
+    acting.celebrating[`t${i}s2`] = { rx: [0, 0.4, 3, phase + 2] };
+    /* limp, hanging straight down */
+    acting.sad[`t${i}s0`] = { rx: 0.45 };
+    acting.sad[`t${i}s1`] = { rx: 0.42 };
+    acting.sad[`t${i}s2`] = { rx: [0.55, 0.06, 0.4, phase] };
+    acting.working[`t${i}s0`] = { rx: [-0.15, 0.08, 1.2, phase] };
   }
+  /* the two front tentacles type, in turn */
+  acting.working.t0s0 = { rx: [-1.25, 0.22, 5.5, 0] };
+  acting.working.t0s1 = { rx: [0.7, 0.2, 5.5, 0.6] };
+  acting.working.t5s0 = { rx: [-1.25, 0.22, 5.5, Math.PI] };
+  acting.working.t5s1 = { rx: [0.7, 0.2, 5.5, Math.PI + 0.6] };
+  /* and cheer, waving high */
+  acting.celebrating.t0s0 = { rx: [-2.1, 0.35, 3.2, 0] };
+  acting.celebrating.t5s0 = { rx: [-2.1, 0.35, 3.2, Math.PI] };
   /* tentacle 0 sits front-right: it curls up to the chin */
   acting.thinking.t0s0 = { rx: -1.75 };
   acting.thinking.t0s1 = { rx: 0.95 };

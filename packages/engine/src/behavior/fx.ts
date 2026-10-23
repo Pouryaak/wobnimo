@@ -14,6 +14,7 @@ export const MAX_PARTICLES = 32;
 
 export const GLYPH_ID: Record<Glyph, number> = {
   z: 0, bubble: 1, sparkle: 2, heart: 3, note: 4, arc: 5, puff: 6, ring: 7, drop: 8, spark: 9, mote: 10, feather: 11, dot: 12,
+  exclaim: 13, warning: 14, confetti: 15, cloud: 16, star: 17, gear: 18,
 };
 
 /** The effects every character gets unless its spec replaces them. */
@@ -36,6 +37,38 @@ export const DEFAULT_FX: FxSpec = {
   ],
   happy: [
     { glyph: 'sparkle', anchor: 'top', rate: 2.5, spread: 0.35, velocity: [0, 0.14, 0], jitter: 0.1, life: [0.6, 0.9], size: [0.045, 0], spin: 1.6, color: '#ffd166' },
+  ],
+  /* little gears turning off the side of the head while it works */
+  working: [
+    { glyph: 'gear', anchor: 'top', rate: 0.7, offset: [0.12, 0.02, 0.05], spread: 0.03, velocity: [0.05, 0.1, 0], jitter: 0.02, wobble: 0.02, life: [2, 2.4], size: [0.035, 0.065], spin: 2.2, color: '#a99cf0' },
+    { glyph: 'dot', anchor: 'top', rate: 2.2, offset: [-0.16, 0.06, 0.05], spread: 0.02, velocity: [-0.06, 0.14, 0], jitter: 0.03, life: [0.8, 1.1], size: [0.015, 0.006], color: '#c7bfff', glow: true },
+  ],
+  /* a warning sign pops up, then smoke curls off the top */
+  'enter:error': [
+    { glyph: 'warning', anchor: 'top', rate: 1, offset: [0.02, 0.12, 0.08], velocity: [0, 0.16, 0], drag: 2.2, life: [1.5, 1.5], size: [0.12, 0.1], color: '#ff4d3d' },
+    { glyph: 'spark', anchor: 'top', rate: 6, offset: [0, 0, 0.05], velocity: [0, 0.4, 0], jitter: 1.3, gravity: 1.6, life: [0.25, 0.4], size: [0.035, 0.015], color: '#ffd166', glow: true, align: true },
+  ],
+  error: [
+    { glyph: 'puff', anchor: 'top', rate: 2.2, offset: [0.02, 0.02, 0], spread: 0.04, velocity: [0, 0.16, 0], jitter: 0.05, wobble: 0.04, drag: 0.4, life: [1.3, 1.7], size: [0.04, 0.13], color: '#8b8fa3' },
+  ],
+  'enter:surprised': [
+    { glyph: 'exclaim', anchor: 'top', rate: 1, offset: [0.04, 0.14, 0.06], velocity: [0, 0.3, 0], drag: 3.5, life: [1.1, 1.1], size: [0.11, 0.08], rotation: -0.15, color: '#ffcc33' },
+    { glyph: 'spark', anchor: 'top', rate: 8, offset: [0, 0.02, 0.04], spread: 0.04, velocity: [0, 0.5, 0], jitter: 1.1, drag: 4, life: [0.3, 0.42], size: [0.05, 0.02], color: '#ffe08a', align: true },
+  ],
+  /* confetti in four colours, and a starburst on arrival */
+  celebrating: [
+    { glyph: 'confetti', anchor: 'top', rate: 2.6, spread: 0.25, velocity: [0, 0.7, 0.05], jitter: 0.7, gravity: 0.9, drag: 1.4, wobble: 0.06, life: [1.6, 2.2], size: [0.03, 0.026], spin: 7, color: '#ff5d8f' },
+    { glyph: 'confetti', anchor: 'top', rate: 2.6, spread: 0.25, velocity: [0, 0.7, 0.05], jitter: 0.7, gravity: 0.9, drag: 1.4, wobble: 0.06, life: [1.6, 2.2], size: [0.03, 0.026], spin: -6, color: '#ffc933' },
+    { glyph: 'confetti', anchor: 'top', rate: 2.6, spread: 0.25, velocity: [0, 0.7, 0.05], jitter: 0.7, gravity: 0.9, drag: 1.4, wobble: 0.06, life: [1.6, 2.2], size: [0.03, 0.026], spin: 8, color: '#4dc3ff' },
+    { glyph: 'confetti', anchor: 'top', rate: 2.6, spread: 0.25, velocity: [0, 0.7, 0.05], jitter: 0.7, gravity: 0.9, drag: 1.4, wobble: 0.06, life: [1.6, 2.2], size: [0.03, 0.026], spin: -7, color: '#5ee08f' },
+  ],
+  'enter:celebrating': [
+    { glyph: 'star', anchor: 'top', rate: 6, spread: 0.1, velocity: [0, 0.55, 0.05], jitter: 0.9, gravity: 0.6, drag: 1.6, life: [0.8, 1.2], size: [0.06, 0.02], spin: 2, color: '#ffd23f' },
+  ],
+  /* its own small rain cloud */
+  sad: [
+    { glyph: 'cloud', anchor: 'top', rate: 0.42, offset: [-0.12, 0.22, 0.02], velocity: [0, 0, 0], wobble: 0.015, life: [2.6, 2.6], size: [0.15, 0.15], color: '#9aa3bd' },
+    { glyph: 'drop', anchor: 'top', rate: 4, offset: [-0.12, 0.16, 0.03], spread: 0.08, velocity: [0, -0.25, 0], gravity: 1.2, life: [0.45, 0.6], size: [0.018, 0.014], color: '#6aa8ff', align: true },
   ],
   land: [
     { glyph: 'puff', anchor: 'feet', rate: 7, spread: 0.1, velocity: [0, 0.05, 0], jitter: 0.32, drag: 3.5, life: [0.45, 0.7], size: [0.05, 0.12], color: '#c4cad9' },

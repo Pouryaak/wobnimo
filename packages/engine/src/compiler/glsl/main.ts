@@ -55,7 +55,9 @@ void main() {
       vec3 p = ro + rd * tt;
       gPixel = tt * pixelAngle;
       vec3 n = calcNormal(p);
-      Material m = getMaterial(map(p).y, p, n);
+      float id = map(p).y;
+      Material m = getMaterial(id, p, n);
+      surface(id, p, n, m);
       vec3 col = pow(aces(shade(m, p, n, -rd) * uExposure), vec3(1.0 / 2.2));
       body = vec4(col * coverage, coverage);
       if (hitT < 0.0) hitT = tt;

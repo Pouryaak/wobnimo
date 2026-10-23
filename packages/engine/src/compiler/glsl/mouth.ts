@@ -7,9 +7,10 @@
 export const MOUTH = /* glsl */ `
 /* q: point in mouth space (x right, y up); w: half width; open: lip
    separation in the same units; round: 0 for "ah"/"ee", 1 for "oo";
-   smile: -1..1; t: half the stroke; px: a pixel in mouth units.
+   smile: -1..1; crooked: -1..1 tilts and wobbles the line, as when something
+   is wrong; t: half the stroke; px: a pixel in mouth units.
    Returns coverage, tongue coverage, and depth inside the mouth (0 at the lips, 1 deep). */
-vec3 mouth(vec2 q, float w, float open, float round, float smile, float t, float px) {
+vec3 mouth(vec2 q, float w, float open, float round, float smile, float crooked, float t, float px) {
   float opened = smoothstep(0.0, 0.25 * w, open);
   w *= 1.0 - 0.3 * round * opened;
   open *= 1.0 + 0.1 * round;
@@ -18,14 +19,14 @@ vec3 mouth(vec2 q, float w, float open, float round, float smile, float t, float
 
   float u = clamp(q.x / w, -1.0, 1.0);
   float bulge = sqrt(max(1.0 - u * u, 0.0));
-  float line = bend * w * u * u;
+  float line = bend * w * u * u + crooked * w * (0.22 * u + 0.12 * sin(u * 6.0));
   float upper = line + open * (0.22 + 0.45 * round) * bulge;
   float lower = line - open * bulge;
 
   /* vertical distances are cheap and exact along y; the slope converts the
      antialiasing width so the steep sides near the corners stay crisp */
   float steep = abs(u) / max(bulge, 0.08);
-  float slope = abs(2.0 * bend * u) + open / w * steep;
+  float slope = abs(2.0 * bend * u) + abs(crooked) * 0.9 + open / w * steep;
   float aa = px * sqrt(1.0 + min(slope * slope, 36.0));
 
   /* the lips taper toward the corners once the mouth is open */
@@ -33,7 +34,7 @@ vec3 mouth(vec2 q, float w, float open, float round, float smile, float t, float
   float inside = max(q.y - upper, lower - q.y);
   float body = abs(q.x) <= w ? inside - lip : 1e3;
   /* round caps finish the closed stroke; an open mouth's lips already meet in a point */
-  float cap = length(vec2(abs(q.x) - w, q.y - bend * w)) - t;
+  float cap = length(vec2(abs(q.x) - w, q.y - bend * w - crooked * w * (0.22 * sign(q.x) + 0.12 * sin(6.0 * sign(q.x))))) - t;
   float a = max(1.0 - smoothstep(-aa, aa, body), (1.0 - smoothstep(-px, px, cap)) * (1.0 - opened));
 
   /* a tongue resting on the lower lip, only inside the opening */

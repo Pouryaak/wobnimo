@@ -5,7 +5,7 @@
      <wobnimo-mascot character="volt" state="thinking" style="width:160px;height:160px"></wobnimo-mascot>
 
    Attributes: character, state, seed, speed, palette ("shell:#e0457b; trim:#fff"),
-   interactive="false", effects="false".
+   interactive="false", effects="false", framing (room around it, default 1).
    Events: `poke` and `statechange` (detail: the new state).
    Properties: `state`, `spec` (any CharacterSpec, for characters not in the registry), `mascot`. */
 
@@ -14,7 +14,7 @@ import type { CharacterSpec } from '../spec/types';
 import type { Palette } from './customize';
 import { Mascot } from './mascot';
 
-const ATTRIBUTES = ['character', 'state', 'seed', 'speed', 'palette', 'interactive', 'effects'] as const;
+const ATTRIBUTES = ['character', 'state', 'seed', 'speed', 'palette', 'interactive', 'effects', 'framing'] as const;
 
 function parsePalette(text: string | null): Palette | undefined {
   if (!text) return undefined;
@@ -100,6 +100,7 @@ export function defineMascotElement(characters: CharacterSpec[], tag = 'wobnimo-
         palette: parsePalette(this.getAttribute('palette')),
         interactive: this.getAttribute('interactive') !== 'false',
         effects: this.getAttribute('effects') !== 'false',
+        framing: Number(this.getAttribute('framing') ?? 1),
       });
       m.on('poke', () => this.dispatchEvent(new CustomEvent('poke', { bubbles: true, composed: true })));
       m.on('state', (s) => this.dispatchEvent(new CustomEvent('statechange', { detail: s, bubbles: true, composed: true })));

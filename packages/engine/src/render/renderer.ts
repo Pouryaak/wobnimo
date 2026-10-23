@@ -19,6 +19,8 @@ export interface Frame {
   height: number;
   shadow: Vec3;
   exposure: number;
+  /** Room around the character: 1 fits it snugly, 1.2 pulls the camera back a fifth. */
+  framing: number;
 }
 
 export interface Renderer {

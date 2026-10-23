@@ -69,6 +69,12 @@ export const boo: CharacterSpec = {
       armR: { rz: [0.3, 0.3, 1.2, 1.7], rx: [-0.3, 0.2, 0.9, 2.2] },
     },
     sleeping: { armL: { rz: 0.4 }, armR: { rz: -0.4 }, body: { rz: 0.08 } },
+    working: { armL: { rx: [-0.6, 0.15, 6, 0], rz: -0.3 }, armR: { rx: [-0.6, 0.15, 6, Math.PI], rz: 0.3 } },
+    error: { armL: { rz: [-1.0, 0.25, 10, 0] }, armR: { rz: [1.0, 0.25, 10, 1] } },
+    /* hands to its cheeks */
+    surprised: { armL: { rz: -1.4, rx: -0.4 }, armR: { rz: 1.4, rx: -0.4 } },
+    celebrating: { armL: { rz: [-1.6, 0.3, 4, 0] }, armR: { rz: [1.6, 0.3, 4, Math.PI] } },
+    sad: { armL: { rz: 0.5 }, armR: { rz: -0.5 }, body: { rz: 0.05 } },
     happy: { armL: { rz: [-1.3, 0.35, 3, 0] }, armR: { rz: [1.3, 0.35, 3, 1.2] } },
   },
   fx: {

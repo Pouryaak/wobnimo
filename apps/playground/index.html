@@ -1,88 +1,212 @@
-<title>Wobnimo Playground</title>
+<title>Wobnimo Studio</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Five characters, one engine. Every mascot is a small spec compiled to a shader.">
+<meta name="description" content="Living mascots for the web. Eleven characters, ten moods, one 24 KB engine. Every character is a few kilobytes of data, rendered live on your GPU.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Fraunces:opsz,wght,SOFT,WONK@9..144,400..800,0..100,0..1&family=Martian+Mono:wght@400;500&display=swap">
 <style>/*__CSS__*/</style>
 
 <div class="page">
-  <header class="masthead">
-    <div class="brand">
-      <span class="wordmark">wobnimo</span>
-      <span class="version">v0.1 · prototype</span>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="wordmark" href="#top" aria-label="Wobnimo, back to top">wobnimo<span class="wordmark-dot" aria-hidden="true"></span></a>
+      <nav class="nav" aria-label="Sections">
+        <a href="#cast">Cast</a>
+        <a href="#studio">Studio</a>
+        <a href="#install">Install</a>
+        <a href="#tiny">Size &amp; speed</a>
+      </nav>
+      <span class="badge">Preview · v0.2</span>
     </div>
-    <p class="lede">Five characters, one engine. Each mascot is a few kilobytes of data that compiles to its own shader, lit in a virtual studio and moved by springs.</p>
   </header>
 
-  <main class="layout">
-    <section class="stage-card" aria-label="Stage">
-      <div class="stage-bar">
-        <div class="states" id="states" role="group" aria-label="State"></div>
-        <span class="hint">Move your cursor. Click to poke.</span>
+  <main id="top">
+    <!-- Opening shot: a live scene played by three of the cast -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="slate"><span class="slate-mark" aria-hidden="true"></span>Wobnimo Studio · character engine for the web</p>
+        <h1 id="hero-title">Little characters.<br><em>Real feelings.</em></h1>
+        <p class="hero-lede">Give your app or agent a face. Every Wobnimo mascot is a few kilobytes of data that becomes its own shader, lit like a studio render and acted on springs, live in the browser. The whole engine is <strong class="engine-size">24 KB</strong>.</p>
+        <div class="hero-actions">
+          <a class="button primary" href="#studio">Direct a character</a>
+          <a class="button" href="#install">Install in a minute</a>
+        </div>
       </div>
-      <div class="stage">
-        <canvas id="stage-canvas"></canvas>
-        <div class="caption">
-          <h1 id="stage-name">Volt</h1>
-          <p id="stage-plan"></p>
+
+      <figure class="viewfinder" aria-label="A short scene played live by Miso, Microduck and Nimbus">
+        <div class="lineup" id="lineup">
+          <div class="actor actor-side" data-actor="miso"></div>
+          <div class="actor actor-lead" data-actor="microduck"></div>
+          <div class="actor actor-side" data-actor="nimbus"></div>
+        </div>
+        <div class="vf-corners" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <div class="vf-top">
+          <span class="vf-rec"><span class="rec-dot" aria-hidden="true"></span>Live</span>
+          <span id="scene-label">Scene 1 / 8 · idle</span>
+        </div>
+        <figcaption class="subtitle" id="subtitle" aria-live="polite"></figcaption>
+        <div class="vf-bottom">
+          <span id="timecode" class="tabular">00:00:00:00</span>
+          <button type="button" class="vf-button" id="scene-toggle" aria-pressed="false">Pause</button>
+          <span id="fps" class="tabular">– fps</span>
+        </div>
+      </figure>
+    </section>
+
+    <!-- The cast, as frames on a strip of film -->
+    <section class="cast" id="cast" aria-labelledby="cast-title">
+      <div class="section-head">
+        <p class="eyebrow">The cast</p>
+        <h2 id="cast-title">Eleven characters, one engine.</h2>
+        <p class="section-lede">Fur, wet skin, knitted wool, injection-moulded plastic: each body plan pushes the engine somewhere new, and each one is plain data you can read, remix or generate. Pick one to put it on stage.</p>
+      </div>
+      <div class="film"><div class="filmstrip" id="filmstrip"></div></div>
+    </section>
+
+    <!-- The playground proper -->
+    <section class="studio" id="studio" aria-labelledby="studio-title">
+      <div class="section-head">
+        <p class="eyebrow">The studio</p>
+        <h2 id="studio-title">You direct. It acts.</h2>
+        <p class="section-lede">Switch states the way your agent would, recolour it live, and copy the exact code for the scene you set up.</p>
+      </div>
+
+      <div class="studio-grid">
+        <div class="soundstage">
+          <div class="picker" id="picker" role="group" aria-label="Character"></div>
+          <div class="stage" id="stage">
+            <div class="stage-caption">
+              <h3 id="stage-name">Microduck</h3>
+              <p id="stage-plan"></p>
+            </div>
+            <p class="stage-hint">Move your cursor. Click to poke.</p>
+          </div>
+          <div class="clapper" id="states" role="group" aria-label="State"></div>
+        </div>
+
+        <aside class="desk" aria-label="Direction and code">
+          <section class="desk-panel" aria-labelledby="direct-title">
+            <h3 id="direct-title">Make it yours</h3>
+            <div class="controls">
+              <label class="control" for="color-input">
+                <span class="control-label">Main colour <code id="color-name">shell</code></span>
+                <span class="color-field"><input type="color" id="color-input" value="#f3f1ec"><span id="color-hex" class="tabular">#f3f1ec</span></span>
+              </label>
+              <label class="control" for="speed-input">
+                <span class="control-label">Speed <output id="speed-out" for="speed-input" class="tabular">1×</output></span>
+                <input type="range" id="speed-input" min="0.25" max="2" step="0.05" value="1">
+              </label>
+              <label class="control switch" for="fx-input">
+                <input type="checkbox" id="fx-input" checked>
+                <span>Effects around it</span>
+              </label>
+              <button type="button" class="text-button" id="reset-custom">Reset</button>
+            </div>
+          </section>
+
+          <section class="desk-panel" aria-labelledby="usage-title">
+            <div class="panel-head">
+              <h3 id="usage-title">Your scene, as code</h3>
+              <div class="tabs" role="tablist" aria-label="Snippet">
+                <button type="button" role="tab" id="tab-html" aria-selected="true" aria-controls="snippet">HTML</button>
+                <button type="button" role="tab" id="tab-js" aria-selected="false" aria-controls="snippet">JS</button>
+                <button type="button" role="tab" id="tab-react" aria-selected="false" aria-controls="snippet">React</button>
+              </div>
+            </div>
+            <pre class="code" id="snippet" role="tabpanel" tabindex="0"></pre>
+            <button type="button" class="text-button" id="copy-snippet">Copy code</button>
+          </section>
+
+          <details class="desk-panel spec-panel">
+            <summary>The whole character, as data <span id="stat-spec" class="tabular"></span></summary>
+            <dl class="spec-stats">
+              <div><dt>Parts</dt><dd id="stat-parts" class="tabular">–</dd></div>
+              <div><dt>Bones</dt><dd id="stat-bones" class="tabular">–</dd></div>
+              <div><dt>Shader lines</dt><dd id="stat-lines" class="tabular">–</dd></div>
+            </dl>
+            <pre class="code spec" id="spec" tabindex="0"></pre>
+            <button type="button" class="text-button" id="copy-spec">Copy spec</button>
+          </details>
+        </aside>
+      </div>
+    </section>
+
+    <!-- Getting started -->
+    <section class="install" id="install" aria-labelledby="install-title">
+      <div class="section-head">
+        <p class="eyebrow">Install</p>
+        <h2 id="install-title">Three steps to a living mascot.</h2>
+        <p class="section-lede">Works anywhere you can write a tag: plain HTML, React, Vue, Svelte. No build plugin, no assets to host.</p>
+      </div>
+
+      <div class="install-grid">
+        <ol class="steps">
+          <li class="step">
+            <h3>Add the packages</h3>
+            <div class="codeline"><pre class="code" id="code-install">npm install @wobnimo/engine @wobnimo/characters</pre><button type="button" class="copy-mini" data-copy="code-install">Copy</button></div>
+            <p class="note">Publishing to npm soon. Until then, build from the repository.</p>
+          </li>
+          <li class="step">
+            <h3>Register the element once</h3>
+            <div class="codeline"><pre class="code" id="code-register">import { defineWobnimoElement } from '@wobnimo/characters';
+defineWobnimoElement();</pre><button type="button" class="copy-mini" data-copy="code-register">Copy</button></div>
+          </li>
+          <li class="step">
+            <h3>Drop it in and drive it</h3>
+            <div class="codeline"><pre class="code" id="code-use">&lt;wobnimo-mascot character="microduck" state="idle"&gt;&lt;/wobnimo-mascot&gt;
+
+mascot.state = 'thinking';  // from your agent's events</pre><button type="button" class="copy-mini" data-copy="code-use">Copy</button></div>
+          </li>
+        </ol>
+
+        <div class="states-card">
+          <div class="desk-buddy" id="desk-buddy" aria-hidden="true"></div>
+          <h3>Ten states, made for agents</h3>
+          <p class="note">Wire them to what your app is doing. Every character plays every state its own way, and any change blends from wherever it is.</p>
+          <table class="state-table">
+            <thead><tr><th scope="col">State</th><th scope="col">When</th></tr></thead>
+            <tbody id="state-table"></tbody>
+          </table>
         </div>
       </div>
     </section>
 
-    <aside class="inspector" aria-label="Character">
-      <dl class="stats">
-        <div><dt>Parts</dt><dd id="stat-parts">–</dd></div>
-        <div><dt>Bones</dt><dd id="stat-bones">–</dd></div>
-        <div><dt>Shader lines</dt><dd id="stat-lines">–</dd></div>
-        <div><dt>Spec, gzipped</dt><dd id="stat-spec">–</dd></div>
-      </dl>
+    <!-- Size and speed -->
+    <section class="tiny" id="tiny" aria-labelledby="tiny-title">
+      <div class="section-head">
+        <p class="eyebrow">Size &amp; speed</p>
+        <h2 id="tiny-title">Smaller than a thumbnail. Smooth on a phone.</h2>
+        <p class="section-lede">No sprites, no textures, no video. Shapes, light and motion are all maths, so a character costs less to download than its own avatar image.</p>
+      </div>
 
-      <section class="panel" aria-labelledby="custom-title">
-        <h2 id="custom-title">Make it yours</h2>
-        <div class="controls">
-          <label class="control" for="color-input">
-            <span>Main colour</span>
-            <span class="color-field"><input type="color" id="color-input" value="#2f56c4"><code id="color-name">shell</code></span>
-          </label>
-          <label class="control" for="speed-input">
-            <span>Speed <output id="speed-out" for="speed-input">1.0×</output></span>
-            <input type="range" id="speed-input" min="0.25" max="2" step="0.05" value="1">
-          </label>
-          <label class="control switch" for="fx-input">
-            <input type="checkbox" id="fx-input" checked>
-            <span>Effects around it</span>
-          </label>
-          <button type="button" class="ghost-button" id="reset-custom">Reset</button>
-        </div>
-      </section>
+      <div class="numbers">
+        <div class="number"><span class="figure tabular engine-size">24 KB</span><span class="figure-label">The whole engine, minified and gzipped</span></div>
+        <div class="number"><span class="figure tabular" id="spec-average">~2 KB</span><span class="figure-label">An average character, gzipped</span></div>
+        <div class="number"><span class="figure tabular">1</span><span class="figure-label">Draw call per mascot per frame</span></div>
+        <div class="number"><span class="figure tabular">0</span><span class="figure-label">Dependencies and image files</span></div>
+      </div>
 
-      <section class="panel" aria-labelledby="usage-title">
-        <div class="panel-head">
-          <h2 id="usage-title">Use it</h2>
-          <div class="tabs" role="tablist" aria-label="Snippet">
-            <button type="button" role="tab" id="tab-html" aria-selected="true" aria-controls="snippet">HTML</button>
-            <button type="button" role="tab" id="tab-js" aria-selected="false" aria-controls="snippet">JavaScript</button>
-            <button type="button" role="tab" id="tab-react" aria-selected="false" aria-controls="snippet">React</button>
-          </div>
-        </div>
-        <pre class="code" id="snippet" role="tabpanel" tabindex="0"></pre>
-        <button type="button" class="ghost-button" id="copy-snippet">Copy snippet</button>
-      </section>
+      <div class="weights">
+        <h3>What ships, to scale</h3>
+        <div class="bars" id="bars"></div>
+      </div>
 
-      <details class="panel spec-panel">
-        <summary>The whole character, as data</summary>
-        <pre class="spec" id="spec" tabindex="0"></pre>
-        <button type="button" class="ghost-button" id="copy-spec">Copy spec</button>
-      </details>
-
-      <p class="footnote">Engine runtime: <strong id="engine-size">–</strong> gzipped, no dependencies. WebGL2.</p>
-    </aside>
+      <ul class="perf">
+        <li><strong>Sleeps when unseen.</strong> Mascots scrolled out of view or in a background tab stop drawing.</li>
+        <li><strong>Adapts to the device.</strong> If frames run long, it renders fewer pixels until the GPU catches up.</li>
+        <li><strong>Shares its work.</strong> Ten copies of one character compile one shader and run on one animation loop.</li>
+        <li><strong>Respects reduced motion.</strong> It holds each state's pose instead of animating.</li>
+      </ul>
+      <p class="live-meter" aria-live="off">Right now this page is running <strong id="live-count" class="tabular">–</strong> at <strong id="live-fps" class="tabular">–</strong> on your device.</p>
+    </section>
   </main>
 
-  <section class="roster-wrap" aria-label="Characters">
-    <h2 class="section-title">Cast</h2>
-    <div class="roster" id="roster"></div>
-  </section>
+  <footer class="footer">
+    <div class="footer-cloud" id="footer-cloud" aria-hidden="true"></div>
+    <div class="footer-copy">
+      <p class="wordmark small">wobnimo<span class="wordmark-dot" aria-hidden="true"></span></p>
+      <p>Coming next: npm packages, a WebGPU renderer, a Rust and WebAssembly core, and a character editor.</p>
+    </div>
+  </footer>
 </div>
 <script>/*__JS__*/</script>
