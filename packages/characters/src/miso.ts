@@ -7,7 +7,7 @@ export const miso: CharacterSpec = {
   tagline: 'A plush tabby with velvet fur, swivelling ears and a tail that never sits still',
   accent: '#e38b3c',
   frame: { target: 0.56, radius: 0.72 },
-  bound: { y: 0.56, radius: 0.78 },
+  bound: { y: 0.52, radius: 0.88 },
   motion: { hop: 0.14, squash: 1.2, snap: 1.1, talkSquash: 0.3 },
   materials: {
     /* matte plush: almost no highlight, a velvet glow at the edges where

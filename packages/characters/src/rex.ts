@@ -18,7 +18,7 @@ export const rex: CharacterSpec = {
   tagline: 'A baby T. rex with pebbly scales, wobbly back spikes, tiny arms and a wagging tail',
   accent: '#4fb86a',
   frame: { target: 0.52, radius: 0.76 },
-  bound: { y: 0.5, radius: 0.8 },
+  bound: { y: 0.46, radius: 0.86 },
   motion: { hop: 0.15, squash: 1.15, snap: 1.05, talkSquash: 0.35 },
   materials: {
     /* a soft vinyl-toy hide: satin, with pebbled scales and darker seams */
@@ -65,8 +65,8 @@ export const rex: CharacterSpec = {
     { bone: 'head', shape: 'ellipsoid', at: [0, 0.2, -0.02], radii: [0.29, 0.25, 0.27], blend: 0.12, material: 'hide' },
     { bone: 'head', shape: 'ellipsoid', at: [0, 0.1, 0.17], radii: [0.23, 0.14, 0.18], blend: 0.1, material: 'hide' },
     /* nostrils */
-    { bone: 'head', shape: 'sphere', at: [-0.05, 0.17, 0.34], radius: 0.014, op: 'sub', blend: 0.01, material: 'hide' },
-    { bone: 'head', shape: 'sphere', at: [0.05, 0.17, 0.34], radius: 0.014, op: 'sub', blend: 0.01, material: 'hide' },
+    { bone: 'head', shape: 'sphere', at: [-0.047, 0.162, 0.322], radius: 0.014, op: 'sub', blend: 0.01, material: 'hide' },
+    { bone: 'head', shape: 'sphere', at: [0.047, 0.162, 0.322], radius: 0.014, op: 'sub', blend: 0.01, material: 'hide' },
     /* tiny arms with two little claws */
     ...([['armL', -1], ['armR', 1]] as const).flatMap(([bone, s]): PartSpec[] => [
       { bone, shape: 'capsule', from: [0, 0, 0], to: [s * 0.01, -0.1, 0.03], radius: 0.042, blend: 0.04, material: 'bodyHide' },
@@ -88,8 +88,8 @@ export const rex: CharacterSpec = {
     { bone: 'head', on: ['hide'], kind: 'ellipse', at: [0, -0.01, 0.15], radii: [0.17, 0.06], color: '#fff0c4', soft: 0.35 },
     { bone: 'head', on: ['hide'], kind: 'sphere', at: [-0.2, 0.12, 0.24], radius: 0.055, color: '#ff9a9a', soft: 0.6, opacity: 0.7 },
     { bone: 'head', on: ['hide'], kind: 'sphere', at: [0.2, 0.12, 0.24], radius: 0.055, color: '#ff9a9a', soft: 0.6, opacity: 0.7 },
-    ...[[-0.09, 0.22], [-0.115, 0.19], [0.09, 0.22], [0.115, 0.19]].map(([x, y]): PaintSpec => ({
-      bone: 'head', on: ['hide'], kind: 'sphere', at: [x, y, 0.31], radius: 0.009, color: '#3f8a4f', soft: 0.3,
+    ...[[-0.083, 0.204, 0.289], [-0.109, 0.181, 0.297], [0.083, 0.204, 0.289], [0.109, 0.181, 0.297]].map(([x, y, z]): PaintSpec => ({
+      bone: 'head', on: ['hide'], kind: 'sphere', at: [x, y, z], radius: 0.009, color: '#3f8a4f', soft: 0.3,
     })),
   ],
   eyes: {

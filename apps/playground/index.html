@@ -1,9 +1,9 @@
 <title>Wobnimo</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Pixels with a pulse. Ten living mascots, one featherweight animation engine for the web.">
+<meta name="description" content="Pixels with a pulse. Twenty living mascots, one featherweight animation engine for the web, and a skill that lets your agent design your own from one sentence.">
 <meta name="theme-color" content="#0e0f12">
 <meta property="og:title" content="Wobnimo: give your app a face">
-<meta property="og:description" content="Ten living 3D mascots on one ~25 KB web animation engine. React, web component, and agent-ready.">
+<meta property="og:description" content="Twenty living 3D mascots on one ~25 KB web animation engine, or describe your own in one sentence and let your agent build it.">
 <meta property="og:image" content="https://pouryaak.github.io/wobnimo/media/social.png">
 <meta property="og:url" content="https://pouryaak.github.io/wobnimo/">
 <meta name="twitter:card" content="summary_large_image">
@@ -21,6 +21,7 @@
       <nav class="links" aria-label="Sections">
         <a href="#cast">The cast</a>
         <a href="#studio">Studio</a>
+        <a href="#describe">Make your own</a>
         <a href="#developers">Developers</a>
       </nav>
       <span class="star-note" aria-hidden="true">a star keeps us wobbling →</span>
@@ -57,7 +58,7 @@
 
         <div class="hero-foot">
           <div class="hero-copy">
-            <p class="mono">Ten little personalities.<br>One featherweight animation engine.<br>Bring your interface to life.</p>
+            <p class="mono">Twenty little personalities, or describe your own.<br>One featherweight animation engine.<br>Bring your interface to life.</p>
             <div class="actions">
               <a class="button lime-button" href="#studio">Enter the studio <span aria-hidden="true">↗</span></a>
               <a class="text-link" href="#developers">Read the docs</a>
@@ -113,10 +114,61 @@
       </div>
     </section>
 
-    <!-- 02: for developers -->
+    <!-- 02: make your own -->
+    <section class="describe" id="describe" aria-labelledby="describe-title">
+      <div class="wrap">
+        <div class="section-bar mono"><span>02 / Make your own</span><span>One sentence in. A living mascot out.</span></div>
+        <div class="describe-head">
+          <h2 id="describe-title" class="big">Describe it<span class="lime">.</span><br>Get it<span class="lime">.</span></h2>
+          <div class="describe-copy">
+            <p class="describe-lede">Hand your coding agent the Wobnimo skill and one sentence. It designs the character as data, measures every part against the engine's own geometry, renders a contact sheet, and fixes what looks off until it's right. No 3D tools. No rigging. No animation.</p>
+            <p class="describe-proof mono"><b>10 / 10</b> mascots below came from one sentence each</p>
+          </div>
+        </div>
+
+        <div class="forge">
+          <div class="forge-term" aria-hidden="true">
+            <div class="term-bar"><i></i><i></i><i></i><span class="mono">your agent</span></div>
+            <div class="term-log" id="forge-log"></div>
+          </div>
+          <div class="forge-stage-wrap">
+            <div class="forge-stage" id="forge-stage" data-phase="idle"></div>
+            <p class="forge-status mono" id="forge-status" aria-live="off">listening</p>
+            <p class="note" style="--x: 74%; --y: 4%; --r: 8deg" aria-hidden="true">made<br>live!</p>
+          </div>
+        </div>
+        <p class="visually-hidden">An animation replays an agent building each mascot from its sentence: plain shapes first, then a face, then colour, then a passing check, then the mascot comes alive.</p>
+
+        <div class="forge-chips" id="forge-chips" role="group" aria-label="Replay a sentence"></div>
+
+        <ol class="forge-steps">
+          <li>
+            <span class="mono label">1 / Give your agent the skill</span>
+            <button type="button" class="cmd-copy" id="skill-copy" data-copy="npx wobnimo skill"><code>npx wobnimo skill</code><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="6.5" y="6.5" width="9" height="9" rx="1.5"/><path d="M13.5 4.5h-8a1 1 0 0 0-1 1v8"/></svg></button>
+            <p>Works with Claude Code, Codex, Cursor, OpenCode and any agent that reads skills.</p>
+          </li>
+          <li>
+            <span class="mono label">2 / Describe your mascot</span>
+            <form class="describe-form" id="describe-form">
+              <label class="visually-hidden" for="describe-input">Describe your mascot in one sentence</label>
+              <input id="describe-input" type="text" maxlength="160" autocomplete="off" placeholder="a sleepy cloud wearing headphones">
+              <button type="submit" class="button lime-button">Copy prompt</button>
+            </form>
+            <p>Paste it into your agent. It installs Wobnimo, builds the mascot, checks it and wires it to your app.</p>
+          </li>
+          <li>
+            <span class="mono label">3 / Watch it check itself</span>
+            <p class="check-demo mono"><span>$ npx wobnimo check</span><span class="err">✖ eye buried 0.028 inside the head</span><span class="fix">fix: move it to z 0.262</span><span class="ok">✓ 0 errors · 0 warnings</span></p>
+            <p>Every message comes with the exact number to change, so even small models get it right.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 03: for developers -->
     <section class="developers" id="developers" aria-labelledby="dev-title">
       <div class="wrap">
-        <div class="section-bar mono"><span>02 / For developers</span><span>npm i wobnimo — React, web component, CDN</span></div>
+        <div class="section-bar mono"><span>03 / For developers</span><span>npm i wobnimo — React, web component, CDN</span></div>
         <div class="dev-grid">
           <div class="dev-head">
             <h2 id="dev-title" class="big dark">Small<br>code.<br>Big feeling<span class="lime-dot" aria-hidden="true"></span></h2>
@@ -140,7 +192,7 @@
               <li>
                 <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 24c0-9 4-16 10-16s10 7 10 16z"/><circle cx="13" cy="17" r="1.2"/><circle cx="19" cy="17" r="1.2"/><path d="M14 20.5c1.2 1 2.8 1 4 0"/></svg>
                 <h3>Choose<br>a character</h3>
-                <p>Pick from Volt, Pip, Mochi, Microduck and six more, or write your own as data.</p>
+                <p>Pick from Volt, Pip, Mochi, Hop and sixteen more, or describe your own in one sentence.</p>
               </li>
               <li>
                 <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M5 9h22M5 16h22M5 23h22"/><circle cx="20" cy="9" r="2.5"/><circle cx="11" cy="16" r="2.5"/><circle cx="17" cy="23" r="2.5"/></svg>
@@ -168,10 +220,10 @@
       </div>
     </section>
 
-    <!-- 03: featherweight -->
+    <!-- 04: featherweight -->
     <section class="weight" aria-labelledby="weight-title">
       <div class="wrap">
-        <div class="section-bar mono"><span>03 / Featherweight</span><span>Tiny engine. Big personalities.</span></div>
+        <div class="section-bar mono"><span>04 / Featherweight</span><span>Tiny engine. Big personalities.</span></div>
         <div class="weight-row">
           <h2 id="weight-title" class="giant"><span id="kb-int">23.</span><span class="weight-gap"><img class="weight-volt" src="volt-hop.webp" width="400" height="478" alt="" loading="lazy" decoding="async"><span class="note" style="--x: 88%; --y: -4%; --r: 10deg" aria-hidden="true">!!</span></span><span id="kb-rest">7 KB</span></h2>
           <p class="weight-line">Tiny by nature.<br>Lively by design.</p>
@@ -180,10 +232,10 @@
       </div>
     </section>
 
-    <!-- 04: the cast -->
+    <!-- 05: the cast -->
     <section class="cast" id="cast" aria-labelledby="cast-title">
       <div class="wrap">
-        <div class="section-bar mono"><span id="cast-title">04 / The cast</span><span>Ten characters. Endless possibilities.</span></div>
+        <div class="section-bar mono"><span id="cast-title">05 / The cast</span><span>Twenty characters. Ten of them from one sentence.</span></div>
         <div class="cast-art" aria-hidden="true">
           <img class="art" src="pebble-skate.webp" width="440" height="413" alt="" loading="lazy" decoding="async">
         </div>
@@ -191,14 +243,14 @@
       </div>
     </section>
 
-    <!-- 05: say hello -->
+    <!-- 06: say hello -->
     <section class="finale" aria-labelledby="finale-title">
       <div class="wrap">
-        <div class="section-bar mono"><span>05 / Say hello</span><span>Pixels with a pulse.</span></div>
+        <div class="section-bar mono"><span>06 / Say hello</span><span>Pixels with a pulse.</span></div>
         <div class="finale-grid">
           <div class="finale-copy">
             <h2 id="finale-title" class="big">Bring one<br>home<span class="lime">.</span></h2>
-            <p class="finale-lede">Pick a character, wire its state to your app, and your interface has a pulse. Install it from npm, or copy a prompt and let your agent do it.</p>
+            <p class="finale-lede">Pick a character or describe your own, wire its state to your app, and your interface has a pulse. Install it from npm, or copy a prompt and let your agent do it.</p>
             <div class="actions">
               <a class="button lime-button" href="#studio">Enter the studio <span aria-hidden="true">↗</span></a>
               <a class="text-link" href="#developers">Read the docs</a>

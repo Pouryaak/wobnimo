@@ -62,13 +62,13 @@ const WHEN = {
 const kb = ((engineBytes / 1024).toFixed(1));
 const llms = `# Wobnimo
 
-> Ten animated mascots on one featherweight web animation engine (~${kb} KB gzipped, zero dependencies). Drop-in web component, first-class React wrapper, and agent-ready. Use it to give an app or AI assistant a face that reacts to what it is doing.
+> Twenty animated mascots on one featherweight web animation engine (~${kb} KB gzipped, zero dependencies). Drop-in web component, first-class React wrapper, and agent-ready. Use it to give an app or AI assistant a face that reacts to what it is doing.
 
 ## Install
 
 One tag, no build step:
 \`\`\`html
-<script type="module" src="https://cdn.jsdelivr.net/npm/wobnimo@0.1/dist/wobnimo.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/wobnimo@0.2/dist/wobnimo.js"></script>
 <wobnimo-mascot character="mochi" state="thinking"></wobnimo-mascot>
 \`\`\`
 
@@ -95,6 +95,16 @@ ${characters.map((c) => `- ${c.id} (${c.name}): ${c.tagline}`).join('\n')}
 ## States (set via the state prop/attribute or mascot.setState)
 
 ${states.map((s) => `- ${s}: ${WHEN[s] ?? ''}`).join('\n')}
+
+## Make your own character
+
+A character is one TypeScript file exporting a CharacterSpec (plain data: materials, bones, SDF parts, paints, eyes, face, anchors, acting). To have an agent design one from a sentence:
+1. \`npx wobnimo skill\` adds the wobnimo-mascot skill to .claude/skills and .agents/skills (or \`npx skills add Pouryaak/wobnimo\`). Read its SKILL.md and follow it.
+2. \`npx wobnimo new <id>\` writes mascots/<id>.ts, a starter that passes every check.
+3. \`npx wobnimo check <file>\` measures the real 3D shape and lists errors and warnings, each with the exact fix. Repeat until clean.
+4. \`npx wobnimo preview <file>\` renders a contact sheet PNG (front, side, back, face close-up, every state, a 56px avatar); \`--live\` opens a preview that reloads on save.
+5. Use it: \`<Mascot character={mySpec} />\`, \`element.spec = mySpec\`, or \`mount(el, mySpec)\`.
+Skill source: https://github.com/Pouryaak/wobnimo/tree/main/skills/wobnimo-mascot
 
 ## Customize
 

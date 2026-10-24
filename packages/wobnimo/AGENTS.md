@@ -1,7 +1,8 @@
 # Wobnimo — guide for AI agents
 
-Wobnimo renders animated mascots in a web app. One engine, ten characters, ten
-emotional states. Use this file to add or wire up a mascot correctly.
+Wobnimo renders animated mascots in a web app. One engine, twenty characters, ten
+emotional states, and a skill for designing new characters. Use this file to add or
+wire up a mascot correctly.
 
 ## Install
 
@@ -12,7 +13,7 @@ npm i wobnimo
 No build step? Add one tag instead:
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/npm/wobnimo@0.1/dist/wobnimo.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/wobnimo@0.2/dist/wobnimo.js"></script>
 ```
 
 ## Render it
@@ -36,8 +37,21 @@ Size it 96–160 px square. Put it where the assistant or chat lives.
 
 `volt` (robot), `pip` (songbird), `mochi` (jelly), `boo` (ghost), `inky` (octopus),
 `miso` (plush cat), `tad` (tree frog), `pebble` (penguin), `rex` (baby dino),
-`microduck` (robot duck). Import one to ship only its ~1.2 KB of data:
+`microduck` (robot duck), `drift` (cloud with headphones), `cacti` (potted cactus),
+`latte` (coffee cup), `bumble` (bumblebee), `swirl` (cinnamon-roll snail), `ember`
+(fox cub), `cap` (mushroom), `berry` (strawberry), `bao` (panda), `hop` (bunny).
+Import one to ship only its ~1.2 KB of data:
 `import { mochi } from 'wobnimo/characters/mochi'`.
+
+## A new character of your own
+
+If the user wants a custom mascot ("a sleepy cloud wearing headphones"), don't
+improvise the format. Run `npx wobnimo skill`, then read
+`.claude/skills/wobnimo-mascot/SKILL.md` (the same skill is in
+`node_modules/wobnimo/skill/SKILL.md`) and follow it: `npx wobnimo new <id>`, build it,
+`npx wobnimo check <file>` until there are no errors or warnings, then
+`npx wobnimo preview <file>` and look at the picture. Use the result with
+`<Mascot character={spec} />`, `element.spec = spec` or `mount(el, spec)`.
 
 ## States — the whole point
 

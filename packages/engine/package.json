@@ -1,1 +1,9 @@
-{ "name": "@wobnimo/engine", "version": "0.1.0", "private": true, "type": "module", "main": "src/index.ts", "sideEffects": false }
+{
+  "name": "@wobnimo/engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "exports": { ".": "./src/index.ts", "./check": "./src/check/index.ts" },
+  "sideEffects": false
+}

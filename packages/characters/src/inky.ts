@@ -123,7 +123,7 @@ export const inky: CharacterSpec = {
       [-0.04, 0.83, -0.05, 0.06],
       [-0.36, 0.52, 0.1, 0.05],
       [0.06, 0.62, 0.33, 0.045],
-      [0.3, 0.42, -0.26, 0.045],
+      [0.338, 0.425, -0.291, 0.045],
     ] as const).map(([x, y, z, r]) => ({
       bone: 'mantle', on: ['skin'], kind: 'sphere' as const, at: [x, y, z] as [number, number, number], radius: r, color: '#d23f6c', soft: 0.2,
     })),

@@ -11,15 +11,15 @@
 
 ### Give your app a face.
 
-Ten living mascots on one featherweight animation engine for the web.
-Real 3D, every mood, ~25&nbsp;KB, zero dependencies — and built so an AI agent can wire it up for you.
+Twenty living mascots on one featherweight animation engine for the web — or describe your own in one sentence and let your agent build it.
+Real 3D, every mood, ~25&nbsp;KB, zero dependencies.
 
 [![npm](https://img.shields.io/npm/v/wobnimo?color=d9f55c&labelColor=16181d)](https://www.npmjs.com/package/wobnimo)
 [![gzip](https://img.shields.io/badge/one%20mascot-~25%20KB%20gzip-d9f55c?labelColor=16181d)](https://pouryaak.github.io/wobnimo/)
 [![zero deps](https://img.shields.io/badge/dependencies-0-d9f55c?labelColor=16181d)](https://www.npmjs.com/package/wobnimo?activeTab=dependencies)
 [![license](https://img.shields.io/npm/l/wobnimo?color=d9f55c&labelColor=16181d)](./LICENSE)
 
-**[▶ Live playground](https://pouryaak.github.io/wobnimo/)** · **[Quickstart](#add-one-in-10-seconds)** · **[For AI agents](#for-ai-agents)**
+**[▶ Live playground](https://pouryaak.github.io/wobnimo/)** · **[Quickstart](#add-one-in-10-seconds)** · **[Describe your own](#describe-it-get-it)** · **[For AI agents](#for-ai-agents)**
 
 </div>
 
@@ -34,7 +34,7 @@ in a tag you drop anywhere, with no build step and nothing to configure.
 No build, no npm, no framework. Two lines in any HTML page:
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/npm/wobnimo@0.1/dist/wobnimo.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/wobnimo@0.2/dist/wobnimo.js"></script>
 
 <wobnimo-mascot character="mochi" state="thinking"></wobnimo-mascot>
 ```
@@ -44,10 +44,38 @@ That's it — a living mascot is on your page. [Try every character and mood in 
 ## Meet the team
 
 **Volt** the LED robot · **Pip** the songbird · **Mochi** the jelly · **Boo** the ghost · **Inky** the octopus ·
-**Miso** the plush cat · **Tad** the tree frog · **Pebble** the penguin · **Rex** the baby dino · **Microduck** the robot duck.
+**Miso** the plush cat · **Tad** the tree frog · **Pebble** the penguin · **Rex** the baby dino · **Microduck** the robot duck ·
+**Drift** the sleepy cloud · **Cacti** the potted cactus · **Latte** the coffee cup · **Bumble** the bee · **Swirl** the cinnamon-roll snail ·
+**Ember** the fox cub · **Cap** the toadstool · **Berry** the strawberry · **Bao** the panda · **Hop** the bunny.
 
 Each has its own body, surface and personality, and every one of them plays all ten moods.
-Recolour any of them to match your brand, or write your own as plain data.
+Recolour any of them to match your brand. The last ten were each designed by an agent from a single sentence —
+which you can do too.
+
+## Describe it. Get it.
+
+Want a mascot that is *yours*? Give your coding agent the Wobnimo skill and one sentence:
+
+```bash
+npx wobnimo skill          # adds the skill for Claude Code, Codex, Cursor, OpenCode…
+```
+
+> *"Use the wobnimo-mascot skill to make a mascot for this app: a sleepy cloud wearing headphones."*
+
+The agent plans the character, writes it as plain data, and then **checks its own work**:
+
+```bash
+npx wobnimo check mascots/drift.ts     # measures the real 3D shape: hidden parts, buried eyes,
+                                       # paints that miss, crops, floating pieces — each with the exact fix
+npx wobnimo preview mascots/drift.ts   # renders front, side, back, a face close-up and every mood to one PNG
+```
+
+Every message from the checker comes with the number to change, so even small models get there: in our
+tests Claude Haiku built a toaster, an avocado and a baby dragon that passed on the first or second try.
+Watch the live preview while it works with `npx wobnimo preview <file> --live`.
+
+The skill is in [`skills/wobnimo-mascot`](./skills/wobnimo-mascot) — install it with
+`npx skills add Pouryaak/wobnimo` too.
 
 ## Give your AI a face
 
@@ -85,6 +113,9 @@ Wobnimo is built to be installed *by* an agent. On the [playground](https://pour
 every character has a **Copy for agent** button: it copies one self-contained prompt that tells any
 agent (Claude Code, Cursor, Copilot, v0…) exactly what to install and how to wire the mascot to your
 app's real events. Paste it, and it's done.
+
+Want a new character instead? See [Describe it. Get it.](#describe-it-get-it) — the
+`wobnimo-mascot` skill walks any agent through designing, checking and previewing one.
 
 Prefer to point your agent at the docs? Everything is at
 **[pouryaak.github.io/wobnimo/llms.txt](https://pouryaak.github.io/wobnimo/llms.txt)**, and the package
@@ -129,7 +160,7 @@ you only ship what you use.
 
 - **Tiny.** One mascot is ~25 KB gzipped, the whole thing has **zero dependencies**, and no Three.js.
 - **Real, not a sprite.** Characters are signed-distance 3D with studio lighting, so they're crisp at any size and animate from springs, not canned clips.
-- **Characters are data.** A character is plain JSON — parts, materials, bones. Recolour, remix with `variant()`, or write your own.
+- **Characters are data.** A character is plain JSON — parts, materials, bones. Recolour, remix with `variant()`, or have your agent write a new one from a sentence.
 - **Drops in anywhere.** A web component for every framework, a first-class React wrapper, and a CDN tag for no-build pages.
 - **Respectful.** Honours `prefers-reduced-motion`, sleeps when off-screen, and shares one WebGL context so a page can hold a whole cast.
 

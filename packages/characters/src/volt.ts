@@ -73,16 +73,15 @@ export const volt: CharacterSpec = {
     { bone: 'body', shape: 'sphere', at: [0, 0.38, 0.285], radius: 0.04, material: 'lamp' },
     { bone: 'body', shape: 'plate', op: 'sub', blend: 0.006, at: [0, 0.225, 0.3], half: [0.075, 0.009], corner: 0.009, depth: 0.03, material: 'shell' },
     { bone: 'body', shape: 'plate', op: 'sub', blend: 0.006, at: [0, 0.19, 0.295], half: [0.075, 0.009], corner: 0.009, depth: 0.03, material: 'shell' },
-    { bone: 'body', shape: 'plate', op: 'sub', blend: 0.006, at: [0, 0.155, 0.285], half: [0.06, 0.009], corner: 0.009, depth: 0.03, material: 'shell' },
+    { bone: 'body', shape: 'plate', op: 'sub', blend: 0.006, at: [0, 0.155, 0.27], half: [0.06, 0.009], corner: 0.009, depth: 0.03, material: 'shell' },
     { bone: 'body', shape: 'roundBox', at: [-0.17, 0.035, 0.05], half: [0.11, 0.035, 0.14], round: 0.035, material: 'trim' },
     { bone: 'body', shape: 'roundBox', at: [0.17, 0.035, 0.05], half: [0.11, 0.035, 0.14], round: 0.035, material: 'trim' },
     { bone: 'body', shape: 'cylinder', at: [0, 0.62, 0], radius: 0.075, half: 0.06, round: 0.02, material: 'metal' },
 
-    /* the head: a shell with a rolled lip into the screen, a gasket and the glass */
+    /* the head: a shell with a rolled lip into the screen, and the glass */
     { bone: 'head', shape: 'roundBox', at: [0, 0.37, 0], half: [0.56, 0.37, 0.35], round: 0.17, material: 'shell' },
     { bone: 'head', shape: 'roundBox', op: 'sub', blend: 0.035, at: [0, 0.37, 0.41], half: [0.45, 0.28, 0.1], round: 0.12, material: 'shell' },
     { bone: 'head', shape: 'plate', at: [0, 0.37, 0.31], half: [0.45, 0.28], corner: 0.12, depth: 0.012, material: 'screen' },
-    { bone: 'head', shape: 'frame', at: [0, 0.37, 0.3], half: [0.448, 0.278], corner: 0.118, width: 0.014, depth: 0.018, material: 'rubber' },
     /* glowing rings where the ears meet the head */
     { bone: 'head', shape: 'cylinder', at: [-0.555, 0.37, 0], rot: [0, 0, 1.5708], radius: 0.122, half: 0.012, round: 0.006, material: 'ring' },
     { bone: 'head', shape: 'cylinder', at: [0.555, 0.37, 0], rot: [0, 0, 1.5708], radius: 0.122, half: 0.012, round: 0.006, material: 'ring' },

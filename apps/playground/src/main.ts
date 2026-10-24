@@ -9,6 +9,7 @@
 
 import { Mascot, STATES, snapshot, type CharacterSpec, type MascotState, type Palette } from '@wobnimo/engine';
 import { characters } from '@wobnimo/characters';
+import { PROMPTS, startForge } from './forge';
 import { highlight, snippet, type Scene, type Tab } from './snippets';
 
 declare const __ENGINE_GZIP_BYTES__: number;
@@ -28,7 +29,7 @@ function agentPrompt(spec: CharacterSpec, state: MascotState, colors?: Palette):
   const attrPalette = entries.length ? ` palette="${entries.map(([k, v]) => `${k}:${v}`).join(',')}"` : '';
   return `Add a Wobnimo mascot to this app.
 
-Wobnimo (npm: "wobnimo") is a tiny web animation engine with ten ready-made mascots and ten emotional states. Set it up:
+Wobnimo (npm: "wobnimo") is a tiny web animation engine with twenty ready-made mascots and ten emotional states. Set it up:
 
 1. Install it: npm i wobnimo
 2. Render the "${spec.id}" character where the user or assistant lives, 96–160px square.
@@ -59,8 +60,32 @@ function toast(msg: string) {
   toastTimer = window.setTimeout(() => t.classList.remove('show'), 2600);
 }
 
+/** The prompt that has an agent design a new character from the person's sentence. */
+function describePrompt(sentence: string): string {
+  const what = sentence.trim().replace(/[.!\s]+$/, '') || 'a friendly mascot that fits this app';
+  return `Make a custom Wobnimo mascot for this app: ${what}.
+
+Wobnimo (npm: "wobnimo") is a tiny web animation engine. A mascot is one TypeScript file of plain data, and the engine animates it through ten states. Do this:
+
+1. Install it: npm i wobnimo
+2. Add the mascot-design skill: npx wobnimo skill
+   (it lands in .claude/skills/wobnimo-mascot and .agents/skills/wobnimo-mascot)
+3. Read .claude/skills/wobnimo-mascot/SKILL.md and follow it step by step:
+   plan, npx wobnimo new <id>, build it feature by feature, run npx wobnimo check after each
+   one until it reports no errors and no warnings, then npx wobnimo preview and look at the picture.
+4. Wire it into the app where the user or assistant lives, 96–160px square, and drive its state
+   from what the app is actually doing: thinking while waiting, speaking while a reply streams,
+   error when something fails, celebrating when a task finishes.
+5. Tell me what you made, where the file is, and how to watch it live: npx wobnimo preview <file> --live
+
+Skill source: https://github.com/Pouryaak/wobnimo/tree/main/skills/wobnimo-mascot`;
+}
+
 async function copyAgent(spec: CharacterSpec, state: MascotState, msg: string, colors?: Palette) {
-  const text = agentPrompt(spec, state, colors);
+  await copyText(agentPrompt(spec, state, colors), msg);
+}
+
+async function copyText(text: string, msg: string) {
   try {
     await navigator.clipboard.writeText(text);
   } catch {
@@ -191,6 +216,15 @@ const avatars = characters.map((spec) => {
   avatarRow.append(b);
   return b;
 });
+
+/* the last seat in the row is for a character of your own */
+{
+  const own = document.createElement('a');
+  own.className = 'avatar avatar-own';
+  own.href = '#describe';
+  own.innerHTML = '<span class="avatar-face" aria-hidden="true">+</span>Yours';
+  avatarRow.append(own);
+}
 
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -354,7 +388,8 @@ copy.addEventListener('click', async () => {
 const castGrid = $('#cast-grid');
 const posters = characters.map((spec) => {
   const li = document.createElement('li');
-  li.innerHTML = `<div class="cast-card"><button type="button" class="cast-open"><span class="poster"></span><h3>${spec.name}</h3><p>${spec.tagline}</p></button><button type="button" class="cast-copy mono" aria-label="Copy a setup prompt for ${spec.name} for your AI agent">Copy for agent</button></div>`;
+  const said = PROMPTS[spec.id] ? `<span class="said">“${PROMPTS[spec.id]}”</span>` : '';
+  li.innerHTML = `<div class="cast-card"><button type="button" class="cast-open"><span class="poster"></span><h3>${spec.name}</h3><p>${spec.tagline}</p>${said}</button><button type="button" class="cast-copy mono" aria-label="Copy a setup prompt for ${spec.name} for your AI agent">Copy for agent</button></div>`;
   li.querySelector('.cast-open')!.addEventListener('click', () => {
     select(spec);
     $('#studio').scrollIntoView();
@@ -416,6 +451,19 @@ $('#agent-copy').addEventListener('click', () =>
 
 /* the developers callout hands over a generic prompt for the default character */
 $('#dev-agent-copy').addEventListener('click', () => copyAgent(byId('mochi'), 'thinking', 'Setup prompt copied — paste it into your agent'));
+
+/* ---- make your own ---- */
+
+whenNear($('#describe'), () =>
+  startForge(characters, { section: $('#describe'), stage: $('#forge-stage'), log: $('#forge-log'), status: $('#forge-status'), chips: $('#forge-chips') }),
+);
+
+$('#skill-copy').addEventListener('click', () => copyText('npx wobnimo skill', 'Copied — run it in your project'));
+$<HTMLFormElement>('#describe-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const input = $<HTMLInputElement>('#describe-input');
+  copyText(describePrompt(input.value || input.placeholder), 'Prompt copied — paste it into your agent');
+});
 
 /* ---- GitHub stars in the nav ---- */
 

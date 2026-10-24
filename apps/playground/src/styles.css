@@ -898,7 +898,432 @@ button {
   color: var(--cream-mute);
 }
 
-/* ---------- 03: featherweight ---------- */
+/* the studio's "your own" seat */
+.avatar-own {
+  text-decoration: none;
+}
+
+.avatar-own .avatar-face {
+  display: grid;
+  place-items: center;
+  border: 1px dashed var(--lime);
+  box-shadow: none;
+  font: 400 30px/1 var(--display);
+  color: var(--lime);
+}
+
+/* ---------- 02: make your own ---------- */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.describe {
+  padding-block: clamp(48px, 7vw, 96px);
+  border-top: 1px solid var(--line);
+  background:
+    radial-gradient(60% 50% at 78% 38%, rgba(217, 245, 92, 0.07), transparent 70%),
+    var(--ink);
+}
+
+.describe-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+  align-items: end;
+  gap: 24px clamp(24px, 5vw, 80px);
+  margin-bottom: clamp(28px, 4vw, 52px);
+}
+
+.describe-lede {
+  max-width: 50ch;
+  margin: 0 0 18px;
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+.describe-proof {
+  margin: 0;
+  font-size: 11px;
+  color: var(--mute);
+}
+
+.describe-proof b {
+  margin-right: 8px;
+  font: 400 22px/1 var(--display);
+  letter-spacing: 0.02em;
+  color: var(--lime);
+}
+
+.forge {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(16px, 2.5vw, 32px);
+  align-items: stretch;
+}
+
+/* the agent's terminal */
+.forge-term {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--ink-2);
+  overflow: hidden;
+}
+
+.term-bar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.term-bar i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--ink-3);
+  border: 1px solid var(--line);
+}
+
+.term-bar span {
+  margin-left: 8px;
+  font-size: 10px;
+  color: var(--mute);
+}
+
+.term-log {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 2px;
+  min-height: 340px;
+  padding: 16px 18px 20px;
+  overflow: hidden;
+  font: 400 13px/1.6 var(--mono);
+  /* lines fade as they scroll off the top */
+  mask-image: linear-gradient(to bottom, transparent, #000 22%);
+}
+
+.term-log p {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  animation: term-in 0.28s ease-out both;
+}
+
+@keyframes term-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+.term-log .prompt {
+  margin-bottom: 6px;
+  color: var(--paper);
+  font-weight: 500;
+}
+
+.term-log .caret-mark,
+.term-log .add,
+.term-log .cmd {
+  color: var(--lime);
+}
+
+.term-log .caret {
+  display: inline-block;
+  width: 0.55em;
+  height: 1.05em;
+  margin-left: 2px;
+  vertical-align: -0.15em;
+  background: var(--lime);
+  animation: blink 1s steps(1) infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.term-log .dim,
+.term-log p .dim {
+  color: var(--mute);
+}
+
+.term-log b {
+  font-weight: 500;
+  color: var(--paper);
+}
+
+.term-log .ok {
+  color: var(--lime);
+}
+
+.term-log .sw {
+  display: inline-block;
+  width: 0.9em;
+  height: 0.9em;
+  margin: 0 3px;
+  vertical-align: -0.1em;
+  border-radius: 3px;
+  background: var(--c);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+  animation: term-in 0.28s ease-out both;
+}
+
+/* the stage the mascot is assembled on */
+.forge-stage-wrap {
+  position: relative;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: var(--cream);
+  overflow: hidden;
+}
+
+.forge-stage-wrap .note {
+  color: var(--cream-ink);
+  text-shadow: none;
+  font-size: clamp(18px, 2vw, 26px);
+}
+
+.forge-stage {
+  position: relative;
+  width: min(100%, 520px);
+  aspect-ratio: 1;
+  opacity: 0;
+  transition: opacity 0.6s;
+}
+
+.forge-stage.is-ready {
+  opacity: 1;
+}
+
+.forge-stage canvas {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* a drafting grid behind the bare clay, gone once it comes alive */
+.forge-stage::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(18, 19, 22, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(18, 19, 22, 0.07) 1px, transparent 1px);
+  background-size: 28px 28px;
+  background-position: center;
+  mask-image: radial-gradient(closest-side, #000 40%, transparent);
+  opacity: 0;
+  transition: opacity 0.6s;
+}
+
+.forge-stage[data-phase='clay']::before,
+.forge-stage[data-phase='paint']::before {
+  opacity: 1;
+}
+
+.forge-status {
+  position: absolute;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  margin: 0;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: var(--cream-ink);
+  color: var(--cream);
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.forge-status::before {
+  content: '';
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: var(--lime);
+  animation: blink 1.2s steps(1) infinite;
+}
+
+/* sentences to replay */
+.forge-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.chip {
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  font-size: 12px;
+  line-height: 1.2;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    color 0.2s,
+    border-color 0.2s;
+}
+
+.chip:hover {
+  border-color: var(--paper);
+}
+
+.chip[aria-pressed='true'] {
+  background: var(--lime);
+  border-color: var(--lime);
+  color: var(--lime-ink);
+}
+
+/* how to get one */
+.forge-steps {
+  list-style: none;
+  margin: clamp(32px, 4vw, 52px) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.25fr) minmax(0, 0.95fr);
+  border-top: 1px solid var(--line);
+}
+
+.forge-steps li {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  padding: 24px clamp(14px, 2vw, 28px) 0;
+  border-left: 1px solid var(--line);
+}
+
+.forge-steps li:first-child {
+  padding-left: 0;
+  border-left: 0;
+}
+
+.forge-steps .label {
+  font-size: 10px;
+  color: var(--mute);
+}
+
+.forge-steps p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--mute);
+}
+
+.cmd-copy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: fit-content;
+  padding: 11px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--ink-2);
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.cmd-copy:hover {
+  border-color: var(--lime);
+}
+
+.cmd-copy code {
+  font: 500 14px/1 var(--mono);
+  color: var(--lime);
+}
+
+.cmd-copy svg {
+  width: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+}
+
+.describe-form {
+  display: flex;
+  gap: 8px;
+}
+
+.describe-form input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--ink-2);
+  color: var(--paper);
+  font: 400 14px/1.2 var(--mono);
+}
+
+.describe-form input::placeholder {
+  color: var(--mute);
+}
+
+.describe-form input:focus-visible {
+  outline: 2px solid var(--lime);
+  outline-offset: 1px;
+}
+
+.describe-form .button {
+  flex: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.check-demo {
+  display: grid;
+  gap: 3px;
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: var(--ink-2);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--paper) !important;
+}
+
+.check-demo .err {
+  color: #ff8a6a;
+}
+
+.check-demo .fix {
+  padding-left: 1.6em;
+  color: var(--mute);
+}
+
+.check-demo .ok {
+  color: var(--lime);
+}
+
+/* the cast says where each described character came from */
+.cast-card .said {
+  display: block;
+  margin-top: 4px;
+  font: 500 17px/1.15 var(--hand);
+  color: var(--lime);
+}
+
+/* ---------- 04: featherweight ---------- */
 
 .weight {
   padding-bottom: 0;
@@ -1377,8 +1802,23 @@ button {
 
   .studio-foot,
   .dev-grid,
-  .finale-grid {
+  .finale-grid,
+  .describe-head {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .forge-steps {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .forge-steps li:nth-child(2) {
+    border-left: 1px solid var(--line);
+  }
+
+  .forge-steps li:last-child {
+    grid-column: 1 / -1;
+    padding-left: 0;
+    border-left: 0;
   }
 
   .cast-grid {
@@ -1468,6 +1908,46 @@ button {
   .weight-row {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .forge {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* on a phone the mascot comes first, the terminal under it */
+  .forge-term {
+    order: 2;
+  }
+
+  .term-log {
+    min-height: 220px;
+    font-size: 12px;
+  }
+
+  .forge-chips {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin-inline: calc(var(--gutter) * -1);
+    padding-inline: var(--gutter);
+    scrollbar-width: none;
+  }
+
+  .chip {
+    flex: none;
+  }
+
+  .forge-steps {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .forge-steps li,
+  .forge-steps li:nth-child(2) {
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .describe-form {
+    flex-direction: column;
   }
 
   .cast-grid {

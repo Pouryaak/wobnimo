@@ -1,7 +1,7 @@
 {
   "name": "wobnimo",
-  "version": "0.1.4",
-  "description": "Ten living mascots on one featherweight animation engine for the web. Agent-ready, zero dependencies, ~25 KB.",
+  "version": "0.2.0",
+  "description": "Twenty living 3D mascots on one featherweight web animation engine, plus a skill and CLI that let your agent design your own from one sentence. Zero dependencies, ~25 KB.",
   "keywords": [
     "mascot",
     "animation",
@@ -13,7 +13,10 @@
     "chatbot",
     "assistant",
     "web-component",
-    "react"
+    "react",
+    "skill",
+    "claude-code",
+    "mascot-generator"
   ],
   "homepage": "https://pouryaak.github.io/wobnimo/",
   "repository": {
@@ -54,10 +57,14 @@
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "bin": {
+    "wobnimo": "./dist/cli.js"
+  },
   "unpkg": "./dist/wobnimo.js",
   "jsdelivr": "./dist/wobnimo.js",
   "files": [
     "dist",
+    "skill",
     "AGENTS.md",
     "README.md"
   ],
@@ -74,7 +81,7 @@
     "provenance": true
   },
   "scripts": {
-    "build": "tsup",
+    "build": "tsup && node ../../scripts/skill.mjs --copy skill",
     "prepack": "cp ../../README.md README.md"
   },
   "bugs": {
@@ -95,5 +102,8 @@
         "./dist/react.d.ts"
       ]
     }
+  },
+  "engines": {
+    "node": ">=20"
   }
 }

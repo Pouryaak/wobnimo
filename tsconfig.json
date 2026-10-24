@@ -16,6 +16,7 @@
     "baseUrl": ".",
     "paths": {
       "@wobnimo/engine": ["packages/engine/src/index.ts"],
+      "@wobnimo/engine/check": ["packages/engine/src/check/index.ts"],
       "@wobnimo/characters": ["packages/characters/src/index.ts"]
     }
   },

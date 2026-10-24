@@ -222,6 +222,26 @@ the render resolution when frames run slow, raising it again once they're
 quick. With `prefers-reduced-motion`, a mascot settles into its state's pose
 and stops drawing.
 
+### 7. Checker (`packages/engine/src/check`)
+
+`checkCharacter(spec)` answers, in numbers, the questions a render would:
+does every part show, does every subtraction carve something, are the eyes
+on the face, does each paint land on its materials, does the mouth sit on
+the surface, does anything float free of the body, does the body fit the
+frame and the bound in every state, does it stand on the floor. It runs the
+same distance field on the CPU (`sdf.ts` mirrors the GLSL), posed by the
+real rig (`field.ts`), so it needs no GPU and runs in Node. Every issue has a
+place in the spec and, where it can, the exact value that fixes it. That is
+what makes it usable by an agent: the loop is "apply the fix line, run
+again", not "squint at a render".
+
+It is deliberately not exported from the engine's main entry, so the browser
+bundle doesn't carry it. The `wobnimo` CLI (`packages/wobnimo/src/cli`) uses
+it for `check`, and pairs it with `preview`, which serves a page that draws a
+contact sheet with `snapshot()` in any installed Chromium-family browser,
+headless. The `wobnimo-mascot` skill (`skills/wobnimo-mascot`) is the
+workflow on top: plan, start from a template, build, check, preview.
+
 ## Decisions and their reasons
 
 **Signed distance fields over meshes.** A spec of 10 to 30 primitives
@@ -269,6 +289,8 @@ playground prints the measured figure). No Three.js, no animation library.
 ```
 packages/engine        the runtime: spec → shader, behavior, rig, renderer
 packages/characters    the cast, as specs
+packages/wobnimo       the published package: entries, the CDN build, the CLI
+skills/wobnimo-mascot  the agent skill for designing new characters (examples are generated)
 apps/playground        the demo page
 scripts/               build (single-file playground) and a headless screenshot helper
 docs/                  this document

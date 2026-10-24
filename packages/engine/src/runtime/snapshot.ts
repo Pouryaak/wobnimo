@@ -6,6 +6,7 @@
 import { Brain } from '../behavior/brain';
 import { Fx } from '../behavior/fx';
 import type { MascotState } from '../behavior/states';
+import { fromEuler, mat4, multiply } from '../math/mat4';
 import { rng } from '../math/scalar';
 import { WebGL2Renderer } from '../render/webgl2';
 import { Rig } from '../rig/rig';
@@ -24,6 +25,10 @@ export interface SnapshotOptions {
   floor?: number;
   palette?: Palette;
   seed?: number;
+  /** Turns the character about its vertical axis, in radians: π/2 shows its left side, π its back. */
+  turn?: number;
+  /** How long the state has been held when the picture is taken, in seconds. Default 1.5. */
+  settle?: number;
 }
 
 const nextFrame = () => new Promise((resolve) => requestAnimationFrame(resolve));
@@ -40,8 +45,9 @@ export async function snapshot(spec: CharacterSpec, options: SnapshotOptions = {
   /* let the springs settle where the state puts them, the way a mascot does with reduced motion */
   const brain = new Brain(spec.motion, options.seed ?? 0.5);
   brain.setState(options.state ?? 'idle');
-  for (let i = 0; i < 90; i++) brain.update(1 / 60);
+  for (let i = 0, n = Math.round((options.settle ?? 1.5) * 60); i < n; i++) brain.update(1 / 60);
   const pose = brain.pose;
+  if (options.turn) multiply(pose.root, fromEuler(mat4(), 0, options.turn, 0), pose.root);
   const rig = new Rig(character.bones, character.acting);
   rig.update(pose.root, pose.channels, pose.weights, 0, 0);
   const fx = new Fx(character, rng(0));

@@ -33,7 +33,7 @@ export function snippet(tab: Tab, scene: Scene): string {
 
   if (tab === 'html') {
     return `<!-- no build step: one tag from the CDN -->
-<script type="module" src="https://cdn.jsdelivr.net/npm/wobnimo@0.1/dist/wobnimo.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/wobnimo@0.2/dist/wobnimo.js"></script>
 
 <wobnimo-mascot ${attrs.join(' ')}></wobnimo-mascot>
 

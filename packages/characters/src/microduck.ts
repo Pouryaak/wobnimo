@@ -114,7 +114,7 @@ export const microduck: CharacterSpec = {
       })),
     ),
     /* screw heads at the corners of the body */
-    ...[-1, 1].map((s): PaintSpec => ({ bone: 'body', on: ['bodyShell'], kind: 'sphere', at: [s * 0.15, 0.03, 0.13], radius: 0.009, color: '#8d9198', soft: 0.2 })),
+    ...[-1, 1].map((s): PaintSpec => ({ bone: 'body', on: ['bodyShell'], kind: 'sphere', at: [s * 0.142, 0.04, 0.117], radius: 0.009, color: '#8d9198', soft: 0.2 })),
   ],
   /* the dark lens behind each ring: it narrows to blink */
   eyes: {
