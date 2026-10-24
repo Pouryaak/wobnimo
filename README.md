@@ -1,6 +1,11 @@
 <div align="center">
 
-<a href="https://pouryaak.github.io/wobnimo/"><img src="https://pouryaak.github.io/wobnimo/media/hero.gif" alt="Wobnimo — pixels with a pulse" width="860"></a>
+<a href="https://pouryaak.github.io/wobnimo/">
+  <picture>
+    <source srcset="https://pouryaak.github.io/wobnimo/media/team.webp" type="image/webp">
+    <img src="https://pouryaak.github.io/wobnimo/media/team.gif" alt="The Wobnimo team: ten animated mascots lined up like a team photo, celebrating in a wave" width="900">
+  </picture>
+</a>
 
 # wobnimo
 
@@ -29,26 +34,29 @@ in a tag you drop anywhere, with no build step and nothing to configure.
 No build, no npm, no framework. Two lines in any HTML page:
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/npm/wobnimo@1/dist/wobnimo.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/wobnimo@0.1/dist/wobnimo.js"></script>
 
 <wobnimo-mascot character="mochi" state="thinking"></wobnimo-mascot>
 ```
 
 That's it — a living mascot is on your page. [Try every character and mood in the playground →](https://pouryaak.github.io/wobnimo/)
 
-## Meet the cast
+## Meet the team
 
-<div align="center">
-<a href="https://pouryaak.github.io/wobnimo/"><img src="https://pouryaak.github.io/wobnimo/media/cast.png" alt="The ten Wobnimo characters: Volt, Pip, Mochi, Boo, Inky, Miso, Tad, Pebble, Rex, Microduck" width="860"></a>
-</div>
+**Volt** the LED robot · **Pip** the songbird · **Mochi** the jelly · **Boo** the ghost · **Inky** the octopus ·
+**Miso** the plush cat · **Tad** the tree frog · **Pebble** the penguin · **Rex** the baby dino · **Microduck** the robot duck.
 
-Ten characters, each with its own body, surface and personality — and every one of them can play all
-ten emotional states. Recolour any of them to match your brand, or write your own as plain data.
+Each has its own body, surface and personality, and every one of them plays all ten moods.
+Recolour any of them to match your brand, or write your own as plain data.
 
 ## Give your AI a face
 
 This is the part that matters. An assistant that just spins a loader feels like a machine.
 Wire a mascot to what your app is doing and it feels like someone is in there.
+
+<div align="center">
+<img src="https://pouryaak.github.io/wobnimo/media/moods.png" alt="Mochi in six moods: listening, thinking, speaking, working, celebrating, sleeping" width="900">
+</div>
 
 Using the [Vercel AI SDK](https://ai-sdk.dev)? It's **one prop** — the mascot thinks, speaks,
 celebrates and shows errors for you:
@@ -137,6 +145,6 @@ you only ship what you use.
 
 If Wobnimo makes your app smile, **drop a ⭐** — it genuinely helps other people find it.
 
-Built with care. MIT licensed. · Next: npm-published characters, a WebGPU renderer, a Rust + WebAssembly core, a visual editor.
+Built with care. MIT licensed. · Next: a WebGPU renderer, a Rust + WebAssembly core, a visual editor.
 
 </div>
