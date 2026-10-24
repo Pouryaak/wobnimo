@@ -567,7 +567,9 @@ button {
   overflow-x: auto;
   scroll-snap-type: x proximity;
   scrollbar-width: none;
-  padding: 6px 4px;
+  padding: 6px 28px;
+  /* soft edges say "there's more this way" instead of a hard cut */
+  mask-image: linear-gradient(90deg, transparent, #000 28px, #000 calc(100% - 28px), transparent);
 }
 
 .avatars::-webkit-scrollbar {

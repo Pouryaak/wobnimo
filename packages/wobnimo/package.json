@@ -1,6 +1,6 @@
 {
   "name": "wobnimo",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Ten living mascots on one featherweight animation engine for the web. Agent-ready, zero dependencies, ~25 KB.",
   "keywords": [
     "mascot",
@@ -18,7 +18,8 @@
   "homepage": "https://pouryaak.github.io/wobnimo/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Pouryaak/wobnimo.git"
+    "url": "git+https://github.com/Pouryaak/wobnimo.git",
+    "directory": "packages/wobnimo"
   },
   "license": "MIT",
   "author": "Pourya Akhbari",
@@ -69,10 +70,14 @@
     }
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "provenance": true
   },
   "scripts": {
     "build": "tsup",
     "prepack": "cp ../../README.md README.md"
+  },
+  "bugs": {
+    "url": "https://github.com/Pouryaak/wobnimo/issues"
   }
 }

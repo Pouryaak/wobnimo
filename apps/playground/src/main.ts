@@ -192,6 +192,16 @@ const avatars = characters.map((spec) => {
   return b;
 });
 
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+
+/** Scrolls `row` so `item` sits in its middle, without moving the page. Positions
+    are measured on screen, so padding, buttons and offset parents can't skew it. */
+function centreInRow(row: HTMLElement, item: HTMLElement) {
+  const r = row.getBoundingClientRect();
+  const i = item.getBoundingClientRect();
+  row.scrollTo({ left: row.scrollLeft + i.left - r.left - (r.width - i.width) / 2, behavior: reducedMotion.matches ? 'auto' : 'smooth' });
+}
+
 const step = (by: number) => select(characters[(characters.indexOf(view.spec) + by + characters.length) % characters.length]);
 $('#cast-prev').addEventListener('click', () => step(-1));
 $('#cast-next').addEventListener('click', () => step(1));
@@ -238,9 +248,7 @@ function select(spec: CharacterSpec) {
   stage?.setSpec(spec);
   const at = characters.indexOf(spec);
   avatars.forEach((b, i) => b.setAttribute('aria-pressed', String(i === at)));
-  /* keep the picked avatar in view without moving the page */
-  const b = avatars[at];
-  avatarRow.scrollTo({ left: b.offsetLeft - (avatarRow.clientWidth - b.offsetWidth) / 2, behavior: 'smooth' });
+  centreInRow(avatarRow, avatars[at]);
   renderSwatches();
   renderSnippet();
   renderGrab();

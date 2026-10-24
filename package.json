@@ -12,9 +12,14 @@
   },
   "devDependencies": {
     "@types/react": "^18.3.12",
-    "esbuild": "0.24.0",
+    "esbuild": "^0.25.12",
     "playwright-core": "1.48.2",
-    "tsup": "^8.3.5",
+    "tsup": "^8.5.1",
     "typescript": "5.6.3"
+  },
+  "overrides": {
+    "tsup": {
+      "esbuild": "0.28.2"
+    }
   }
 }

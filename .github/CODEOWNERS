@@ -1,0 +1,4 @@
+# Every change, and especially workflows and the published package, needs the maintainer's review.
+*                    @Pouryaak
+/.github/            @Pouryaak
+/packages/wobnimo/   @Pouryaak
