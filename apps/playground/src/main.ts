@@ -22,7 +22,10 @@ const kb = (n: number) => `${(n / 1024).toFixed(1)} KB`;
    (Claude Code, Cursor, Copilot, v0…) to have it install and wire up a
    mascot. It names the chosen character and state so the paste lands
    exactly where the person was looking. */
-function agentPrompt(spec: CharacterSpec, state: MascotState): string {
+function agentPrompt(spec: CharacterSpec, state: MascotState, colors?: Palette): string {
+  const entries = Object.entries(colors ?? {});
+  const reactPalette = entries.length ? ` palette={{ ${entries.map(([k, v]) => `${k}: '${v}'`).join(', ')} }}` : '';
+  const attrPalette = entries.length ? ` palette="${entries.map(([k, v]) => `${k}:${v}`).join(',')}"` : '';
   return `Add a Wobnimo mascot to this app.
 
 Wobnimo (npm: "wobnimo") is a tiny web animation engine with ten ready-made mascots and ten emotional states. Set it up:
@@ -31,16 +34,16 @@ Wobnimo (npm: "wobnimo") is a tiny web animation engine with ten ready-made masc
 2. Render the "${spec.id}" character where the user or assistant lives, 96–160px square.
    - React / Next.js (add "use client" in app-router files):
        import { Mascot } from 'wobnimo/react';
-       <Mascot character="${spec.id}" state="${state}" style={{ width: 128, height: 128 }} />
+       <Mascot character="${spec.id}" state="${state}"${reactPalette} style={{ width: 128, height: 128 }} />
    - Anything else (Vue, Svelte, plain HTML) — register the element once (import 'wobnimo/element'), then:
-       <wobnimo-mascot character="${spec.id}" state="${state}"></wobnimo-mascot>
+       <wobnimo-mascot character="${spec.id}" state="${state}"${attrPalette}></wobnimo-mascot>
 3. Drive the state from what the app is actually doing — don't leave it stuck on idle. The ten states:
    idle (waiting for the user), listening (user is typing), thinking (request sent, no reply yet),
    speaking (reply streaming in), working (running a tool or long task), error (something failed),
    celebrating (a task finished), surprised (unexpected event), sad (couldn't help), sleeping (idle a while).
    If this is a chat UI on the Vercel AI SDK, it's one prop:
        const { status } = useChat();
-       <Mascot character="${spec.id}" status={status} />
+       <Mascot character="${spec.id}" status={status}${reactPalette} />
    …and the mascot thinks, speaks, celebrates and errors on its own.
 4. Verify: run the app and confirm the mascot renders and changes state during one chat turn.
 
@@ -56,8 +59,8 @@ function toast(msg: string) {
   toastTimer = window.setTimeout(() => t.classList.remove('show'), 2600);
 }
 
-async function copyAgent(spec: CharacterSpec, state: MascotState, msg: string) {
-  const text = agentPrompt(spec, state);
+async function copyAgent(spec: CharacterSpec, state: MascotState, msg: string, colors?: Palette) {
+  const text = agentPrompt(spec, state, colors);
   try {
     await navigator.clipboard.writeText(text);
   } catch {
@@ -210,6 +213,7 @@ function renderSwatches() {
         stage?.setPalette(palette());
         renderSwatches();
         renderSnippet();
+        renderGrab();
       });
       return b;
     }),
@@ -223,6 +227,7 @@ function setState(s: MascotState) {
   stateButtons.forEach((b, i) => b.setAttribute('aria-pressed', String(i === at)));
   ticks.forEach((t, i) => t.classList.toggle('on', i === at * 4));
   $('#track-now').textContent = LABELS[s];
+  renderGrab();
   if (!playing) movePlayhead(at / STATES.length);
   renderSnippet();
 }
@@ -238,6 +243,12 @@ function select(spec: CharacterSpec) {
   avatarRow.scrollTo({ left: b.offsetLeft - (avatarRow.clientWidth - b.offsetWidth) / 2, behavior: 'smooth' });
   renderSwatches();
   renderSnippet();
+  renderGrab();
+}
+
+/** The studio's copy button says exactly what it will hand over. */
+function renderGrab() {
+  $('#agent-copy-what').textContent = `${view.spec.name} · ${LABELS[view.state].toLowerCase()}${view.color ? ' · your colour' : ''}`;
 }
 
 /* ---- the timeline: plays through every state in turn ---- */
@@ -392,11 +403,25 @@ whenNear($('#studio'), startStills);
 
 /* the studio's agent button follows whatever character and state are on stage */
 $('#agent-copy').addEventListener('click', () =>
-  copyAgent(view.spec, view.state, `${view.spec.name} (${LABELS[view.state].toLowerCase()}) setup prompt copied — paste it into your agent`),
+  copyAgent(view.spec, view.state, `${view.spec.name} (${LABELS[view.state].toLowerCase()}) setup prompt copied — paste it into your agent`, palette()),
 );
 
 /* the developers callout hands over a generic prompt for the default character */
 $('#dev-agent-copy').addEventListener('click', () => copyAgent(byId('mochi'), 'thinking', 'Setup prompt copied — paste it into your agent'));
+
+/* ---- GitHub stars in the nav ---- */
+
+idle(async () => {
+  try {
+    const res = await fetch('https://api.github.com/repos/Pouryaak/wobnimo');
+    if (!res.ok) return;
+    const n: number = (await res.json()).stargazers_count;
+    $('#star-count').textContent = n >= 1000 ? `${(n / 1000).toFixed(n >= 10000 ? 0 : 1)}k` : String(n);
+    $('#star-count').parentElement!.hidden = false;
+  } catch {
+    /* offline or rate limited: the button still works without a number */
+  }
+});
 
 select(view.spec);
 setState(view.state);

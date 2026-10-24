@@ -130,36 +130,69 @@ button {
   color: var(--lime);
 }
 
-.tagline {
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--mute);
+.star-note {
+  font: 600 21px/1 var(--hand);
+  color: var(--lime);
+  transform: rotate(-4deg);
+  white-space: nowrap;
 }
 
-.cta {
+.star {
   display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 14px;
+  align-items: stretch;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  overflow: hidden;
+  font-size: 13px;
   font-weight: 500;
   text-decoration: none;
+  transition: border-color 0.2s;
 }
 
-.cta-icon {
-  display: grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
+.star-main {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 16px 9px 13px;
+  background: var(--paper);
+  color: var(--ink);
+  transition: background 0.2s;
+}
+
+.star .gh {
+  width: 18px;
+  fill: currentColor;
+}
+
+.star-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 14px;
+  font: 500 13px/1 var(--mono);
+  color: var(--paper);
+}
+
+.star-count[hidden] {
+  display: none;
+}
+
+.star-count svg {
+  width: 13px;
+  fill: var(--lime);
+  transition: transform 0.3s;
+}
+
+.star:hover {
+  border-color: var(--lime);
+}
+
+.star:hover .star-main {
   background: var(--lime);
-  color: var(--lime-ink);
-  font-weight: 700;
-  transition: transform 0.2s;
 }
 
-.cta:hover .cta-icon {
-  transform: rotate(45deg);
+.star:hover .star-count svg {
+  transform: rotate(72deg) scale(1.2);
 }
 
 /* ---------- hand-written notes and scribbles ---------- */
@@ -1089,36 +1122,74 @@ button {
 
 /* ---------- copy for agent ---------- */
 
+.grab {
+  position: relative;
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+}
+
+.grab-note {
+  font: 600 20px/1 var(--hand);
+  color: var(--lime);
+  transform: rotate(-3deg);
+}
+
 .agent-copy {
   display: inline-flex;
   align-items: center;
-  gap: 9px;
-  padding: 12px 18px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: none;
-  color: var(--paper);
-  font: 500 11px/1 var(--mono);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 20px 12px 16px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--lime);
+  color: var(--lime-ink);
+  text-align: left;
   cursor: pointer;
+  box-shadow: 0 0 0 0 rgba(217, 245, 92, 0.4);
   transition:
-    color 0.2s,
-    background 0.2s,
-    border-color 0.2s;
+    transform 0.15s,
+    box-shadow 0.25s;
 }
 
 .agent-copy svg {
-  width: 15px;
+  flex: none;
+  width: 20px;
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.4;
+  stroke-width: 1.6;
+}
+
+.agent-copy-text {
+  display: grid;
+  gap: 3px;
+}
+
+.agent-copy-text b {
+  font: 700 13px/1 var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.agent-copy-text small {
+  font: 500 11.5px/1.2 var(--mono);
+  opacity: 0.7;
 }
 
 .agent-copy:hover {
-  color: var(--ink);
-  background: var(--lime);
-  border-color: var(--lime);
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 6px rgba(217, 245, 92, 0.16);
+}
+
+.agent-copy:active {
+  transform: translateY(1px);
+}
+
+.grab-hint {
+  font-size: 10.5px;
+  line-height: 1.5;
+  color: var(--mute);
 }
 
 .agent-card {
@@ -1280,7 +1351,7 @@ button {
 /* ---------- smaller screens ---------- */
 
 @media (max-width: 1080px) {
-  .tagline {
+  .star-note {
     display: none;
   }
 
@@ -1322,7 +1393,8 @@ button {
 }
 
 @media (max-width: 720px) {
-  .links {
+  .links,
+  .star-long {
     display: none;
   }
 
@@ -1408,8 +1480,20 @@ button {
     border-right: 0;
   }
 
-  .cast-card {
-    padding: 16px 12px 20px;
+  .cast-open {
+    padding: 16px 12px 10px;
+  }
+
+  .cast-copy {
+    margin: 0 12px 16px;
+  }
+}
+
+/* touch screens have no hover, so the cast's copy buttons are always there */
+@media (hover: none) {
+  .cast-copy {
+    opacity: 1;
+    transform: none;
   }
 }
 

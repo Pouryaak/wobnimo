@@ -68,7 +68,7 @@ const llms = `# Wobnimo
 
 One tag, no build step:
 \`\`\`html
-<script type="module" src="https://cdn.jsdelivr.net/npm/wobnimo@1/dist/wobnimo.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/wobnimo@0.1/dist/wobnimo.js"></script>
 <wobnimo-mascot character="mochi" state="thinking"></wobnimo-mascot>
 \`\`\`
 

@@ -19,6 +19,16 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm run build -w wobnimo
+      # a release for a version that's already on npm is a no-op, not a failure
+      - name: Check whether this version is already published
+        id: check
+        run: |
+          v=$(node -p "require('./packages/wobnimo/package.json').version")
+          if npm view "wobnimo@$v" version > /dev/null 2>&1; then
+            echo "wobnimo@$v is already on npm, skipping"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
       - run: npm publish -w wobnimo
+        if: steps.check.outputs.skip != 'true'
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

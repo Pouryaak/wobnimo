@@ -32,10 +32,8 @@ export function snippet(tab: Tab, scene: Scene): string {
   }
 
   if (tab === 'html') {
-    return `<script type="module">
-  import { defineWobnimoElement } from '@wobnimo/characters';
-  defineWobnimoElement();
-</script>
+    return `<!-- no build step: one tag from the CDN -->
+<script type="module" src="https://cdn.jsdelivr.net/npm/wobnimo@0.1/dist/wobnimo.js"></script>
 
 <wobnimo-mascot ${attrs.join(' ')}></wobnimo-mascot>
 
@@ -45,8 +43,9 @@ export function snippet(tab: Tab, scene: Scene): string {
 </script>`;
   }
   if (tab === 'js') {
-    return `import { mount } from '@wobnimo/engine';
-import { ${id} } from '@wobnimo/characters';
+    return `// npm i wobnimo
+import { mount } from 'wobnimo';
+import { ${id} } from 'wobnimo/characters/${id}';
 
 const mascot = mount(document.querySelector('#mascot'), ${id}, {
   ${options.join(',\n  ')},
@@ -55,25 +54,25 @@ const mascot = mount(document.querySelector('#mascot'), ${id}, {
 agent.on('status', (status) => mascot.setState(status));
 mascot.on('poke', () => console.log('${name} was poked'));`;
   }
-  const rest = options.filter((o) => !o.startsWith('state'));
-  const component = name.replace(/\W/g, '');
-  return `import { useEffect, useRef } from 'react';
-import { mount } from '@wobnimo/engine';
-import { ${id} } from '@wobnimo/characters';
+  const props = [`character="${id}"`, `state="${scene.state}"`];
+  if (scene.color) props.push(`palette={{ ${scene.material}: '${scene.color}' }}`);
+  if (scene.speed !== 1) props.push(`speed={${scene.speed}}`);
+  if (!scene.effects) props.push('effects={false}');
+  return `// npm i wobnimo
+import { Mascot } from 'wobnimo/react';
 
-export function ${component}({ state = '${scene.state}' }) {
-  const host = useRef(null);
-  const mascot = useRef(null);
+export function Assistant() {
+  return (
+    <Mascot
+      ${props.join('\n      ')}
+      style={{ width: 160, height: 160 }}
+    />
+  );
+}
 
-  useEffect(() => {
-    mascot.current = mount(host.current, ${id}${rest.length ? `, { ${rest.join(', ')} }` : ''});
-    return () => mascot.current.dispose();
-  }, []);
-
-  useEffect(() => mascot.current?.setState(state), [state]);
-
-  return <div ref={host} style={{ width: 160, height: 160 }} />;
-}`;
+// chatting with the Vercel AI SDK? one prop does it all:
+// const { status } = useChat();
+// <Mascot character="${id}" status={status} />`;
 }
 
 const escape = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');

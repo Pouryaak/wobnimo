@@ -12,7 +12,7 @@ npm i wobnimo
 No build step? Add one tag instead:
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/npm/wobnimo@1/dist/wobnimo.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/wobnimo@0.1/dist/wobnimo.js"></script>
 ```
 
 ## Render it
