@@ -11,11 +11,11 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
-    "@types/react": "^18.3.12",
-    "esbuild": "^0.25.12",
-    "playwright-core": "1.48.2",
-    "tsup": "^8.5.1",
-    "typescript": "5.6.3"
+    "@types/react": "^19.3.0",
+    "esbuild": "^0.28.2",
+    "playwright-core": "1.64.1",
+    "tsup": "^9.0.0",
+    "typescript": "7.0.2"
   },
   "overrides": {
     "tsup": {
