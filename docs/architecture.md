@@ -176,8 +176,12 @@ of every shader, so a mascot draws into a corner of the shared drawing
 buffer and copies that onto its own 2D canvas, which stays an ordinary
 element in the layout. Each character's program is compiled once for the
 page, in the background with `KHR_parallel_shader_compile` where the browser
-has it (and spaced a few frames apart where it doesn't), so a page full of
-new characters never freezes while it loads. `render()` returns false until
+has it (and spaced a few frames apart where it doesn't, starting only after
+the page's first paint), so a page full of new characters never freezes
+while it loads. A build is still the most expensive thing the engine does,
+so a page should only build what it shows live: `warm(spec)` starts one
+ahead of need (the site does it when an avatar is hovered), and stills that
+never move are better as images rendered ahead of time. `render()` returns false until
 the program is ready, which is when a mascot fires `ready`. A lost context
 drops every program and they're rebuilt as they're asked for.
 
@@ -199,6 +203,11 @@ In the shader:
   with darker seams, speckles or a wet ripple, from 3D noise in a bone's
   space, so the pattern rides on the body. It fades with the pixel
   footprint, so a small mascot never shimmers.
+- **Reveal**: `compile(spec, { reveal: true })` (a mascot's `revealable`
+  option) guards each part, the face and the paints with one uniform, so
+  `mascot.reveal({ parts, face, paints })` shows the character a piece at
+  a time with no new shader. The site's "Describe it" replay builds one
+  such shader per character instead of one per step.
 - **Framing**: the camera backs off by the `framing` option, so a page can
   set characters smaller in their canvases without resizing them. The
   `floor` option fades the floor shadow, and at 0 skips it entirely.
@@ -209,8 +218,10 @@ In the shader:
 
 `Mascot` is the public API: `new Mascot(canvas, spec, options)` or
 `mount(container, spec, options)`, then `setState()`, `poke()`,
-`setPalette()`, `setSpeed()`, `setEffects()`, `setSpec()`, `on()`,
-`dispose()`. `snapshot(spec, options)` settles a character into a state
+`setPalette()`, `setSpeed()`, `setEffects()`, `setSpec()`, `reveal()`,
+`on()`, `dispose()`. `isSupported()` says whether the browser can draw
+mascots at all (WebGL2 is off on some locked-down devices), so a page can
+show stills instead. `snapshot(spec, options)` settles a character into a state
 and draws a single frame onto a new canvas, for avatars and galleries that
 don't need to move. `element.ts` wraps it as `<wobnimo-mascot>`, so any framework
 that renders tags can use it with no adapter. `customize.ts` makes new
@@ -291,7 +302,7 @@ packages/engine        the runtime: spec → shader, behavior, rig, renderer
 packages/characters    the cast, as specs
 packages/wobnimo       the published package: entries, the CDN build, the CLI
 skills/wobnimo-mascot  the agent skill for designing new characters (examples are generated)
-apps/playground        the demo page
-scripts/               build (single-file playground) and a headless screenshot helper
+apps/playground        the demo page; public/posters holds its character stills
+scripts/               build (single-file playground), posters (renders the stills), a screenshot helper
 docs/                  this document
 ```

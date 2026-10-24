@@ -1,6 +1,30 @@
 /* Wobnimo site: one dark look, huge condensed type, the cast playing
    between the letters, and a cream band for the code. */
 
+/* ---------- fonts ----------
+   Self-hosted and preloaded, so nothing waits on another origin. The
+   headline waits for Anton rather than reflowing from a fallback. */
+
+@font-face {
+  font-family: 'Anton';
+  src: url(fonts/anton.woff2) format('woff2');
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url(fonts/jetbrains-mono.woff2) format('woff2');
+  font-weight: 400 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Caveat';
+  src: url(fonts/caveat.woff2) format('woff2');
+  font-weight: 500 600;
+  font-display: swap;
+}
+
 :root {
   color-scheme: dark;
   --ink: #0e0f12;
@@ -250,7 +274,9 @@ button {
 }
 
 .actor canvas,
-.stage canvas {
+.stage canvas,
+.actor img,
+.stage img {
   display: block;
   width: 100%;
   height: 100%;
@@ -603,7 +629,7 @@ button {
   transition: box-shadow 0.2s;
 }
 
-.avatar-face canvas {
+.avatar-face img {
   display: block;
   width: 100%;
   height: 100%;
@@ -611,7 +637,7 @@ button {
   transition: opacity 0.4s;
 }
 
-.avatar-face canvas.is-ready {
+.avatar-face img.is-ready {
   opacity: 1;
 }
 
@@ -1109,7 +1135,8 @@ button {
   opacity: 1;
 }
 
-.forge-stage canvas {
+.forge-stage canvas,
+.forge-stage img {
   position: relative;
   display: block;
   width: 100%;
@@ -1460,7 +1487,7 @@ button {
   margin-bottom: 8px;
 }
 
-.poster canvas {
+.poster img {
   display: block;
   width: 100%;
   height: 100%;
@@ -1471,12 +1498,12 @@ button {
     transform 0.6s;
 }
 
-.poster canvas.is-ready {
+.poster img.is-ready {
   opacity: 1;
   transform: none;
 }
 
-.cast-card:hover .poster canvas {
+.cast-card:hover .poster img {
   transform: translateY(-6px);
 }
 

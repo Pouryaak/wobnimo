@@ -1,12 +1,13 @@
 /* Emits map(p): the character's signed distance field, with the material
    of the nearest surface. Parts are combined in the order the spec lists
-   them, so a subtraction carves everything declared before it. */
+   them, so a subtraction carves everything declared before it. A reveal
+   shader guards each part, and the eyes, with the uReveal uniform. */
 
 import type { PartSpec, Vec3 } from '../spec/types';
 import { f, inverseRotation, v2, v3 } from './format';
 import type { Resolved } from './resolve';
 
-export function emitMap(r: Resolved): string {
+export function emitMap(r: Resolved, reveal = false): string {
   const out: string[] = ['vec2 map(vec3 p) {', '  vec2 r = vec2(1e9, 0.0);', '  vec3 l;'];
   const declared = new Set<number>();
   const boneSpace = (index: number) => {
@@ -23,18 +24,20 @@ export function emitMap(r: Resolved): string {
     const local = part.rot ? `${inverseRotation(part.rot)} * (${b} - ${v3(at)})` : `${b} - ${v3(at)}`;
     out.push(`  l = ${local};`);
     const id = f(r.materialId(part.material, `parts[${i}]`));
+    const shown = reveal ? `if (uReveal.x > ${f(i)}) ` : '';
     if (part.shape === 'hem') {
       out.push(
-        `  r.x = smax(r.x, ${f(part.y)} + ${f(part.amplitude)} * sin(atan(l.z, l.x) * ${f(part.waves)} + uTime * ${f(part.speed)}) - l.y, ${f(part.blend)});`,
+        `  ${shown}r.x = smax(r.x, ${f(part.y)} + ${f(part.amplitude)} * sin(atan(l.z, l.x) * ${f(part.waves)} + uTime * ${f(part.speed)}) - l.y, ${f(part.blend)});`,
       );
       return;
     }
     const d = part.clip ? `max(${distance(part)}, dot(l, ${v3(unit(part.clip.normal))}) - ${f(part.clip.offset ?? 0)})` : distance(part);
     const k = f(part.blend ?? 0);
-    out.push(part.op === 'sub' ? `  opSub(r, ${d}, ${k});` : `  opAdd(r, ${d}, ${id}, ${k});`);
+    out.push(part.op === 'sub' ? `  ${shown}opSub(r, ${d}, ${k});` : `  ${shown}opAdd(r, ${d}, ${id}, ${k});`);
   });
 
-  out.push(...emitEyes(r, boneSpace));
+  const eyes = emitEyes(r, boneSpace);
+  out.push(...(reveal && eyes.length ? ['  if (uReveal.y > 0.5) {', ...eyes.map((line) => `  ${line}`), '  }'] : eyes));
   out.push('  r.x *= uScaleFix;', '  return r;', '}');
   return out.join('\n');
 }

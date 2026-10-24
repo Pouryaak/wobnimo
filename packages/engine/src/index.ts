@@ -2,13 +2,13 @@
    element) and a character; the rest is for building characters and
    for other renderers. */
 
-export { Mascot, mount, compileCached, type MascotOptions, type MascotEvents } from './runtime/mascot';
+export { Mascot, mount, warm, isSupported, compileCached, type MascotOptions, type MascotEvents, type Reveal } from './runtime/mascot';
 export { snapshot, type SnapshotOptions } from './runtime/snapshot';
 export { driveFromStatus, type ChatStatus } from './runtime/status';
 export { defineMascotElement } from './runtime/element';
 export { recolor, albedo, variant, defineCharacter, type Palette } from './runtime/customize';
 export { STATES, EXPRESSIONS, type MascotState } from './behavior/states';
-export { compile, type CompiledCharacter } from './compiler/compile';
+export { compile, type CompiledCharacter, type CompileOptions } from './compiler/compile';
 export { SpecError } from './compiler/resolve';
 export { Brain, type Pose, type BeatEvent } from './behavior/brain';
 export { DEFAULT_FX, Fx } from './behavior/fx';

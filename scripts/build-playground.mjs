@@ -4,7 +4,9 @@
    dist/playground.html   the page body, for hosts that supply the document shell
    dist/site/index.html   a complete document, for GitHub Pages or any static host
 
-   Images in apps/playground/public are copied next to both. */
+   Images in apps/playground/public are copied next to both. The character
+   stills there are rendered by `npm run posters`; the build stops if any
+   of them is out of date. */
 
 import { build } from 'esbuild';
 import { cp, mkdir, readFile, writeFile } from 'node:fs/promises';
@@ -17,14 +19,24 @@ const engine = await build({ ...common, entryPoints: [`${root}packages/engine/sr
 const engineBytes = gzipSync(engine.outputFiles[0].contents).length;
 
 /* pull the cast and the states from source so llms.txt can't drift from the code */
-const data = await build({ bundle: true, write: false, format: 'esm', target: 'es2022', tsconfig: `${root}tsconfig.json`, entryPoints: [`${root}scripts/_catalog.ts`] });
-const { characters, states } = await import(`data:text/javascript;base64,${Buffer.from(data.outputFiles[0].text).toString('base64')}`);
+const data = await build({ bundle: true, write: false, format: 'esm', platform: 'node', target: 'es2022', tsconfig: `${root}tsconfig.json`, entryPoints: [`${root}scripts/_catalog.ts`] });
+const { characters, states, posterKeys, specGzipAverage } = await import(`data:text/javascript;base64,${Buffer.from(data.outputFiles[0].text).toString('base64')}`);
+
+/* every still must match the character as it is now */
+const manifest = JSON.parse(await readFile(`${root}apps/playground/public/posters/manifest.json`, 'utf8').catch(() => '{}'));
+const stale = Object.keys(posterKeys).filter((id) => manifest[id] !== posterKeys[id]);
+if (stale.length) throw new Error(`Character stills are out of date for ${stale.join(', ')}. Run: npm run posters`);
 
 const app = await build({
   ...common,
   entryPoints: [`${root}apps/playground/src/main.ts`],
   format: 'iife',
-  define: { __ENGINE_GZIP_BYTES__: String(engineBytes) },
+  define: {
+    __ENGINE_GZIP_BYTES__: String(engineBytes),
+    __SPEC_GZIP_BYTES__: String(Math.round(specGzipAverage)),
+    /* the key goes on each still's URL, so a re-rendered one is never served from an old cache */
+    __POSTER_KEYS__: JSON.stringify(posterKeys),
+  },
 });
 const js = app.outputFiles[0].text.replace(/<\/script/gi, '<\\/script');
 const css = await readFile(`${root}apps/playground/src/styles.css`, 'utf8');

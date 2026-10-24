@@ -9,6 +9,7 @@ import type { Frame, Renderer } from './renderer';
 /** The camera's half field of view, as a tangent: a long lens, like a product shot. */
 const TAN_HALF_FOV = 0.2;
 const CAMERA_PITCH = 0.1;
+const SHOW_ALL = [1e6, 1, 1];
 
 export class WebGL2Renderer implements Renderer {
   private readonly gpu = Gpu.shared();
@@ -68,6 +69,7 @@ export class WebGL2Renderer implements Renderer {
     gl.uniform4fv(u.uFxB, frame.fx.b);
     gl.uniform4fv(u.uFxC, frame.fx.c);
     gl.uniform1i(u.uFxCount, frame.fx.count);
+    if (p.character.reveal) gl.uniform3fv(u.uReveal, frame.reveal ?? SHOW_ALL);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
 
     /* GL's origin is bottom left, so the drawing sits at the bottom of the shared buffer */

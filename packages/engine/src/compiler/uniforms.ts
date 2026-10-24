@@ -39,6 +39,8 @@ export const UNIFORMS = {
   uFxB: 'vec4[fx]',
   uFxC: 'vec4[fx]',
   uFxCount: 'int',
+  /** Parts shown, face on, paints on: only read by shaders compiled with `reveal`. */
+  uReveal: 'vec3',
 } as const;
 
 export type UniformName = keyof typeof UNIFORMS;

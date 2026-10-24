@@ -11,6 +11,7 @@ import { Brain } from '../behavior/brain';
 import { Fx } from '../behavior/fx';
 import { STATES, type MascotState } from '../behavior/states';
 import { compile, type CompiledCharacter } from '../compiler/compile';
+import { Gpu } from '../render/gpu';
 import { rng } from '../math/scalar';
 import { Rig } from '../rig/rig';
 import type { Renderer } from '../render/renderer';
@@ -44,7 +45,18 @@ export interface MascotOptions {
   framing?: number;
   /** Respect `prefers-reduced-motion`: hold the state's pose instead of animating. Default true. */
   respectReducedMotion?: boolean;
+  /** Build the character so `reveal()` can show it a piece at a time, for build-up animations. Default false. */
+  revealable?: boolean;
 }
+
+/** What `reveal()` shows: the first `parts` parts of the spec, and whether the face and the paints are on. */
+export interface Reveal {
+  parts?: number;
+  face?: boolean;
+  paints?: boolean;
+}
+
+const SHOW_ALL: Vec3 = [1e6, 1, 1];
 
 export interface MascotEvents {
   /** Clicked or poked. */
@@ -58,10 +70,37 @@ type Listener<T> = (value: T) => void;
 
 /* compiling is pure, so every mascot of one character shares the result */
 const compiled = new WeakMap<CharacterSpec, CompiledCharacter>();
-export function compileCached(spec: CharacterSpec): CompiledCharacter {
-  let c = compiled.get(spec);
-  if (!c) compiled.set(spec, (c = compile(spec)));
+const compiledRevealable = new WeakMap<CharacterSpec, CompiledCharacter>();
+export function compileCached(spec: CharacterSpec, options: { reveal?: boolean } = {}): CompiledCharacter {
+  const cache = options.reveal ? compiledRevealable : compiled;
+  let c = cache.get(spec);
+  if (!c) cache.set(spec, (c = compile(spec, options)));
   return c;
+}
+
+/**
+ * Whether this browser can draw mascots (WebGL2, which some locked-down or
+ * very old devices turn off). Check it before creating one to show a still
+ * instead; `new Mascot` throws where it's false.
+ */
+export function isSupported(): boolean {
+  try {
+    Gpu.shared();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Starts building the character's shader without drawing it, so a mascot
+ * that shows it later appears at once. Call it ahead of a likely need: when
+ * a picker is hovered, or while the page is idle. Where the browser can't
+ * build shaders in the background this blocks while it builds, so call it
+ * from an idle callback there.
+ */
+export function warm(spec: CharacterSpec, options: { revealable?: boolean } = {}) {
+  Gpu.shared().program(compileCached(spec, { reveal: options.revealable }));
 }
 
 export class Mascot implements Animated {
@@ -71,6 +110,7 @@ export class Mascot implements Animated {
   private fx!: Fx;
   private readonly renderer: Renderer;
   private readonly options: Required<Omit<MascotOptions, 'state' | 'seed' | 'palette'>>;
+  private shown: Vec3 = SHOW_ALL;
   private readonly seed: number;
   private palette: Palette | undefined;
   private albedo!: Float32Array;
@@ -97,6 +137,7 @@ export class Mascot implements Animated {
       exposure: options.exposure ?? 1,
       framing: options.framing ?? 1,
       respectReducedMotion: options.respectReducedMotion ?? true,
+      revealable: options.revealable ?? false,
     };
     this.renderer = new WebGL2Renderer(canvas);
     this.load(spec, options.state ?? 'idle');
@@ -156,6 +197,17 @@ export class Mascot implements Animated {
     this.options.effects = on;
   }
 
+  /**
+   * Shows only part of the character: the first `parts` parts, with or
+   * without the face and the paints. `null` shows all of it. Needs the
+   * `revealable` option; costs nothing to change, so it can step every frame.
+   */
+  reveal(show: Reveal | null) {
+    if (!this.options.revealable) throw new Error('reveal() needs a mascot created with { revealable: true }');
+    this.shown = show ? [show.parts ?? SHOW_ALL[0], show.face === false ? 0 : 1, show.paints === false ? 0 : 1] : SHOW_ALL;
+    this.stillFrames = 0;
+  }
+
   /** The happy reaction: a hop with a spin. */
   poke() {
     this.brain.poke();
@@ -213,6 +265,7 @@ export class Mascot implements Animated {
       floor: this.options.floor,
       exposure: this.options.exposure,
       framing: this.options.framing,
+      reveal: this.shown,
     });
     /* with reduced motion, count only frames that reached the screen */
     if (drew && still) this.stillFrames++;
@@ -238,7 +291,7 @@ export class Mascot implements Animated {
 
   private load(spec: CharacterSpec, state: MascotState) {
     this.source = spec;
-    this.character = compileCached(spec);
+    this.character = compileCached(spec, { reveal: this.options.revealable });
     this.albedo = albedo(this.character, this.palette);
     this.renderer.load(this.character);
     this.brain = new Brain(spec.motion, this.seed);

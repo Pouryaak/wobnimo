@@ -27,7 +27,9 @@ interface Building {
 type Entry = Program | Building | 'failed';
 
 /* without background compiling, build at most one shader every few frames,
-   so a page full of new characters doesn't freeze while it loads */
+   so a page full of new characters doesn't freeze while it loads. None is
+   built before the page has painted once, so a build never holds up the
+   first paint. */
 const SYNC_BUILD_GAP_MS = 48;
 /* the shared buffer grows in steps, so resizing mascots don't reallocate it every frame */
 const BUFFER_STEP = 128;
@@ -44,7 +46,7 @@ export class Gpu {
   readonly gl: WebGL2RenderingContext;
   private readonly programs = new Map<CompiledCharacter, Entry>();
   private readonly parallel: { COMPLETION_STATUS_KHR: number } | null;
-  private lastSyncBuild = -Infinity;
+  private lastSyncBuild = Infinity;
 
   private constructor() {
     const gl = this.canvas.getContext('webgl2', {
@@ -58,6 +60,8 @@ export class Gpu {
     if (!gl) throw new Error('WebGL2 is not available');
     this.gl = gl;
     this.parallel = gl.getExtension('KHR_parallel_shader_compile');
+    /* a task queued from a frame callback runs once that frame is painted */
+    if (!this.parallel) requestAnimationFrame(() => setTimeout(() => (this.lastSyncBuild = -Infinity)));
     gl.enable(gl.SCISSOR_TEST);
     gl.clearColor(0, 0, 0, 0);
     /* a lost context takes every program with it: rebuild them as they're asked for */
