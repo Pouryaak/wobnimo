@@ -28,6 +28,9 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm run build
+        env:
+          # the deployed studio API (apps/studio-api); left unset, the studio runs its demo
+          STUDIO_API_URL: ${{ vars.STUDIO_API_URL }}
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
         with:
           path: dist/site

@@ -27,3 +27,4 @@ jobs:
       - run: npm run typecheck
       - run: npm run build
       - run: npm run build -w wobnimo
+      - run: npm run check -w @wobnimo/studio-api
