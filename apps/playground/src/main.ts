@@ -17,6 +17,66 @@ const $ = <T extends HTMLElement>(sel: string) => document.querySelector<T>(sel)
 const byId = (id: string) => characters.find((c) => c.id === id)!;
 const kb = (n: number) => `${(n / 1024).toFixed(1)} KB`;
 
+/* ---- copy for agent ----
+   One self-contained prompt a person can paste into any coding agent
+   (Claude Code, Cursor, Copilot, v0…) to have it install and wire up a
+   mascot. It names the chosen character and state so the paste lands
+   exactly where the person was looking. */
+function agentPrompt(spec: CharacterSpec, state: MascotState): string {
+  return `Add a Wobnimo mascot to this app.
+
+Wobnimo (npm: "wobnimo") is a tiny web animation engine with ten ready-made mascots and ten emotional states. Set it up:
+
+1. Install it: npm i wobnimo
+2. Render the "${spec.id}" character where the user or assistant lives, 96–160px square.
+   - React / Next.js (add "use client" in app-router files):
+       import { Mascot } from 'wobnimo/react';
+       <Mascot character="${spec.id}" state="${state}" style={{ width: 128, height: 128 }} />
+   - Anything else (Vue, Svelte, plain HTML) — register the element once (import 'wobnimo/element'), then:
+       <wobnimo-mascot character="${spec.id}" state="${state}"></wobnimo-mascot>
+3. Drive the state from what the app is actually doing — don't leave it stuck on idle. The ten states:
+   idle (waiting for the user), listening (user is typing), thinking (request sent, no reply yet),
+   speaking (reply streaming in), working (running a tool or long task), error (something failed),
+   celebrating (a task finished), surprised (unexpected event), sad (couldn't help), sleeping (idle a while).
+   If this is a chat UI on the Vercel AI SDK, it's one prop:
+       const { status } = useChat();
+       <Mascot character="${spec.id}" status={status} />
+   …and the mascot thinks, speaks, celebrates and errors on its own.
+4. Verify: run the app and confirm the mascot renders and changes state during one chat turn.
+
+Full reference: https://pouryaak.github.io/wobnimo/llms.txt`;
+}
+
+let toastTimer: number | undefined;
+function toast(msg: string) {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = window.setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+async function copyAgent(spec: CharacterSpec, state: MascotState, msg: string) {
+  const text = agentPrompt(spec, state);
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    /* the clipboard can be off limits in frames: fall back to a hidden textarea */
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.append(ta);
+    ta.select();
+    try {
+      document.execCommand('copy');
+    } finally {
+      ta.remove();
+    }
+  }
+  toast(msg);
+}
+
 /** Runs `fn` when the browser has a moment, or soon anyway. */
 const idle = (fn: () => void) => ('requestIdleCallback' in window ? requestIdleCallback(fn, { timeout: 1500 }) : setTimeout(fn, 200));
 
@@ -275,11 +335,12 @@ copy.addEventListener('click', async () => {
 const castGrid = $('#cast-grid');
 const posters = characters.map((spec) => {
   const li = document.createElement('li');
-  li.innerHTML = `<button type="button" class="cast-card"><span class="poster"></span><h3>${spec.name}</h3><p>${spec.tagline}</p></button>`;
-  li.querySelector('button')!.addEventListener('click', () => {
+  li.innerHTML = `<div class="cast-card"><button type="button" class="cast-open"><span class="poster"></span><h3>${spec.name}</h3><p>${spec.tagline}</p></button><button type="button" class="cast-copy mono" aria-label="Copy a setup prompt for ${spec.name} for your AI agent">Copy for agent</button></div>`;
+  li.querySelector('.cast-open')!.addEventListener('click', () => {
     select(spec);
     $('#studio').scrollIntoView();
   });
+  li.querySelector('.cast-copy')!.addEventListener('click', () => copyAgent(spec, 'idle', `${spec.name} setup prompt copied — paste it into your agent`));
   castGrid.append(li);
   return li.querySelector<HTMLElement>('.poster')!;
 });
@@ -328,6 +389,14 @@ if (actors.length) {
   setTimeout(startStills, 2500);
 } else startStills();
 whenNear($('#studio'), startStills);
+
+/* the studio's agent button follows whatever character and state are on stage */
+$('#agent-copy').addEventListener('click', () =>
+  copyAgent(view.spec, view.state, `${view.spec.name} (${LABELS[view.state].toLowerCase()}) setup prompt copied — paste it into your agent`),
+);
+
+/* the developers callout hands over a generic prompt for the default character */
+$('#dev-agent-copy').addEventListener('click', () => copyAgent(byId('mochi'), 'thinking', 'Setup prompt copied — paste it into your agent'));
 
 select(view.spec);
 setState(view.state);

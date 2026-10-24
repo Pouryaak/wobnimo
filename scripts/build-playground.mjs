@@ -16,6 +16,10 @@ const common = { bundle: true, minify: true, write: false, target: 'es2022', tsc
 const engine = await build({ ...common, entryPoints: [`${root}packages/engine/src/index.ts`], format: 'esm' });
 const engineBytes = gzipSync(engine.outputFiles[0].contents).length;
 
+/* pull the cast and the states from source so llms.txt can't drift from the code */
+const data = await build({ bundle: true, write: false, format: 'esm', target: 'es2022', tsconfig: `${root}tsconfig.json`, entryPoints: [`${root}scripts/_catalog.ts`] });
+const { characters, states } = await import(`data:text/javascript;base64,${Buffer.from(data.outputFiles[0].text).toString('base64')}`);
+
 const app = await build({
   ...common,
   entryPoints: [`${root}apps/playground/src/main.ts`],
@@ -43,10 +47,74 @@ ${html.slice(split).trim()}
 </html>
 `;
 
+const WHEN = {
+  idle: 'waiting for the user',
+  thinking: 'a request is sent, no reply yet',
+  listening: 'the user is typing or talking',
+  speaking: 'a reply is streaming in',
+  sleeping: 'idle for a couple of minutes',
+  working: 'running a tool, a build or a long task',
+  error: 'something failed',
+  surprised: 'an unexpected event',
+  celebrating: 'a task finished, tests passed',
+  sad: 'it could not help',
+};
+const kb = ((engineBytes / 1024).toFixed(1));
+const llms = `# Wobnimo
+
+> Ten animated mascots on one featherweight web animation engine (~${kb} KB gzipped, zero dependencies). Drop-in web component, first-class React wrapper, and agent-ready. Use it to give an app or AI assistant a face that reacts to what it is doing.
+
+## Install
+
+One tag, no build step:
+\`\`\`html
+<script type="module" src="https://cdn.jsdelivr.net/npm/wobnimo@1/dist/wobnimo.js"></script>
+<wobnimo-mascot character="mochi" state="thinking"></wobnimo-mascot>
+\`\`\`
+
+With a bundler: \`npm i wobnimo\`
+- React/Next: \`import { Mascot } from 'wobnimo/react'\` then \`<Mascot character="mochi" state="thinking" />\` (add "use client" in Next app-router files).
+- Anywhere else: \`import 'wobnimo/element'\` then \`<wobnimo-mascot character="mochi" state="idle"></wobnimo-mascot>\`.
+- In code: \`import { mount } from 'wobnimo'\`; \`import { mochi } from 'wobnimo/characters/mochi'\`; \`mount(el, mochi).setState('thinking')\`.
+
+Import one character (~1.2 KB each) from \`wobnimo/characters/<id>\`, or the whole cast from \`wobnimo/characters\`.
+
+## AI chat, one prop
+
+With the Vercel AI SDK, pass the useChat \`status\` straight in; the mascot thinks, speaks, celebrates and errors for you:
+\`\`\`tsx
+const { status } = useChat();
+<Mascot character="mochi" status={status} />
+\`\`\`
+With the element, set the \`status\` attribute to submitted | streaming | ready | error.
+
+## Characters
+
+${characters.map((c) => `- ${c.id} (${c.name}): ${c.tagline}`).join('\n')}
+
+## States (set via the state prop/attribute or mascot.setState)
+
+${states.map((s) => `- ${s}: ${WHEN[s] ?? ''}`).join('\n')}
+
+## Customize
+
+- Recolour by material name: \`palette={{ shell: '#e0457b' }}\` (React) or \`palette="shell:#e0457b"\` (attribute). Material names are per character.
+- Make a variant or a new character from data with \`variant()\` and \`defineCharacter()\` from \`wobnimo\`.
+- Draw a still (avatar, thumbnail) with \`snapshot(spec, { state, size })\`.
+
+## Notes
+
+- Unknown character or state names throw at runtime and list the valid ones.
+- Honours prefers-reduced-motion, sleeps off-screen, shares one WebGL2 context across all mascots on a page.
+- Live demo and copy-paste install: https://pouryaak.github.io/wobnimo/
+`;
+
 await mkdir(`${root}dist/site`, { recursive: true });
 await writeFile(`${root}dist/playground.html`, html);
 await writeFile(`${root}dist/site/index.html`, site);
 /* images and other static files sit next to the page in both outputs */
 await cp(`${root}apps/playground/public`, `${root}dist/site`, { recursive: true });
 await cp(`${root}apps/playground/public`, `${root}dist`, { recursive: true });
+await writeFile(`${root}dist/site/llms.txt`, llms);
+await writeFile(`${root}dist/llms.txt`, llms);
 console.log(`engine ${(engineBytes / 1024).toFixed(1)} KB gzipped · playground ${(html.length / 1024).toFixed(1)} KB`);

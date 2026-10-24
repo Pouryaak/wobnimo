@@ -1,190 +1,142 @@
-# wobnimo.
+<div align="center">
 
-Living mascots for the web. Describe a character as a few kilobytes of data,
-and Wobnimo renders it in real time, lit like a studio product shot, acted
-like a cartoon, and reacting to what your app or agent is doing.
+<a href="https://pouryaak.github.io/wobnimo/"><img src="https://pouryaak.github.io/wobnimo/media/hero.gif" alt="Wobnimo — pixels with a pulse" width="860"></a>
 
-```html
-<script type="module">
-  import { defineWobnimoElement } from '@wobnimo/characters';
-  defineWobnimoElement();
-</script>
+# wobnimo
 
-<wobnimo-mascot character="volt" state="thinking"></wobnimo-mascot>
-```
+### Give your app a face.
 
-- **Characters are data.** A `CharacterSpec` is plain JSON: parts, materials,
-  bones, eyes, face, acting and effects. No keyframes, no per-character code.
-- **One engine for any body.** Ten characters (a robot, a songbird, a
-  jelly, a ghost, an octopus, a plush cat, a tree frog, a penguin, a baby
-  dino and a robot duck) all run on the same ~25 KB (gzipped) runtime with
-  no dependencies.
-- **Any number on a page.** Every mascot shares one WebGL context, each
-  character's shader is built once in the background, and `snapshot()`
-  draws stills for galleries that cost nothing after the first frame.
-- **Real surfaces.** Fur, pebbled scales, speckled wet skin and a rippled
-  sheen are procedural detail on a material (`surface`), fixed to a bone so
-  they move with the body.
-- **Premium by default.** Per-pixel studio lighting, clear coat, subsurface
-  scattering, soft shadows and occlusion, all derived from the shape.
-- **Acted, not just animated.** Every state has a pose per character (Volt
-  props its chin when thinking, Inky cups a tentacle to listen), on springs,
-  so any change of state at any moment blends. Effects live around the
-  character: z's when it sleeps, notes when the bird talks, splashes when the
-  jelly lands, and the body hides whatever passes behind it.
+Ten living mascots on one featherweight animation engine for the web.
+Real 3D, every mood, ~25&nbsp;KB, zero dependencies — and built so an AI agent can wire it up for you.
 
-## Use it
+[![npm](https://img.shields.io/npm/v/wobnimo?color=d9f55c&labelColor=16181d)](https://www.npmjs.com/package/wobnimo)
+[![gzip](https://img.shields.io/badge/one%20mascot-~25%20KB%20gzip-d9f55c?labelColor=16181d)](https://pouryaak.github.io/wobnimo/)
+[![zero deps](https://img.shields.io/badge/dependencies-0-d9f55c?labelColor=16181d)](https://www.npmjs.com/package/wobnimo?activeTab=dependencies)
+[![license](https://img.shields.io/npm/l/wobnimo?color=d9f55c&labelColor=16181d)](./LICENSE)
 
-Ten states, shared by every character, made to follow an agent:
+**[▶ Live playground](https://pouryaak.github.io/wobnimo/)** · **[Quickstart](#add-one-in-10-seconds)** · **[For AI agents](#for-ai-agents)**
 
-| State | When |
-|---|---|
-| `idle` | Waiting for the user |
-| `thinking` | Planning, before it answers |
-| `listening` | The user is talking or typing |
-| `speaking` | Streaming a reply |
-| `sleeping` | Nothing has happened for a while |
-| `working` | Running a tool, a build or a long task |
-| `error` | Something failed |
-| `surprised` | Something unexpected arrived |
-| `celebrating` | A task finished, the tests passed |
-| `sad` | It could not help, or the user is unhappy |
+</div>
 
-Clicking a mascot pokes it (a happy hop).
+---
 
-### HTML, Vue, Svelte, anything that renders tags
+Chatbots, copilots and apps feel alive when something on screen reacts. Wobnimo gives you a
+character that **thinks while it works, talks while it streams, and celebrates when it's done** —
+in a tag you drop anywhere, with no build step and nothing to configure.
+
+## Add one in 10 seconds
+
+No build, no npm, no framework. Two lines in any HTML page:
 
 ```html
-<wobnimo-mascot
-  character="pip"
-  state="speaking"
-  palette="feather:#7ec8ff; wing:#3a7bd5"
-  speed="1.2"
-  style="width: 200px; height: 200px"
-></wobnimo-mascot>
+<script type="module" src="https://cdn.jsdelivr.net/npm/wobnimo@1/dist/wobnimo.js"></script>
 
-<script>
-  const pip = document.querySelector('wobnimo-mascot');
-  pip.state = 'listening';
-  pip.addEventListener('poke', () => console.log('hi'));
-  pip.addEventListener('statechange', (e) => console.log(e.detail));
-</script>
+<wobnimo-mascot character="mochi" state="thinking"></wobnimo-mascot>
 ```
 
-Attributes: `character`, `state`, `seed`, `speed`, `palette`,
-`interactive="false"`, `effects="false"`. The element is 160 × 160 unless
-you size it.
+That's it — a living mascot is on your page. [Try every character and mood in the playground →](https://pouryaak.github.io/wobnimo/)
 
-### JavaScript
+## Meet the cast
 
-```ts
-import { mount } from '@wobnimo/engine';
-import { volt } from '@wobnimo/characters';
+<div align="center">
+<a href="https://pouryaak.github.io/wobnimo/"><img src="https://pouryaak.github.io/wobnimo/media/cast.png" alt="The ten Wobnimo characters: Volt, Pip, Mochi, Boo, Inky, Miso, Tad, Pebble, Rex, Microduck" width="860"></a>
+</div>
 
-const mascot = mount(document.querySelector('#mascot'), volt, { state: 'idle' });
+Ten characters, each with its own body, surface and personality — and every one of them can play all
+ten emotional states. Recolour any of them to match your brand, or write your own as plain data.
 
-agent.on('status', (status) => mascot.setState(status));
-mascot.on('poke', () => openChat());
-mascot.setPalette({ shell: '#e0457b' }); // live, no shader rebuild
-mascot.setSpeed(0.8);
-mascot.setEffects(false);
-mascot.on('ready', () => fadeIn()); // first frame is on screen
-mascot.dispose(); // removes the canvas too
-```
+## Give your AI a face
 
-`new Mascot(canvas, spec, options)` does the same on a canvas you own.
-The element fires the same `ready` event.
+This is the part that matters. An assistant that just spins a loader feels like a machine.
+Wire a mascot to what your app is doing and it feels like someone is in there.
 
-For a still (an avatar, a thumbnail, a picker), draw one frame instead of
-running a mascot:
-
-```ts
-import { snapshot } from '@wobnimo/engine';
-
-const canvas = await snapshot(volt, { state: 'celebrating', size: 96 });
-avatar.append(canvas);
-```
-
-### React
+Using the [Vercel AI SDK](https://ai-sdk.dev)? It's **one prop** — the mascot thinks, speaks,
+celebrates and shows errors for you:
 
 ```tsx
-function Mascot({ state = 'idle' }) {
-  const host = useRef(null);
-  const mascot = useRef(null);
-  useEffect(() => {
-    mascot.current = mount(host.current, volt);
-    return () => mascot.current.dispose();
-  }, []);
-  useEffect(() => mascot.current?.setState(state), [state]);
-  return <div ref={host} style={{ width: 160, height: 160 }} />;
-}
+import { Mascot } from 'wobnimo/react';
+
+const { status } = useChat();
+
+<Mascot character="mochi" status={status} />
 ```
 
-Or render `<wobnimo-mascot>` directly; React 19 passes its props through.
+The ten states map straight onto what an app or agent actually does:
 
-### Options
+| State | Show it when | | State | Show it when |
+| --- | --- | --- | --- | --- |
+| `idle` | waiting for the user | | `working` | running a tool or long task |
+| `listening` | the user is typing | | `error` | something failed |
+| `thinking` | request sent, no reply yet | | `celebrating` | a task finished |
+| `speaking` | a reply is streaming | | `surprised` | an unexpected event |
+| `sleeping` | idle for a while | | `sad` | it couldn't help |
 
-| Option | Default | |
-|---|---|---|
-| `state` | `'idle'` | Where it starts. |
-| `palette` | spec's own | New colours for materials by name. Unknown names throw, listing the real ones. |
-| `speed` | `1` | Pace of everything: acting, springs, effects. |
-| `effects` | `true` | Particles around the character. |
-| `interactive` | `true` | Follows the pointer, hops when clicked. |
-| `framing` | `1` | Room around the character; above 1 makes it smaller in its canvas. |
-| `floor` | `1` | Strength of the floor shadow; `0` for a mascot laid over text or a busy background. |
-| `seed` | random | Desyncs blinks and glances between mascots; fixed seeds behave the same every time. |
-| `exposure`, `shadow`, `maxPixelRatio`, `respectReducedMotion` | | Rendering. |
+## For AI agents
 
-### Your own character
+Wobnimo is built to be installed *by* an agent. On the [playground](https://pouryaak.github.io/wobnimo/),
+every character has a **Copy for agent** button: it copies one self-contained prompt that tells any
+agent (Claude Code, Cursor, Copilot, v0…) exactly what to install and how to wire the mascot to your
+app's real events. Paste it, and it's done.
 
-```ts
-import { defineCharacter, variant } from '@wobnimo/engine';
-import { pip } from '@wobnimo/characters';
+Prefer to point your agent at the docs? Everything is at
+**[pouryaak.github.io/wobnimo/llms.txt](https://pouryaak.github.io/wobnimo/llms.txt)**, and the package
+ships an `AGENTS.md` so an agent inspecting `node_modules/wobnimo` already knows the rules.
 
-// a recoloured, calmer cousin
-const wren = variant(pip, {
-  id: 'wren',
-  name: 'Wren',
-  palette: { feather: '#9b7b5b', wing: '#5d4630' },
-  motion: { ...pip.motion, hop: 0.3 },
-});
-
-// or from scratch, fully typed
-const blob = defineCharacter({ id: 'blob', /* parts, materials, bones… */ });
-```
-
-A material can be a shade of another (`wing: { color: '#e8962e', shadeOf:
-'feather' }`), so recolouring the body carries the wings and belly along
-with it, keeping their own lightness.
-
-Spec mistakes fail loudly and name the field (`pip: acting.thinking names
-bone "jaw2", which does not exist`), so a person or an agent writing a spec
-can fix it from the message alone.
-
-## Run it
+## Use it with a bundler
 
 ```bash
-npm install
-npm run build        # dist/site/index.html, one self-contained page
-npm run typecheck
+npm i wobnimo
 ```
 
-Open `dist/site/index.html` in a browser with WebGL2. Every push to `main`
-rebuilds the playground and publishes it to GitHub Pages
-(`.github/workflows/pages.yml`).
+**React / Next.js** (`"use client"` in app-router files):
 
-## Read next
+```tsx
+import { Mascot } from 'wobnimo/react';
 
-- [`docs/architecture.md`](docs/architecture.md): how it works and why.
-- [`packages/engine/src/spec/types.ts`](packages/engine/src/spec/types.ts): the character format.
-- [`packages/characters/src`](packages/characters/src): the ten specs.
-
-## Layout
-
+<Mascot character="volt" state="thinking" style={{ width: 160, height: 160 }} />
 ```
-packages/engine        spec → shader compiler, behavior, effects, rig, WebGL2 renderer, runtime
-packages/characters    the cast
-apps/playground        the demo page
-scripts/               build and a headless screenshot helper
+
+**Vanilla JS, Vue, Svelte, anything** — register the element once, then use the tag:
+
+```ts
+import 'wobnimo/element';
+// <wobnimo-mascot character="pip" state="speaking"></wobnimo-mascot>
 ```
+
+**Control it in code:**
+
+```ts
+import { mount } from 'wobnimo';
+import { mochi } from 'wobnimo/characters/mochi';
+
+const mascot = mount(document.querySelector('#mascot'), mochi);
+agent.on('status', (s) => mascot.setState(s));   // idle · thinking · speaking · …
+mascot.setPalette({ jelly: '#ff5d8f' });          // recolour live, no rebuild
+```
+
+Import one character (`wobnimo/characters/mochi`, ~1.2 KB) or the whole cast (`wobnimo/characters`) —
+you only ship what you use.
+
+## Why Wobnimo
+
+- **Tiny.** One mascot is ~25 KB gzipped, the whole thing has **zero dependencies**, and no Three.js.
+- **Real, not a sprite.** Characters are signed-distance 3D with studio lighting, so they're crisp at any size and animate from springs, not canned clips.
+- **Characters are data.** A character is plain JSON — parts, materials, bones. Recolour, remix with `variant()`, or write your own.
+- **Drops in anywhere.** A web component for every framework, a first-class React wrapper, and a CDN tag for no-build pages.
+- **Respectful.** Honours `prefers-reduced-motion`, sleeps when off-screen, and shares one WebGL context so a page can hold a whole cast.
+
+## Links
+
+- 🎨 **[Live playground](https://pouryaak.github.io/wobnimo/)** — every character, every mood, copy-paste install
+- 📦 **[npm](https://www.npmjs.com/package/wobnimo)**
+- 🤖 **[llms.txt](https://pouryaak.github.io/wobnimo/llms.txt)** — the whole API for agents
+
+---
+
+<div align="center">
+
+If Wobnimo makes your app smile, **drop a ⭐** — it genuinely helps other people find it.
+
+Built with care. MIT licensed. · Next: npm-published characters, a WebGPU renderer, a Rust + WebAssembly core, a visual editor.
+
+</div>

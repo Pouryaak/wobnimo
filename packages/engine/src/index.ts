@@ -4,6 +4,7 @@
 
 export { Mascot, mount, compileCached, type MascotOptions, type MascotEvents } from './runtime/mascot';
 export { snapshot, type SnapshotOptions } from './runtime/snapshot';
+export { driveFromStatus, type ChatStatus } from './runtime/status';
 export { defineMascotElement } from './runtime/element';
 export { recolor, albedo, variant, defineCharacter, type Palette } from './runtime/customize';
 export { STATES, EXPRESSIONS, type MascotState } from './behavior/states';

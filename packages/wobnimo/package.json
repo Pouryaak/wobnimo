@@ -1,0 +1,76 @@
+{
+  "name": "wobnimo",
+  "version": "0.1.0",
+  "description": "Ten living mascots on one featherweight animation engine for the web. Agent-ready, zero dependencies, ~25 KB.",
+  "keywords": [
+    "mascot",
+    "animation",
+    "avatar",
+    "character",
+    "webgl",
+    "agent",
+    "ai",
+    "chatbot",
+    "assistant",
+    "web-component",
+    "react"
+  ],
+  "homepage": "https://pouryaak.github.io/wobnimo/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Pouryaak/wobnimo.git"
+  },
+  "license": "MIT",
+  "author": "Pourya Akhbari",
+  "type": "module",
+  "sideEffects": [
+    "./dist/element.js",
+    "./dist/cdn.js"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./characters": {
+      "types": "./dist/characters/index.d.ts",
+      "import": "./dist/characters/index.js"
+    },
+    "./characters/*": {
+      "types": "./dist/characters/*.d.ts",
+      "import": "./dist/characters/*.js"
+    },
+    "./element": {
+      "types": "./dist/element.d.ts",
+      "import": "./dist/element.js"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "import": "./dist/react.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "unpkg": "./dist/wobnimo.js",
+  "jsdelivr": "./dist/wobnimo.js",
+  "files": [
+    "dist",
+    "AGENTS.md"
+  ],
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsup"
+  }
+}

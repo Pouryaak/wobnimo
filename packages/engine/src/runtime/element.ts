@@ -13,8 +13,9 @@ import { STATES, type MascotState } from '../behavior/states';
 import type { CharacterSpec } from '../spec/types';
 import type { Palette } from './customize';
 import { Mascot } from './mascot';
+import { driveFromStatus, type ChatStatus } from './status';
 
-const ATTRIBUTES = ['character', 'state', 'seed', 'speed', 'palette', 'interactive', 'effects', 'framing', 'floor'] as const;
+const ATTRIBUTES = ['character', 'state', 'status', 'seed', 'speed', 'palette', 'interactive', 'effects', 'framing', 'floor'] as const;
 
 function parsePalette(text: string | null): Palette | undefined {
   if (!text) return undefined;
@@ -75,7 +76,8 @@ export function defineMascotElement(characters: CharacterSpec[], tag = 'wobnimo-
     attributeChangedCallback(name: (typeof ATTRIBUTES)[number], before: string | null, after: string | null) {
       if (before === after || !this.isConnected) return;
       const m = this.instance;
-      if (name === 'state' && m && STATES.includes(after as MascotState)) m.setState(after as MascotState);
+      if (name === 'status' && m && after) driveFromStatus(m, after as ChatStatus);
+      else if (name === 'state' && m && STATES.includes(after as MascotState)) m.setState(after as MascotState);
       else if (name === 'speed' && m) m.setSpeed(Number(after ?? 1));
       else if (name === 'effects' && m) m.setEffects(after !== 'false');
       else if (name === 'palette' && m) m.setPalette(parsePalette(after));
@@ -107,6 +109,9 @@ export function defineMascotElement(characters: CharacterSpec[], tag = 'wobnimo-
       m.on('state', (s) => this.dispatchEvent(new CustomEvent('statechange', { detail: s, bubbles: true, composed: true })));
       m.on('ready', () => this.dispatchEvent(new CustomEvent('ready', { bubbles: true, composed: true })));
       this.instance = m;
+      /* a chat can set `status` instead of `state`; honour it on first build too */
+      const status = this.getAttribute('status');
+      if (status) driveFromStatus(m, status as ChatStatus);
     }
   }
 

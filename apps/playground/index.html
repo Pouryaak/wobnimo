@@ -2,6 +2,8 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="description" content="Pixels with a pulse. Ten living mascots, one featherweight animation engine for the web.">
 <meta name="theme-color" content="#0e0f12">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E %3Crect width='64' height='64' rx='16' fill='%230e0f12'/%3E %3Cpath d='M32 12c-13 0-21 14-22 28-.6 8 5 12 22 12s22.6-4 22-12C53 26 45 12 32 12z' fill='%23d9f55c'/%3E %3Cpath d='M32 12c3-5 8-6 11-4-2 3-6 5-11 4z' fill='%23d9f55c'/%3E %3Cellipse cx='24.5' cy='34' rx='3' ry='4' fill='%230e0f12'/%3E %3Cellipse cx='39.5' cy='34' rx='3' ry='4' fill='%230e0f12'/%3E %3Cpath d='M27.5 42c2.8 2.6 6.2 2.6 9 0' fill='none' stroke='%230e0f12' stroke-width='2.6' stroke-linecap='round'/%3E %3C/svg%3E">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Caveat:wght@500;600&family=JetBrains+Mono:wght@400;500;700&display=swap">
@@ -30,7 +32,7 @@
           <div class="actor" data-actor="volt" style="--x: 12%; --y: -3%; --w: 15%"></div>
           <div class="actor" data-actor="pip" data-state="celebrating" style="--x: 49%; --y: 0%; --w: 17%"></div>
           <div class="actor" data-actor="boo" style="--x: 72%; --y: 9%; --w: 17%"></div>
-          <div class="actor" data-actor="inky" data-state="listening" style="--x: -1%; --y: 40%; --w: 25%"></div>
+          <div class="actor" data-actor="inky" data-state="speaking" style="--x: -1%; --y: 40%; --w: 25%"></div>
           <div class="actor lead" data-actor="mochi" data-state="speaking" data-effects="false" style="--x: 50%; --y: 33%; --w: 50%"></div>
 
           <p class="note" style="--x: 25.5%; --y: 1%; --r: -8deg">Hello<br>web!</p>
@@ -72,6 +74,10 @@
               <span class="mono label">Colour <span id="material-name"></span></span>
               <div class="swatch-row" id="swatches" role="group" aria-label="Colour"></div>
             </div>
+            <button type="button" class="agent-copy" id="agent-copy">
+              <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="6.5" y="6.5" width="9" height="9" rx="1.5"/><path d="M13.5 4.5h-8a1 1 0 0 0-1 1v8"/></svg>
+              <span>Copy for agent</span>
+            </button>
           </div>
         </div>
         <div class="studio-foot">
@@ -95,7 +101,7 @@
     <!-- 02: for developers -->
     <section class="developers" id="developers" aria-labelledby="dev-title">
       <div class="wrap">
-        <div class="section-bar mono"><span>02 / For developers</span><span>Preview API — packages coming soon</span></div>
+        <div class="section-bar mono"><span>02 / For developers</span><span>npm i wobnimo — React, web component, CDN</span></div>
         <div class="dev-grid">
           <div class="dev-head">
             <h2 id="dev-title" class="big dark">Small<br>code.<br>Big feeling<span class="lime-dot" aria-hidden="true"></span></h2>
@@ -132,6 +138,16 @@
                 <p>Drop it in your app and wire it to your agent's events.</p>
               </li>
             </ol>
+            <div class="agent-card">
+              <div class="agent-card-text">
+                <span class="mono label">Or let your agent do it</span>
+                <p>Copy one self-contained prompt and paste it into Claude Code, Cursor, Copilot or v0. It installs Wobnimo and wires the mascot to your app's real events — no reading docs.</p>
+              </div>
+              <button type="button" class="button lime-button agent-copy-big" id="dev-agent-copy">
+                <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="6.5" y="6.5" width="9" height="9" rx="1.5"/><path d="M13.5 4.5h-8a1 1 0 0 0-1 1v8"/></svg>
+                Copy for agent
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -167,7 +183,7 @@
         <div class="finale-grid">
           <div class="finale-copy">
             <h2 id="finale-title" class="big">Bring one<br>home<span class="lime">.</span></h2>
-            <p class="finale-lede">Pick a character, wire its state to your app, and your interface has a pulse. Packages are on the way; the studio is open now.</p>
+            <p class="finale-lede">Pick a character, wire its state to your app, and your interface has a pulse. Install it from npm, or copy a prompt and let your agent do it.</p>
             <div class="actions">
               <a class="button lime-button" href="#studio">Enter the studio <span aria-hidden="true">↗</span></a>
               <a class="text-link" href="#developers">Read the docs</a>
@@ -188,8 +204,10 @@
   <footer class="footer">
     <div class="wrap footer-inner mono">
       <span class="logo small">wobnimo<i aria-hidden="true">.</i></span>
-      <span>Next: npm packages, a WebGPU renderer, a Rust + WebAssembly core, a character editor.</span>
+      <span>Next: a WebGPU renderer, a Rust + WebAssembly core, a visual character editor.</span>
     </div>
   </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </div>
 <script>/*__JS__*/</script>
