@@ -1,8 +1,9 @@
-/* Builds the playground as one self-contained HTML file, and measures the
-   engine on its own (minified, gzipped) so the number on the page is real.
+/* Builds the site's pages, each one self-contained HTML file, and measures
+   the engine on its own (minified, gzipped) so the number on the page is real.
 
-   dist/playground.html   the page body, for hosts that supply the document shell
-   dist/site/index.html   a complete document, for GitHub Pages or any static host
+   dist/playground.html        the main page's body, for hosts that supply the document shell
+   dist/site/index.html        the main page, a complete document for GitHub Pages or any static host
+   dist/site/studio/index.html the studio, where a mascot is built from a sentence
 
    Images in apps/playground/public are copied next to both. The character
    stills there are rendered by `npm run posters`; the build stops if any
@@ -27,37 +28,50 @@ const manifest = JSON.parse(await readFile(`${root}apps/playground/public/poster
 const stale = Object.keys(posterKeys).filter((id) => manifest[id] !== posterKeys[id]);
 if (stale.length) throw new Error(`Character stills are out of date for ${stale.join(', ')}. Run: npm run posters`);
 
-const app = await build({
-  ...common,
-  entryPoints: [`${root}apps/playground/src/main.ts`],
-  format: 'iife',
-  define: {
-    __ENGINE_GZIP_BYTES__: String(engineBytes),
-    __SPEC_GZIP_BYTES__: String(Math.round(specGzipAverage)),
-    /* the key goes on each still's URL, so a re-rendered one is never served from an old cache */
-    __POSTER_KEYS__: JSON.stringify(posterKeys),
-  },
-});
-const js = app.outputFiles[0].text.replace(/<\/script/gi, '<\\/script');
-const css = await readFile(`${root}apps/playground/src/styles.css`, 'utf8');
-const html = (await readFile(`${root}apps/playground/index.html`, 'utf8'))
-  .replace('/*__CSS__*/', () => css)
-  .replace('/*__JS__*/', () => js);
+/** One page: its script bundled, its styles and script inlined, and the
+    document shell for static hosts. `base` is the way back to the site's
+    root from where the page is served, for its fonts and images. */
+async function page({ entry, template, styles, base = '' }) {
+  const app = await build({
+    ...common,
+    entryPoints: [`${apps}${entry}`],
+    format: 'iife',
+    define: {
+      __ENGINE_GZIP_BYTES__: String(engineBytes),
+      __SPEC_GZIP_BYTES__: String(Math.round(specGzipAverage)),
+      /* the key goes on each still's URL, so a re-rendered one is never served from an old cache */
+      __POSTER_KEYS__: JSON.stringify(posterKeys),
+      __ASSET_ROOT__: JSON.stringify(base),
+      /* where the studio's brain lives (apps/studio-api); without it the studio runs its demo */
+      __STUDIO_API__: JSON.stringify(process.env.STUDIO_API_URL ?? ''),
+    },
+  });
+  const js = app.outputFiles[0].text.replace(/<\/script/gi, '<\\/script');
+  const css = (await Promise.all(styles.map((f) => readFile(`${apps}${f}`, 'utf8')))).join('\n').replaceAll('url(fonts/', `url(${base}fonts/`);
+  const body = (await readFile(`${apps}${template}`, 'utf8'))
+    .replace('/*__CSS__*/', () => css)
+    .replace('/*__JS__*/', () => js);
 
-/* the page's title, metadata and styles come before its first element */
-const split = html.indexOf('<div class="page">');
-const site = `<!doctype html>
+  /* the page's title, metadata and styles come before its first element */
+  const split = body.indexOf('<div class="page');
+  const doc = `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-${html.slice(0, split).trim()}
+${body.slice(0, split).trim()}
 </head>
 <body>
-${html.slice(split).trim()}
+${body.slice(split).trim()}
 </body>
 </html>
 `;
+  return { body, doc, bytes: js.length + css.length };
+}
+
+const apps = `${root}apps/playground/`;
+const site = await page({ entry: 'src/main.ts', template: 'index.html', styles: ['src/shared/base.css', 'src/styles.css'] });
+const studio = await page({ entry: 'src/studio/main.ts', template: 'studio.html', styles: ['src/shared/base.css', 'src/studio/studio.css'], base: '../' });
 
 const WHEN = {
   idle: 'waiting for the user',
@@ -132,11 +146,13 @@ Skill source: https://github.com/Pouryaak/wobnimo/tree/main/skills/wobnimo-masco
 `;
 
 await mkdir(`${root}dist/site`, { recursive: true });
-await writeFile(`${root}dist/playground.html`, html);
-await writeFile(`${root}dist/site/index.html`, site);
+await mkdir(`${root}dist/site/studio`, { recursive: true });
+await writeFile(`${root}dist/playground.html`, site.body);
+await writeFile(`${root}dist/site/index.html`, site.doc);
+await writeFile(`${root}dist/site/studio/index.html`, studio.doc);
 /* images and other static files sit next to the page in both outputs */
 await cp(`${root}apps/playground/public`, `${root}dist/site`, { recursive: true });
 await cp(`${root}apps/playground/public`, `${root}dist`, { recursive: true });
 await writeFile(`${root}dist/site/llms.txt`, llms);
 await writeFile(`${root}dist/llms.txt`, llms);
-console.log(`engine ${(engineBytes / 1024).toFixed(1)} KB gzipped · playground ${(html.length / 1024).toFixed(1)} KB`);
+console.log(`engine ${(engineBytes / 1024).toFixed(1)} KB gzipped · site ${(site.body.length / 1024).toFixed(1)} KB · studio ${(studio.doc.length / 1024).toFixed(1)} KB`);
