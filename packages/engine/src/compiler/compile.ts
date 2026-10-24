@@ -30,6 +30,18 @@ export interface CompiledCharacter {
   /** The spec's material colours, linear RGB, three floats each. */
   albedo: Float32Array;
   stats: { parts: number; bones: number; materials: number; shaderLines: number };
+  /** Whether the shader can show the character part by part (see `CompileOptions.reveal`). */
+  reveal: boolean;
+}
+
+export interface CompileOptions {
+  /**
+   * Build a shader that can show the character a piece at a time: the first
+   * n parts, with or without the face and the paints, set per frame by a
+   * uniform. It costs a branch per part, so only build-up animations want it;
+   * one such shader replaces a shader per step.
+   */
+  reveal?: boolean;
 }
 
 export const VERTEX_SHADER = /* glsl */ `#version 300 es
@@ -41,8 +53,9 @@ void main() {
 /* the expression numbers, named, so the LED faces read as words */
 const expressionDefines = () => EXPRESSIONS.map((e) => `#define E_${e.toUpperCase()} ${f(EXPRESSION_ID[e])}`).join('\n') + '\n';
 
-export function compile(spec: CharacterSpec): CompiledCharacter {
+export function compile(spec: CharacterSpec, options: CompileOptions = {}): CompiledCharacter {
   const r = resolve(spec);
+  const reveal = options.reveal ?? false;
   const fragment = [
     '#version 300 es',
     'precision highp float;',
@@ -54,11 +67,11 @@ export function compile(spec: CharacterSpec): CompiledCharacter {
     /* a zero the compiler cannot see through, so loops calling map() are not unrolled */
     '#define ZERO (min(int(uTime), 0))',
     PRELUDE,
-    emitMap(r),
+    emitMap(r, reveal),
     LIGHTING,
     spec.face?.kind === 'screen' ? expressionDefines() + SCREEN_FACE : '',
     spec.face?.kind === 'mouth' ? MOUTH : '',
-    emitMaterials(r),
+    emitMaterials(r, reveal),
     emitSurfaces(r),
     PARTICLES,
     MAIN,
@@ -78,5 +91,6 @@ export function compile(spec: CharacterSpec): CompiledCharacter {
       materials: r.materials.length,
       shaderLines: fragment.split('\n').length,
     },
+    reveal,
   };
 }

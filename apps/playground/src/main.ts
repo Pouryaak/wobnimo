@@ -3,16 +3,21 @@
 
    First impressions are the point of the page, so the work is ordered:
    the opening scene starts at once, everything else waits until the
-   browser is idle or until it scrolls near the screen, and the stills
-   (avatars and cast posters) are drawn once and never animate. All of it
-   shares one WebGL context, and each character's shader is built once. */
+   browser is idle or until it scrolls near the screen. A shader build is
+   the most expensive thing the engine does, so the page builds only the
+   ones it shows live: the stills (avatars and cast posters) are images
+   rendered at build time (npm run posters), and a studio character's
+   shader starts building when its avatar is hovered. All of it shares one
+   WebGL context, and each character's shader is built once. */
 
-import { Mascot, STATES, snapshot, type CharacterSpec, type MascotState, type Palette } from '@wobnimo/engine';
+import { Mascot, STATES, isSupported, warm, type CharacterSpec, type MascotState, type Palette } from '@wobnimo/engine';
 import { characters } from '@wobnimo/characters';
 import { PROMPTS, startForge } from './forge';
 import { highlight, snippet, type Scene, type Tab } from './snippets';
 
 declare const __ENGINE_GZIP_BYTES__: number;
+declare const __SPEC_GZIP_BYTES__: number;
+declare const __POSTER_KEYS__: Record<string, string>;
 
 const $ = <T extends HTMLElement>(sel: string) => document.querySelector<T>(sel)!;
 const byId = (id: string) => characters.find((c) => c.id === id)!;
@@ -121,8 +126,35 @@ function whenNear(el: Element, fn: () => void) {
   io.observe(el);
 }
 
-/** A live mascot in `host`, which fades in once its first frame is drawn. */
+/* without WebGL2 (switched off on some locked-down devices) the page shows every character as its still */
+const animated = isSupported();
+
+/* the key changes whenever a still is re-rendered, so an old one is never served from a cache */
+const stillUrl = (spec: CharacterSpec, kind: 'poster' | 'face' = 'poster') =>
+  `posters/${spec.id}${kind === 'face' ? '-face' : ''}.webp?v=${__POSTER_KEYS__[spec.id]}`;
+
+/** A character's pre-rendered still, which fades in once it has loaded. */
+function still(spec: CharacterSpec, kind: 'poster' | 'face', size: number) {
+  const img = new Image(size, size);
+  img.alt = '';
+  img.loading = 'lazy';
+  img.decoding = 'async';
+  img.addEventListener('load', () => img.classList.add('is-ready'), { once: true });
+  img.src = stillUrl(spec, kind);
+  return img;
+}
+
+/** Puts `spec`'s still in `host` in place of a live mascot, or swaps the one already there. */
+function standIn(host: HTMLElement, spec: CharacterSpec) {
+  const img = host.querySelector('img') ?? host.appendChild(new Image());
+  img.alt = spec.name;
+  img.src = stillUrl(spec);
+  host.classList.add('is-ready');
+}
+
+/** A live mascot in `host`, which fades in once its first frame is drawn; a still where WebGL2 is off. */
 function live(host: HTMLElement, spec: CharacterSpec, options: ConstructorParameters<typeof Mascot>[2] = {}) {
+  if (!animated) return standIn(host, spec), null;
   const canvas = document.createElement('canvas');
   host.append(canvas);
   const mascot = new Mascot(canvas, spec, options);
@@ -212,7 +244,15 @@ const avatars = characters.map((spec) => {
   b.type = 'button';
   b.className = 'avatar';
   b.innerHTML = `<span class="avatar-face"></span>${spec.name}`;
+  b.querySelector('.avatar-face')!.append(still(spec, 'face', 68));
   b.addEventListener('click', () => select(spec));
+  /* a pause on an avatar is a likely click: start building its shader, so the stage changes at once */
+  let intent = 0;
+  const warmUp = () => animated && (intent = window.setTimeout(() => warm(spec), 120));
+  b.addEventListener('pointerenter', warmUp);
+  b.addEventListener('focus', warmUp);
+  b.addEventListener('pointerleave', () => clearTimeout(intent));
+  b.addEventListener('blur', () => clearTimeout(intent));
   avatarRow.append(b);
   return b;
 });
@@ -276,13 +316,14 @@ function setState(s: MascotState) {
   renderSnippet();
 }
 
-function select(spec: CharacterSpec) {
+function select(spec: CharacterSpec, centre = true) {
   view.spec = spec;
   view.color = null;
-  stage?.setSpec(spec);
+  if (stage) stage.setSpec(spec);
+  else if (!animated && $('#stage').childElementCount) standIn($('#stage'), spec);
   const at = characters.indexOf(spec);
   avatars.forEach((b, i) => b.setAttribute('aria-pressed', String(i === at)));
-  centreInRow(avatarRow, avatars[at]);
+  if (centre) centreInRow(avatarRow, avatars[at]);
   renderSwatches();
   renderSnippet();
   renderGrab();
@@ -386,7 +427,7 @@ copy.addEventListener('click', async () => {
 /* ---- the cast ---- */
 
 const castGrid = $('#cast-grid');
-const posters = characters.map((spec) => {
+characters.forEach((spec) => {
   const li = document.createElement('li');
   const said = PROMPTS[spec.id] ? `<span class="said">“${PROMPTS[spec.id]}”</span>` : '';
   li.innerHTML = `<div class="cast-card"><button type="button" class="cast-open"><span class="poster"></span><h3>${spec.name}</h3><p>${spec.tagline}</p>${said}</button><button type="button" class="cast-copy mono" aria-label="Copy a setup prompt for ${spec.name} for your AI agent">Copy for agent</button></div>`;
@@ -395,54 +436,11 @@ const posters = characters.map((spec) => {
     $('#studio').scrollIntoView();
   });
   li.querySelector('.cast-copy')!.addEventListener('click', () => copyAgent(spec, 'idle', `${spec.name} setup prompt copied — paste it into your agent`));
+  li.querySelector('.poster')!.append(still(spec, 'poster', 240));
   castGrid.append(li);
-  return li.querySelector<HTMLElement>('.poster')!;
 });
 
-async function gzipBytes(text: string): Promise<number> {
-  if (typeof CompressionStream === 'undefined') return text.length;
-  const stream = new Blob([text]).stream().pipeThrough(new CompressionStream('gzip'));
-  return (await new Response(stream).arrayBuffer()).byteLength;
-}
-
-idle(async () => {
-  const sizes = await Promise.all(characters.map((spec) => gzipBytes(JSON.stringify(spec))));
-  $('#spec-average').textContent = `~${kb(sizes.reduce((a, b) => a + b, 0) / sizes.length)}`;
-});
-
-/* Stills for the avatars and the cast, one character at a time, once the
-   opening scene is up: each is drawn once, then the avatar reuses it. */
-async function drawStills() {
-  for (const [i, spec] of characters.entries()) {
-    const still = await snapshot(spec, { size: 240, pixelRatio: Math.min(devicePixelRatio || 1, 2), seed: 0.4 + i * 0.07, framing: 1.04 });
-    still.classList.add('is-ready');
-    posters[i].append(still);
-
-    const face = document.createElement('canvas');
-    face.width = face.height = 136;
-    face.getContext('2d')!.drawImage(still, 0, 0, face.width, face.height);
-    face.className = 'is-ready';
-    avatars[i].querySelector('.avatar-face')!.append(face);
-    await new Promise((resolve) => idle(() => resolve(null)));
-  }
-}
-
-let stillsStarted = false;
-const startStills = () => {
-  if (stillsStarted) return;
-  stillsStarted = true;
-  idle(drawStills);
-};
-/* start as soon as the opening scene is on screen, or straight away when it has no live actors */
-if (actors.length) {
-  let waiting = actors.length;
-  actors.forEach((a) => {
-    const done = () => --waiting || startStills();
-    a.classList.contains('is-ready') ? done() : new MutationObserver((_, mo) => a.classList.contains('is-ready') && (mo.disconnect(), done())).observe(a, { attributes: true, attributeFilter: ['class'] });
-  });
-  setTimeout(startStills, 2500);
-} else startStills();
-whenNear($('#studio'), startStills);
+$('#spec-average').textContent = `~${kb(__SPEC_GZIP_BYTES__)}`;
 
 /* the studio's agent button follows whatever character and state are on stage */
 $('#agent-copy').addEventListener('click', () =>
@@ -455,7 +453,7 @@ $('#dev-agent-copy').addEventListener('click', () => copyAgent(byId('mochi'), 't
 /* ---- make your own ---- */
 
 whenNear($('#describe'), () =>
-  startForge(characters, { section: $('#describe'), stage: $('#forge-stage'), log: $('#forge-log'), status: $('#forge-status'), chips: $('#forge-chips') }),
+  startForge(characters, { section: $('#describe'), stage: $('#forge-stage'), log: $('#forge-log'), status: $('#forge-status'), chips: $('#forge-chips') }, stillUrl),
 );
 
 $('#skill-copy').addEventListener('click', () => copyText('npx wobnimo skill', 'Copied — run it in your project'));
@@ -479,5 +477,6 @@ idle(async () => {
   }
 });
 
-select(view.spec);
+/* the first pick is already in view; scrolling the row now would also end the page's LCP measurement */
+select(view.spec, false);
 setState(view.state);

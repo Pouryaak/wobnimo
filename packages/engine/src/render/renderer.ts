@@ -23,6 +23,8 @@ export interface Frame {
   exposure: number;
   /** Room around the character: 1 fits it snugly, 1.2 pulls the camera back a fifth. */
   framing: number;
+  /** Parts shown, face on (0/1), paints on (0/1), for shaders compiled with `reveal`. Default all. */
+  reveal?: Vec3;
 }
 
 export interface Renderer {

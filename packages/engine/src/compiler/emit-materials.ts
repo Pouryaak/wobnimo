@@ -15,7 +15,7 @@ function base(m: MaterialSpec, slot: number): string {
 
 const anyOf = (ids: number[]) => ids.map((id) => `k == ${id}`).join(' || ');
 
-export function emitMaterials(r: Resolved): string {
+export function emitMaterials(r: Resolved, reveal = false): string {
   const out: string[] = ['Material getMaterial(float id, vec3 p, vec3 n) {', '  int k = int(id + 0.5);', '  Material m = material(vec3(0.5));'];
 
   r.materials.forEach(({ id, spec }, i) => out.push(`  ${i ? 'else ' : ''}if (k == ${id}) m = ${base(spec, i)};`));
@@ -32,12 +32,12 @@ export function emitMaterials(r: Resolved): string {
       `  if (${anyOf(ids)}) {`,
       `    vec3 q = (uBones[${b}] * vec4(p, 1.0)).xyz - ${v3(paint.at)};`,
       `    float e = ${edge};`,
-      `    m.albedo = mix(m.albedo, ${lin(paint.color)}, (1.0 - smoothstep(-${soft}, ${soft}, e)) * ${f(paint.opacity ?? 1)});`,
+      `    m.albedo = mix(m.albedo, ${lin(paint.color)}, (1.0 - smoothstep(-${soft}, ${soft}, e)) * ${f(paint.opacity ?? 1)}${reveal ? ' * uReveal.z' : ''});`,
       `  }`,
     );
   });
 
-  out.push(...emitEyeMaterials(r), ...emitFace(r), '  return m;', '}');
+  out.push(...emitEyeMaterials(r), ...emitFace(r, reveal), '  return m;', '}');
   return out.join('\n');
 }
 
@@ -133,7 +133,8 @@ function emitEyeMaterials(r: Resolved): string[] {
   return out;
 }
 
-function emitFace(r: Resolved): string[] {
+function emitFace(r: Resolved, reveal: boolean): string[] {
+  const on = reveal ? ' * uReveal.y' : '';
   const face = r.spec.face;
   if (!face) return [];
   if (face.kind === 'screen') {
@@ -142,7 +143,7 @@ function emitFace(r: Resolved): string[] {
     return [
       `  if (k == ${id}) {`,
       `    vec2 q = (uBones[${b}] * vec4(p, 1.0)).xy - ${v2(face.center)};`,
-      `    m.emit += screenLight(q, ${lin(face.color)}, ${f(face.cell)}, ${v2(face.half)}, ${f(face.corner)});`,
+      `    m.emit += screenLight(q, ${lin(face.color)}, ${f(face.cell)}, ${v2(face.half)}, ${f(face.corner)})${on};`,
       `  }`,
     ];
   }
@@ -154,7 +155,7 @@ function emitFace(r: Resolved): string[] {
     `    vec3 q = (uBones[${b}] * vec4(p, 1.0)).xyz - ${v3(face.at)};`,
     `    if (q.z > -0.02) {`,
     `      vec3 mo = mouth(q.xy, ${f(w)}, uFaceB.x * ${f(w * 1.1)}, uFaceD.y, uFaceA.w, uFaceD.w, ${f(w * 0.12)}, gPixel * 0.8);`,
-    `      float a = mo.x;`,
+    `      float a = mo.x${on};`,
     /* the inside darkens with depth; the tongue sits on top */
     `      vec3 inner = ${lin(face.color)} * (1.25 - 0.5 * mo.z);`,
     `      m.albedo = mix(m.albedo, mix(inner, ${lin(face.tongue)}, mo.y), a);`,

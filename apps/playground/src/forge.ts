@@ -3,12 +3,13 @@
    shows the character the way the agent assembles it: bare clay shapes
    bone by bone, then the face, then colour, then the check, then life.
 
-   Every step is a real spec handed to the real engine. Each intermediate
-   spec is built once and kept, so the second time round every shader is
-   already compiled and only uniforms change. The replay only advances
-   while the section is on screen. */
+   Every step is the real character in the real engine. It is built once,
+   as a revealable shader, and each step only changes what that shader
+   shows, so a whole replay costs one shader build. The next character's is
+   built while the page is idle, and the replay only advances while the
+   section is on screen. */
 
-import { Mascot, type CharacterSpec, type MascotState, type Palette, type PartSpec } from '@wobnimo/engine';
+import { Mascot, isSupported, warm, type CharacterSpec, type MascotState, type Palette, type PartSpec, type Reveal } from '@wobnimo/engine';
 
 /** The sentence each of the described characters was made from. */
 export const PROMPTS: Record<string, string> = {
@@ -30,15 +31,14 @@ const MAX_STAGES = 6;
 const SPLIT = 7;
 
 interface Stage {
-  spec: CharacterSpec;
+  /** How many of the spec's parts are shaped by the end of this stage. */
+  parts: number;
   label: string;
   shapes: string;
 }
 
 interface Build {
   stages: Stage[];
-  /** The eyes and mouth on the finished clay body. */
-  face: CharacterSpec;
   clay: Palette;
 }
 
@@ -65,19 +65,13 @@ function plan(spec: CharacterSpec): Build {
     passes[k - 1] = { label: passes[k - 1].label, end: passes[k].end, size: passes[k - 1].size + passes[k].size };
     passes.splice(k, 1);
   }
-  /* bare stages: no paint, no face, no effects, so only the shapes show */
-  const bare = { ...spec, paints: [], eyes: undefined, face: undefined, fx: undefined, acting: {} };
   let start = 0;
   const stages = passes.map((pass): Stage => {
-    const stage = { spec: { ...bare, parts: spec.parts.slice(0, pass.end) }, label: pass.label, shapes: count(spec.parts.slice(start, pass.end)) };
+    const stage = { parts: pass.end, label: pass.label, shapes: count(spec.parts.slice(start, pass.end)) };
     start = pass.end;
     return stage;
   });
-  return {
-    stages,
-    face: { ...spec, paints: [], fx: undefined },
-    clay: Object.fromEntries(Object.keys(spec.materials).map((m) => [m, CLAY])),
-  };
+  return { stages, clay: Object.fromEntries(Object.keys(spec.materials).map((m) => [m, CLAY])) };
 }
 
 function count(parts: PartSpec[]): string {
@@ -99,7 +93,8 @@ export interface ForgeElements {
   chips: HTMLElement;
 }
 
-export function startForge(cast: CharacterSpec[], el: ForgeElements) {
+export function startForge(cast: CharacterSpec[], el: ForgeElements, stillUrl: (spec: CharacterSpec) => string) {
+  const animated = isSupported();
   const order = cast.filter((c) => PROMPTS[c.id]);
   const builds = new Map<string, Build>();
   const build = (spec: CharacterSpec) => builds.get(spec.id) ?? builds.set(spec.id, plan(spec)).get(spec.id)!;
@@ -152,17 +147,34 @@ export function startForge(cast: CharacterSpec[], el: ForgeElements) {
     el.stage.dataset.phase = phase;
   };
 
-  function show(spec: CharacterSpec, palette: Palette | undefined, state: MascotState) {
+  function show(spec: CharacterSpec, palette: Palette | undefined, state: MascotState, reveal: Reveal | null) {
+    if (!animated) {
+      /* no WebGL2: the finished character's still stands in for the whole build */
+      const img = el.stage.querySelector('img') ?? el.stage.appendChild(new Image());
+      img.alt = spec.name;
+      img.src = stillUrl(spec);
+      el.stage.classList.add('is-ready');
+      return;
+    }
     if (!mascot) {
       const canvas = document.createElement('canvas');
       el.stage.append(canvas);
-      mascot = new Mascot(canvas, spec, { state, palette, effects: false, seed: 0.42, framing: 1.14, maxPixelRatio: 1.5 });
+      mascot = new Mascot(canvas, spec, { state, palette, effects: false, seed: 0.42, framing: 1.14, maxPixelRatio: 1.5, revealable: true });
       mascot.on('ready', () => el.stage.classList.add('is-ready'));
     } else {
-      mascot.setSpec(spec, palette);
+      if (mascot.spec !== spec) mascot.setSpec(spec);
+      mascot.setPalette(palette);
       mascot.setState(state);
     }
+    mascot.reveal(reveal);
   }
+
+  /* build the next character's shader before its turn, while the page has a moment */
+  const warmNext = (spec: CharacterSpec) => {
+    const next = order[(order.indexOf(spec) + 1) % order.length];
+    const go = () => animated && warm(next, { revealable: true });
+    'requestIdleCallback' in window ? requestIdleCallback(go, { timeout: 2000 }) : setTimeout(go, 300);
+  };
 
   async function replay(spec: CharacterSpec, token: number) {
     const b = build(spec);
@@ -181,19 +193,20 @@ export function startForge(cast: CharacterSpec[], el: ForgeElements) {
     line(`<span class="cmd">$</span> npx wobnimo new ${spec.id}`);
     await wait(260, token);
 
+    /* bare stages: no paint, no face, no effects, so only the shapes show */
     for (const [i, s] of b.stages.entries()) {
-      show(s.spec, b.clay, 'idle');
+      show(spec, b.clay, 'idle', { parts: s.parts, face: false, paints: false });
       status(`shaping ${i + 1}/${b.stages.length}`, 'clay');
       line(`<span class="add">+</span> ${s.label.padEnd(15, ' ')}<span class="dim">${s.shapes}</span>`);
       await wait(still ? 0 : 560, token);
     }
 
     /* the face arrives asleep, then wakes up */
-    show(b.face, b.clay, 'sleeping');
+    show(spec, b.clay, 'sleeping', { face: true, paints: false });
     status('adding a face', 'clay');
     line(`<span class="add">+</span> ${'face'.padEnd(15, ' ')}<span class="dim">${spec.eyes ? `${spec.eyes.kind} eyes ×2` : 'screen'}${spec.face?.kind === 'mouth' ? ' · mouth' : ''}</span>`);
     await wait(still ? 0 : 650, token);
-    mascot!.setState('surprised');
+    mascot?.setState('surprised');
     await wait(still ? 0 : 520, token);
 
     /* colour floods in one material at a time */
@@ -203,11 +216,11 @@ export function startForge(cast: CharacterSpec[], el: ForgeElements) {
     const reveal: Palette = { ...b.clay };
     for (const name of names) {
       delete reveal[name];
-      mascot!.setPalette({ ...reveal });
+      mascot?.setPalette({ ...reveal });
       p.insertAdjacentHTML('beforeend', swatch(spec.materials[name].color));
       await wait(still ? 0 : Math.max(70, 520 / names.length), token);
     }
-    show(spec, undefined, 'idle');
+    show(spec, undefined, 'idle', null);
     if (spec.paints?.length) line(`<span class="add">+</span> ${'paint'.padEnd(15, ' ')}<span class="dim">${spec.paints.length} soft paints</span>`);
     await wait(320, token);
 
@@ -221,12 +234,13 @@ export function startForge(cast: CharacterSpec[], el: ForgeElements) {
     line(`✓ 15 views → .wobnimo/${spec.id}.png`, 'ok');
 
     status(`${spec.name} is alive`, 'alive');
-    mascot!.setEffects(true);
-    mascot!.setState('celebrating');
+    warmNext(spec);
+    mascot?.setEffects(true);
+    mascot?.setState('celebrating');
     await wait(2300, token);
-    mascot!.setState('speaking');
+    mascot?.setState('speaking');
     await wait(2400, token);
-    mascot!.setState('idle');
+    mascot?.setState('idle');
     await wait(1600, token);
   }
 

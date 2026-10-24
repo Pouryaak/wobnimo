@@ -8,6 +8,7 @@
   ],
   "scripts": {
     "build": "node scripts/build-playground.mjs",
+    "posters": "node scripts/posters.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
