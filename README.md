@@ -2,36 +2,34 @@
 
 <a href="https://pouryaak.github.io/wobnimo/">
   <picture>
-    <source srcset="https://pouryaak.github.io/wobnimo/media/team.webp" type="image/webp">
-    <img src="https://pouryaak.github.io/wobnimo/media/team.gif" alt="The Wobnimo team: ten animated mascots lined up like a team photo, celebrating in a wave" width="900">
+    <img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/repo-hero.svg" width="100%" alt="wobnimo — GIVE YOUR APP A FACE  ·  ~25 KB GZIP  ·  0 DEPENDENCIES">
   </picture>
 </a>
 
-# wobnimo
+<br>
 
-### Give your app a face.
+<a href="https://pouryaak.github.io/wobnimo/">
+  <picture>
+    <source srcset="https://pouryaak.github.io/wobnimo/media/team.webp" type="image/webp">
+    <img src="https://pouryaak.github.io/wobnimo/media/team.gif" alt="The Wobnimo team: ten animated mascots lined up like a team photo, celebrating in a wave" width="100%">
+  </picture>
+</a>
 
-Twenty living mascots on one featherweight animation engine for the web — or describe your own in one sentence and let your agent build it.
-Real 3D, every mood, ~25&nbsp;KB, zero dependencies.
+<br>
 
-[![npm](https://img.shields.io/npm/v/wobnimo?color=d9f55c&labelColor=16181d)](https://www.npmjs.com/package/wobnimo)
-[![gzip](https://img.shields.io/badge/one%20mascot-~25%20KB%20gzip-d9f55c?labelColor=16181d)](https://pouryaak.github.io/wobnimo/)
-[![zero deps](https://img.shields.io/badge/dependencies-0-d9f55c?labelColor=16181d)](https://www.npmjs.com/package/wobnimo?activeTab=dependencies)
-[![license](https://img.shields.io/npm/l/wobnimo?color=d9f55c&labelColor=16181d)](./LICENSE)
-
-**[▶ Live playground](https://pouryaak.github.io/wobnimo/)** · **[Quickstart](#add-one-in-10-seconds)** · **[Describe your own](#describe-it-get-it)** · **[For AI agents](#for-ai-agents)**
+<a href="https://pouryaak.github.io/wobnimo/"><picture><img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/btn-studio.svg" height="40" alt="Enter the studio"></picture></a>&nbsp;&nbsp;<a href="https://www.npmjs.com/package/wobnimo"><picture><img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/btn-npm.svg" height="40" alt="npm i wobnimo"></picture></a>&nbsp;&nbsp;<a href="https://pouryaak.github.io/wobnimo/llms.txt"><picture><img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/btn-llms.svg" height="40" alt="llms.txt for agents"></picture></a>&nbsp;&nbsp;<a href="https://github.com/Pouryaak/wobnimo/tree/main/skills/wobnimo-mascot"><picture><img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/btn-skill.svg" height="40" alt="Agent Skill"></picture></a>
 
 </div>
 
----
+<br>
 
-Chatbots, copilots and apps feel alive when something on screen reacts. Wobnimo gives you a
-character that **thinks while it works, talks while it streams, and celebrates when it's done** —
-in a tag you drop anywhere, with no build step and nothing to configure.
+<!-- 01 / FOR DEVELOPERS (Interactive Cream Band Code Switcher) -->
+<picture>
+  <img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/sec-01-devs.svg" width="100%" alt="01 / For Developers — Small code. Big feeling.">
+</picture>
 
-## Add one in 10 seconds
-
-No build, no npm, no framework. Two lines in any HTML page:
+<details name="wobnimo-dev-tabs" open>
+<summary><picture><img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/tab-dev-html-cdn.svg" width="96%" align="middle" alt="Add One in 10 Seconds (HTML / CDN)"></picture></summary>
 
 ```html
 <script type="module" src="https://cdn.jsdelivr.net/npm/wobnimo@0.2/dist/wobnimo.js"></script>
@@ -39,143 +37,122 @@ No build, no npm, no framework. Two lines in any HTML page:
 <wobnimo-mascot character="mochi" state="thinking"></wobnimo-mascot>
 ```
 
-That's it — a living mascot is on your page. [Try every character and mood in the playground →](https://pouryaak.github.io/wobnimo/)
+> Drop those two lines anywhere and a living 3D mascot is on your page.
 
-## Meet the team
+</details>
 
-**Volt** the LED robot · **Pip** the songbird · **Mochi** the jelly · **Boo** the ghost · **Inky** the octopus ·
-**Miso** the plush cat · **Tad** the tree frog · **Pebble** the penguin · **Rex** the baby dino · **Microduck** the robot duck ·
-**Drift** the sleepy cloud · **Cacti** the potted cactus · **Latte** the coffee cup · **Bumble** the bee · **Swirl** the cinnamon-roll snail ·
-**Ember** the fox cub · **Cap** the toadstool · **Berry** the strawberry · **Bao** the panda · **Hop** the bunny.
-
-Each has its own body, surface and personality, and every one of them plays all ten moods.
-Recolour any of them to match your brand. The last ten were each designed by an agent from a single sentence —
-which you can do too.
-
-## Describe it. Get it.
-
-Want a mascot that is *yours*? Give your coding agent the Wobnimo skill and one sentence:
-
-```bash
-npx wobnimo skill          # adds the skill for Claude Code, Codex, Cursor, OpenCode…
-```
-
-> *"Use the wobnimo-mascot skill to make a mascot for this app: a sleepy cloud wearing headphones."*
-
-The agent plans the character, writes it as plain data, and then **checks its own work**:
-
-```bash
-npx wobnimo check mascots/drift.ts     # measures the real 3D shape: hidden parts, buried eyes,
-                                       # paints that miss, crops, floating pieces — each with the exact fix
-npx wobnimo preview mascots/drift.ts   # renders front, side, back, a face close-up and every mood to one PNG
-```
-
-Every message from the checker comes with the number to change, so even small models get there: in our
-tests Claude Haiku built a toaster, an avocado and a baby dragon that passed on the first or second try.
-Watch the live preview while it works with `npx wobnimo preview <file> --live`.
-
-The skill is in [`skills/wobnimo-mascot`](./skills/wobnimo-mascot) — install it with
-`npx skills add Pouryaak/wobnimo` too.
-
-## Give your AI a face
-
-This is the part that matters. An assistant that just spins a loader feels like a machine.
-Wire a mascot to what your app is doing and it feels like someone is in there.
-
-<div align="center">
-<img src="https://pouryaak.github.io/wobnimo/media/moods.png" alt="Mochi in six moods: listening, thinking, speaking, working, celebrating, sleeping" width="900">
-</div>
-
-Using the [Vercel AI SDK](https://ai-sdk.dev)? It's **one prop** — the mascot thinks, speaks,
-celebrates and shows errors for you:
+<details name="wobnimo-dev-tabs">
+<summary><picture><img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/tab-dev-react-nextjs.svg" width="96%" align="middle" alt="React &amp; Next.js Component"></picture></summary>
 
 ```tsx
+// npm i wobnimo
+"use client";
 import { Mascot } from 'wobnimo/react';
 
-const { status } = useChat();
-
-<Mascot character="mochi" status={status} />
+export function CopilotAvatar() {
+  return <Mascot character="volt" state="thinking" style={{ width: 160, height: 160 }} />;
+}
 ```
 
-The ten states map straight onto what an app or agent actually does:
+> Import one character (`wobnimo/characters/mochi`, ~1.2 KB) or the full cast — you only ship what you use.
 
-| State | Show it when | | State | Show it when |
-| --- | --- | --- | --- | --- |
-| `idle` | waiting for the user | | `working` | running a tool or long task |
-| `listening` | the user is typing | | `error` | something failed |
-| `thinking` | request sent, no reply yet | | `celebrating` | a task finished |
-| `speaking` | a reply is streaming | | `surprised` | an unexpected event |
-| `sleeping` | idle for a while | | `sad` | it couldn't help |
+</details>
 
-## For AI agents
-
-Wobnimo is built to be installed *by* an agent. On the [playground](https://pouryaak.github.io/wobnimo/),
-every character has a **Copy for agent** button: it copies one self-contained prompt that tells any
-agent (Claude Code, Cursor, Copilot, v0…) exactly what to install and how to wire the mascot to your
-app's real events. Paste it, and it's done.
-
-Want a new character instead? See [Describe it. Get it.](#describe-it-get-it) — the
-`wobnimo-mascot` skill walks any agent through designing, checking and previewing one.
-
-Prefer to point your agent at the docs? Everything is at
-**[pouryaak.github.io/wobnimo/llms.txt](https://pouryaak.github.io/wobnimo/llms.txt)**, and the package
-ships an `AGENTS.md` so an agent inspecting `node_modules/wobnimo` already knows the rules.
-
-## Use it with a bundler
-
-```bash
-npm i wobnimo
-```
-
-**React / Next.js** (`"use client"` in app-router files):
-
-```tsx
-import { Mascot } from 'wobnimo/react';
-
-<Mascot character="volt" state="thinking" style={{ width: 160, height: 160 }} />
-```
-
-**Vanilla JS, Vue, Svelte, anything** — register the element once, then use the tag:
-
-```ts
-import 'wobnimo/element';
-// <wobnimo-mascot character="pip" state="speaking"></wobnimo-mascot>
-```
-
-**Control it in code:**
+<details name="wobnimo-dev-tabs">
+<summary><picture><img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/tab-dev-vanilla-js.svg" width="96%" align="middle" alt="JavaScript, Vue, Svelte &amp; Live Palette Control"></picture></summary>
 
 ```ts
 import { mount } from 'wobnimo';
 import { mochi } from 'wobnimo/characters/mochi';
 
 const mascot = mount(document.querySelector('#mascot'), mochi);
-agent.on('status', (s) => mascot.setState(s));   // idle · thinking · speaking · …
+agent.on('status', (s) => mascot.setState(s));   // idle · thinking · speaking · celebrating…
 mascot.setPalette({ jelly: '#ff5d8f' });          // recolour live, no rebuild
 ```
 
-Import one character (`wobnimo/characters/mochi`, ~1.2 KB) or the whole cast (`wobnimo/characters`) —
-you only ship what you use.
+> Or register `<wobnimo-mascot>` once via `import "wobnimo/element"` in Vue, Svelte, or plain JS.
 
-## Why Wobnimo
+</details>
 
-- **Tiny.** One mascot is ~25 KB gzipped, the whole thing has **zero dependencies**, and no Three.js.
-- **Real, not a sprite.** Characters are signed-distance 3D with studio lighting, so they're crisp at any size and animate from springs, not canned clips.
-- **Characters are data.** A character is plain JSON — parts, materials, bones. Recolour, remix with `variant()`, or have your agent write a new one from a sentence.
-- **Drops in anywhere.** A web component for every framework, a first-class React wrapper, and a CDN tag for no-build pages.
-- **Respectful.** Honours `prefers-reduced-motion`, sleeps when off-screen, and shares one WebGL context so a page can hold a whole cast.
+<br>
 
-## Links
-
-- 🎨 **[Live playground](https://pouryaak.github.io/wobnimo/)** — every character, every mood, copy-paste install
-- 📦 **[npm](https://www.npmjs.com/package/wobnimo)**
-- 🤖 **[llms.txt](https://pouryaak.github.io/wobnimo/llms.txt)** — the whole API for agents
-
----
+<!-- 02 / GIVE YOUR AI A FACE (Moods Showcase + 10-State Engine) -->
+<picture>
+  <img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/sec-02-moods.svg" width="100%" alt="02 / Give your AI a face">
+</picture>
 
 <div align="center">
-
-If Wobnimo makes your app smile, **drop a ⭐** — it genuinely helps other people find it.
-
-Built with care. MIT licensed. · Next: a WebGPU renderer, a Rust + WebAssembly core, a visual editor.
-
+  <a href="https://pouryaak.github.io/wobnimo/">
+    <img src="https://pouryaak.github.io/wobnimo/media/moods.png" alt="Mochi in six moods: listening, thinking, speaking, working, celebrating, sleeping" width="100%">
+  </a>
 </div>
+
+<picture>
+  <img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/panel-states.svg" width="100%" alt="Ten expressive states">
+</picture>
+
+```tsx
+import { Mascot } from 'wobnimo/react';
+
+const { status } = useChat(); // Vercel AI SDK
+
+<Mascot character="mochi" status={status} />
+```
+
+<br>
+
+<!-- 03 / DESCRIBE IT. GET IT. (The Agent Forge) -->
+<picture>
+  <img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/sec-03-forge.svg" width="100%" alt="03 / Make your own — Describe it. Get it.">
+</picture>
+
+<picture>
+  <img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/panel-forge.svg" width="100%" alt="Agent Forge workflow">
+</picture>
+
+```bash
+npx wobnimo skill                      # installs the skill for Claude Code, Codex, Cursor, OpenCode…
+npx wobnimo check mascots/drift.ts     # measures real 3D geometry & reports exact coordinate fixes
+npx wobnimo preview mascots/drift.ts   # renders front, side, back, face close-up & all 10 moods to PNG
+```
+
+<br>
+
+<!-- 04 / FEATHERWEIGHT ARCHITECTURE -->
+<picture>
+  <img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/sec-04-weight.svg" width="100%" alt="04 / Featherweight — Tiny by nature. Lively by design.">
+</picture>
+
+<picture>
+  <img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/panel-weight.svg" width="100%" alt="23.7 KB Featherweight Engine">
+</picture>
+
+<br><br>
+
+<!-- 05 / THE CAST (Interactive 20-Mascot Explorer) -->
+<picture>
+  <img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/sec-05-cast.svg" width="100%" alt="05 / The Cast — Twenty living personalities.">
+</picture>
+
+<details name="wobnimo-cast" open>
+<summary><picture><img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/cast-originals-trigger.svg" width="96%" align="middle" alt="The Studio Originals (10 Mascots)"></picture></summary>
+<br>
+<picture><img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/cast-originals-stage.svg" width="100%" alt="The Studio Originals (10 Mascots)"></picture>
+<br>
+</details>
+
+<details name="wobnimo-cast">
+<summary><picture><img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/cast-agent-made-trigger.svg" width="96%" align="middle" alt="The Agent-Described Cast (10 Mascots from 1 Sentence Each)"></picture></summary>
+<br>
+<picture><img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/cast-agent-made-stage.svg" width="100%" alt="The Agent-Described Cast (10 Mascots from 1 Sentence Each)"></picture>
+<br>
+</details>
+
+<br>
+
+<!-- FINALE -->
+<a href="https://github.com/Pouryaak/wobnimo">
+  <picture>
+    <img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/repo-finale.svg" width="100%" alt="Bring one home — Star Wobnimo on GitHub">
+  </picture>
+</a>

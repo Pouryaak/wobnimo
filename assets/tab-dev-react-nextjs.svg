@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 56" width="100%" height="56" fill="none">
+  <defs>
+    <style type="text/css"><![CDATA[
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      .ghpx-root {
+        width: 860px;
+        height: 56px;
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        overflow: hidden;
+        position: relative;
+      }
+      .mono {
+        font-family: 'SF Mono', 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Menlo, Consolas, monospace;
+      }
+      
+      .dt-row {
+        width: 100%; height: 100%; padding: 0 22px;
+        display: flex; justify-content: space-between; align-items: center;
+        color: #121316;
+      }
+    
+    ]]></style>
+    
+  </defs>
+  
+      <rect width="860" height="56" rx="10" fill="#f1eee6" stroke="#121316" stroke-width="1.4"/>
+      <rect x="0" y="0" width="8" height="56" rx="4" fill="#121316"/>
+    
+  <foreignObject x="0" y="0" width="860" height="56">
+    <div xmlns="http://www.w3.org/1999/xhtml" class="ghpx-root">
+      
+      <div class="dt-row">
+        <div style="display:flex; align-items:center; gap:16px;">
+          <span style="font-family:'Impact','Anton',sans-serif; font-size:22px; font-weight:900; color:#121316;">02</span>
+          <div>
+            <span class="mono" style="font-size:13.5px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase;">React &amp; Next.js Component</span>
+            <span style="font-size:12.5px; color:#5f5d57; margin-left:12px;">—  First-class React wrapper with live state &amp; Vercel AI SDK support</span>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span class="mono" style="font-size:10.5px; font-weight:700; background:#121316; color:#f2efe6; padding:5px 11px; border-radius:6px;">REACT / NEXT.JS ▾</span>
+        </div>
+      </div>
+    
+    </div>
+  </foreignObject>
+  
+</svg>

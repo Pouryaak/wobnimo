@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 115" width="100%" height="115" fill="none">
+  <defs>
+    <style type="text/css"><![CDATA[
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      .ghpx-root {
+        width: 900px;
+        height: 115px;
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        overflow: hidden;
+        position: relative;
+      }
+      .mono {
+        font-family: 'SF Mono', 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Menlo, Consolas, monospace;
+      }
+      
+      .rf-wrap {
+        width: 100%; height: 100%; padding: 0 32px;
+        display: flex; justify-content: space-between; align-items: center;
+      }
+    
+    ]]></style>
+    
+  </defs>
+  
+      <rect width="900" height="115" rx="16" fill="#16181d" stroke="rgba(242, 239, 230, 0.14)" stroke-width="1.4"/>
+    
+  <foreignObject x="0" y="0" width="900" height="115">
+    <div xmlns="http://www.w3.org/1999/xhtml" class="ghpx-root">
+      
+      <div class="rf-wrap">
+        <div>
+          <div style="font-family:'Impact','Anton','Arial Black',sans-serif; font-size:32px; font-weight:900; color:#f2efe6; letter-spacing:-0.5px;">
+            BRING ONE HOME<span style="color:#d9f55c;">.</span>
+          </div>
+          <div class="mono" style="font-size:11px; color:#9b998f; margin-top:4px;">
+            MIT Licensed  ·  Built with care  ·  Next: WebGPU renderer, Rust + Wasm core &amp; visual editor
+          </div>
+        </div>
+        <div class="mono" style="font-size:12px; font-weight:700; background:#d9f55c; color:#10120a; padding:11px 20px; border-radius:8px;">
+          ⭐ Star on GitHub →
+        </div>
+      </div>
+    
+    </div>
+  </foreignObject>
+  
+</svg>

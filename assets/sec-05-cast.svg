@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 96" width="100%" height="96" fill="none">
+  <defs>
+    <style type="text/css"><![CDATA[
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      .ghpx-root {
+        width: 900px;
+        height: 96px;
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        overflow: hidden;
+        position: relative;
+      }
+      .mono {
+        font-family: 'SF Mono', 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Menlo, Consolas, monospace;
+      }
+      
+      .rs-wrap {
+        width: 100%; height: 100%; padding: 18px 30px;
+        display: flex; flex-direction: column; justify-content: space-between;
+      }
+      .rs-top {
+        display: flex; justify-content: space-between; align-items: center;
+        font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase;
+        color: #9b998f;
+      }
+      .rs-title {
+        font-family: 'Impact', 'Anton', 'Arial Black', -apple-system, sans-serif;
+        font-size: 34px; font-weight: 900; letter-spacing: -0.6px;
+        color: #f2efe6; line-height: 1;
+      }
+    
+    ]]></style>
+    
+  </defs>
+  
+      <rect width="900" height="96" rx="14" fill="#0e0f12" stroke="rgba(242, 239, 230, 0.14)" stroke-width="1.2"/>
+    
+  <foreignObject x="0" y="0" width="900" height="96">
+    <div xmlns="http://www.w3.org/1999/xhtml" class="ghpx-root">
+      
+      <div class="rs-wrap">
+        <div class="rs-top mono">
+          <span>05 / THE CAST</span>
+          <span>Ten studio originals + ten designed by coding agents from one sentence each</span>
+        </div>
+        <div class="rs-title">
+          Twenty living personalities.<span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#d9f55c; margin-left:6px;"></span>
+        </div>
+      </div>
+    
+    </div>
+  </foreignObject>
+  
+</svg>

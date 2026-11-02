@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 235" width="100%" height="235" fill="none">
+  <defs>
+    <style type="text/css"><![CDATA[
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      .ghpx-root {
+        width: 900px;
+        height: 235px;
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        overflow: hidden;
+        position: relative;
+      }
+      .mono {
+        font-family: 'SF Mono', 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Menlo, Consolas, monospace;
+      }
+      
+      .cs-grid {
+        width: 100%; height: 100%;
+        display: grid; grid-template-columns: repeat(5, 1fr);
+        grid-template-rows: 1fr 1fr;
+      }
+    
+    ]]></style>
+    
+  </defs>
+  
+      <rect width="900" height="235" rx="14" fill="#0e0f12" stroke="rgba(242, 239, 230, 0.14)" stroke-width="1.4"/>
+    
+  <foreignObject x="0" y="0" width="900" height="235">
+    <div xmlns="http://www.w3.org/1999/xhtml" class="ghpx-root">
+      <div class="cs-grid">
+      <div style="padding: 14px 14px; border-right: 1px solid rgba(242, 239, 230, 0.14); border-bottom: 1px solid rgba(242, 239, 230, 0.14); display:flex; flex-direction:column; justify-content:space-between;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span class="mono" style="font-size:12.5px; font-weight:700; color:#f2efe6; text-transform:uppercase; letter-spacing:0.06em;">Volt</span>
+          <span style="width:12px; height:12px; border-radius:50%; background:#d9f55c; box-shadow:inset 0 0 0 1px rgba(255,255,255,0.22);"></span>
+        </div>
+        <div style="font-size:11.5px; color:#9b998f; margin-top:4px;">The LED Robot</div>
+        <div class="mono" style="font-size:9.5px; color:#d9f55c; margin-top:6px;">10 MOODS · SDF 3D</div>
+      </div>
+      <div style="padding: 14px 14px; border-right: 1px solid rgba(242, 239, 230, 0.14); border-bottom: 1px solid rgba(242, 239, 230, 0.14); display:flex; flex-direction:column; justify-content:space-between;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span class="mono" style="font-size:12.5px; font-weight:700; color:#f2efe6; text-transform:uppercase; letter-spacing:0.06em;">Pip</span>
+          <span style="width:12px; height:12px; border-radius:50%; background:#38bdf8; box-shadow:inset 0 0 0 1px rgba(255,255,255,0.22);"></span>
+        </div>
+        <div style="font-size:11.5px; color:#9b998f; margin-top:4px;">The Songbird</div>
+        <div class="mono" style="font-size:9.5px; color:#d9f55c; margin-top:6px;">10 MOODS · SDF 3D</div>
+      </div>
+      <div style="padding: 14px 14px; border-right: 1px solid rgba(242, 239, 230, 0.14); border-bottom: 1px solid rgba(242, 239, 230, 0.14); display:flex; flex-direction:column; justify-content:space-between;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span class="mono" style="font-size:12.5px; font-weight:700; color:#f2efe6; text-transform:uppercase; letter-spacing:0.06em;">Mochi</span>
+          <span style="width:12px; height:12px; border-radius:50%; background:#a3e635; box-shadow:inset 0 0 0 1px rgba(255,255,255,0.22);"></span>
+        </div>
+        <div style="font-size:11.5px; color:#9b998f; margin-top:4px;">The Jelly</div>
+        <div class="mono" style="font-size:9.5px; color:#d9f55c; margin-top:6px;">10 MOODS · SDF 3D</div>
+      </div>
+      <div style="padding: 14px 14px; border-right: 1px solid rgba(242, 239, 230, 0.14); border-bottom: 1px solid rgba(242, 239, 230, 0.14); display:flex; flex-direction:column; justify-content:space-between;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span class="mono" style="font-size:12.5px; font-weight:700; color:#f2efe6; text-transform:uppercase; letter-spacing:0.06em;">Boo</span>
+          <span style="width:12px; height:12px; border-radius:50%; background:#e2e8f0; box-shadow:inset 0 0 0 1px rgba(255,255,255,0.22);"></span>
+        </div>
+        <div style="font-size:11.5px; color:#9b998f; margin-top:4px;">The Ghost</div>
+        <div class="mono" style="font-size:9.5px; color:#d9f55c; margin-top:6px;">10 MOODS · SDF 3D</div>
+      </div>
+      <div style="padding: 14px 14px; border-right: 1px solid rgba(242, 239, 230, 0.14); border-bottom: 1px solid rgba(242, 239, 230, 0.14); display:flex; flex-direction:column; justify-content:space-between;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span class="mono" style="font-size:12.5px; font-weight:700; color:#f2efe6; text-transform:uppercase; letter-spacing:0.06em;">Inky</span>
+          <span style="width:12px; height:12px; border-radius:50%; background:#f472b6; box-shadow:inset 0 0 0 1px rgba(255,255,255,0.22);"></span>
+        </div>
+        <div style="font-size:11.5px; color:#9b998f; margin-top:4px;">The Octopus</div>
+        <div class="mono" style="font-size:9.5px; color:#d9f55c; margin-top:6px;">10 MOODS · SDF 3D</div>
+      </div>
+      <div style="padding: 14px 14px; border-right: 1px solid rgba(242, 239, 230, 0.14); border-bottom: 1px solid rgba(242, 239, 230, 0.14); display:flex; flex-direction:column; justify-content:space-between;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span class="mono" style="font-size:12.5px; font-weight:700; color:#f2efe6; text-transform:uppercase; letter-spacing:0.06em;">Miso</span>
+          <span style="width:12px; height:12px; border-radius:50%; background:#fbbf24; box-shadow:inset 0 0 0 1px rgba(255,255,255,0.22);"></span>
+        </div>
+        <div style="font-size:11.5px; color:#9b998f; margin-top:4px;">The Plush Cat</div>
+        <div class="mono" style="font-size:9.5px; color:#d9f55c; margin-top:6px;">10 MOODS · SDF 3D</div>
+      </div>
+      <div style="padding: 14px 14px; border-right: 1px solid rgba(242, 239, 230, 0.14); border-bottom: 1px solid rgba(242, 239, 230, 0.14); display:flex; flex-direction:column; justify-content:space-between;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span class="mono" style="font-size:12.5px; font-weight:700; color:#f2efe6; text-transform:uppercase; letter-spacing:0.06em;">Tad</span>
+          <span style="width:12px; height:12px; border-radius:50%; background:#4ade80; box-shadow:inset 0 0 0 1px rgba(255,255,255,0.22);"></span>
+        </div>
+        <div style="font-size:11.5px; color:#9b998f; margin-top:4px;">The Tree Frog</div>
+        <div class="mono" style="font-size:9.5px; color:#d9f55c; margin-top:6px;">10 MOODS · SDF 3D</div>
+      </div>
+      <div style="padding: 14px 14px; border-right: 1px solid rgba(242, 239, 230, 0.14); border-bottom: 1px solid rgba(242, 239, 230, 0.14); display:flex; flex-direction:column; justify-content:space-between;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span class="mono" style="font-size:12.5px; font-weight:700; color:#f2efe6; text-transform:uppercase; letter-spacing:0.06em;">Pebble</span>
+          <span style="width:12px; height:12px; border-radius:50%; background:#94a3b8; box-shadow:inset 0 0 0 1px rgba(255,255,255,0.22);"></span>
+        </div>
+        <div style="font-size:11.5px; color:#9b998f; margin-top:4px;">The Penguin</div>
+        <div class="mono" style="font-size:9.5px; color:#d9f55c; margin-top:6px;">10 MOODS · SDF 3D</div>
+      </div>
+      <div style="padding: 14px 14px; border-right: 1px solid rgba(242, 239, 230, 0.14); border-bottom: 1px solid rgba(242, 239, 230, 0.14); display:flex; flex-direction:column; justify-content:space-between;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span class="mono" style="font-size:12.5px; font-weight:700; color:#f2efe6; text-transform:uppercase; letter-spacing:0.06em;">Rex</span>
+          <span style="width:12px; height:12px; border-radius:50%; background:#34d399; box-shadow:inset 0 0 0 1px rgba(255,255,255,0.22);"></span>
+        </div>
+        <div style="font-size:11.5px; color:#9b998f; margin-top:4px;">The Baby Dino</div>
+        <div class="mono" style="font-size:9.5px; color:#d9f55c; margin-top:6px;">10 MOODS · SDF 3D</div>
+      </div>
+      <div style="padding: 14px 14px; border-right: 1px solid rgba(242, 239, 230, 0.14); border-bottom: 1px solid rgba(242, 239, 230, 0.14); display:flex; flex-direction:column; justify-content:space-between;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span class="mono" style="font-size:12.5px; font-weight:700; color:#f2efe6; text-transform:uppercase; letter-spacing:0.06em;">Microduck</span>
+          <span style="width:12px; height:12px; border-radius:50%; background:#facc15; box-shadow:inset 0 0 0 1px rgba(255,255,255,0.22);"></span>
+        </div>
+        <div style="font-size:11.5px; color:#9b998f; margin-top:4px;">The Robot Duck</div>
+        <div class="mono" style="font-size:9.5px; color:#d9f55c; margin-top:6px;">10 MOODS · SDF 3D</div>
+      </div></div>
+    </div>
+  </foreignObject>
+  
+</svg>

@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 275" width="100%" height="275" fill="none">
+  <defs>
+    <style type="text/css"><![CDATA[
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      .ghpx-root {
+        width: 900px;
+        height: 275px;
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        overflow: hidden;
+        position: relative;
+      }
+      .mono {
+        font-family: 'SF Mono', 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Menlo, Consolas, monospace;
+      }
+      
+      .sp-wrap {
+        width: 100%; height: 100%; padding: 22px 26px;
+        display: flex; flex-direction: column; justify-content: space-between;
+      }
+      .sp-grid {
+        display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;
+      }
+    
+    ]]></style>
+    
+  </defs>
+  
+      <rect width="900" height="275" rx="16" fill="#0e0f12" stroke="rgba(242, 239, 230, 0.14)" stroke-width="1.4"/>
+    
+  <foreignObject x="0" y="0" width="900" height="275">
+    <div xmlns="http://www.w3.org/1999/xhtml" class="ghpx-root">
+      
+      <div class="sp-wrap">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span class="mono" style="font-size:11px; color:#f2efe6; letter-spacing:0.08em; text-transform:uppercase;">
+            ● TEN EXPRESSIVE STATES  —  BUILT-IN SPRING PHYSICS &amp; PARTICLE FX
+          </span>
+          <span class="mono" style="font-size:11px; color:#d9f55c;">
+            &lt;Mascot character="mochi" status={status} /&gt;
+          </span>
+        </div>
+
+        <div class="sp-grid">
+          
+        <div style="background:#16181d; border:1px solid rgba(242, 239, 230, 0.14); border-radius:10px; padding:12px 16px; display:flex; align-items:center; gap:12px;">
+          <span style="width:10px; height:10px; border-radius:50%; background:#1f2229; box-shadow:inset 0 0 0 1px rgba(242, 239, 230, 0.14); flex-shrink:0;"></span>
+          <div>
+            <div class="mono" style="font-size:12px; font-weight:700; color:#f2efe6; letter-spacing:0.08em; text-transform:uppercase;">idle</div>
+            <div style="font-size:11.5px; color:#9b998f; margin-top:2px;">Waiting for user</div>
+          </div>
+        </div>
+        <div style="background:#16181d; border:1px solid rgba(242, 239, 230, 0.14); border-radius:10px; padding:12px 16px; display:flex; align-items:center; gap:12px;">
+          <span style="width:10px; height:10px; border-radius:50%; background:#d9f55c; box-shadow:0 0 0 4px rgba(217, 245, 92, 0.2); flex-shrink:0;"></span>
+          <div>
+            <div class="mono" style="font-size:12px; font-weight:700; color:#d9f55c; letter-spacing:0.08em; text-transform:uppercase;">listening</div>
+            <div style="font-size:11.5px; color:#9b998f; margin-top:2px;">User is typing</div>
+          </div>
+        </div>
+        <div style="background:#16181d; border:1px solid rgba(242, 239, 230, 0.14); border-radius:10px; padding:12px 16px; display:flex; align-items:center; gap:12px;">
+          <span style="width:10px; height:10px; border-radius:50%; background:#d9f55c; box-shadow:0 0 0 4px rgba(217, 245, 92, 0.2); flex-shrink:0;"></span>
+          <div>
+            <div class="mono" style="font-size:12px; font-weight:700; color:#d9f55c; letter-spacing:0.08em; text-transform:uppercase;">thinking</div>
+            <div style="font-size:11.5px; color:#9b998f; margin-top:2px;">Request sent</div>
+          </div>
+        </div>
+        <div style="background:#16181d; border:1px solid rgba(242, 239, 230, 0.14); border-radius:10px; padding:12px 16px; display:flex; align-items:center; gap:12px;">
+          <span style="width:10px; height:10px; border-radius:50%; background:#d9f55c; box-shadow:0 0 0 4px rgba(217, 245, 92, 0.2); flex-shrink:0;"></span>
+          <div>
+            <div class="mono" style="font-size:12px; font-weight:700; color:#d9f55c; letter-spacing:0.08em; text-transform:uppercase;">speaking</div>
+            <div style="font-size:11.5px; color:#9b998f; margin-top:2px;">Reply streaming</div>
+          </div>
+        </div>
+        <div style="background:#16181d; border:1px solid rgba(242, 239, 230, 0.14); border-radius:10px; padding:12px 16px; display:flex; align-items:center; gap:12px;">
+          <span style="width:10px; height:10px; border-radius:50%; background:#1f2229; box-shadow:inset 0 0 0 1px rgba(242, 239, 230, 0.14); flex-shrink:0;"></span>
+          <div>
+            <div class="mono" style="font-size:12px; font-weight:700; color:#f2efe6; letter-spacing:0.08em; text-transform:uppercase;">working</div>
+            <div style="font-size:11.5px; color:#9b998f; margin-top:2px;">Running a tool</div>
+          </div>
+        </div>
+        <div style="background:#16181d; border:1px solid rgba(242, 239, 230, 0.14); border-radius:10px; padding:12px 16px; display:flex; align-items:center; gap:12px;">
+          <span style="width:10px; height:10px; border-radius:50%; background:#d9f55c; box-shadow:0 0 0 4px rgba(217, 245, 92, 0.2); flex-shrink:0;"></span>
+          <div>
+            <div class="mono" style="font-size:12px; font-weight:700; color:#d9f55c; letter-spacing:0.08em; text-transform:uppercase;">celebrating</div>
+            <div style="font-size:11.5px; color:#9b998f; margin-top:2px;">Task finished</div>
+          </div>
+        </div>
+        <div style="background:#16181d; border:1px solid rgba(242, 239, 230, 0.14); border-radius:10px; padding:12px 16px; display:flex; align-items:center; gap:12px;">
+          <span style="width:10px; height:10px; border-radius:50%; background:#1f2229; box-shadow:inset 0 0 0 1px rgba(242, 239, 230, 0.14); flex-shrink:0;"></span>
+          <div>
+            <div class="mono" style="font-size:12px; font-weight:700; color:#f2efe6; letter-spacing:0.08em; text-transform:uppercase;">sleeping</div>
+            <div style="font-size:11.5px; color:#9b998f; margin-top:2px;">Idle for a while</div>
+          </div>
+        </div>
+        <div style="background:#16181d; border:1px solid rgba(242, 239, 230, 0.14); border-radius:10px; padding:12px 16px; display:flex; align-items:center; gap:12px;">
+          <span style="width:10px; height:10px; border-radius:50%; background:#1f2229; box-shadow:inset 0 0 0 1px rgba(242, 239, 230, 0.14); flex-shrink:0;"></span>
+          <div>
+            <div class="mono" style="font-size:12px; font-weight:700; color:#f2efe6; letter-spacing:0.08em; text-transform:uppercase;">surprised</div>
+            <div style="font-size:11.5px; color:#9b998f; margin-top:2px;">Unexpected event</div>
+          </div>
+        </div>
+        <div style="background:#16181d; border:1px solid rgba(242, 239, 230, 0.14); border-radius:10px; padding:12px 16px; display:flex; align-items:center; gap:12px;">
+          <span style="width:10px; height:10px; border-radius:50%; background:#1f2229; box-shadow:inset 0 0 0 1px rgba(242, 239, 230, 0.14); flex-shrink:0;"></span>
+          <div>
+            <div class="mono" style="font-size:12px; font-weight:700; color:#f2efe6; letter-spacing:0.08em; text-transform:uppercase;">error</div>
+            <div style="font-size:11.5px; color:#9b998f; margin-top:2px;">Something failed</div>
+          </div>
+        </div>
+        <div style="background:#16181d; border:1px solid rgba(242, 239, 230, 0.14); border-radius:10px; padding:12px 16px; display:flex; align-items:center; gap:12px;">
+          <span style="width:10px; height:10px; border-radius:50%; background:#1f2229; box-shadow:inset 0 0 0 1px rgba(242, 239, 230, 0.14); flex-shrink:0;"></span>
+          <div>
+            <div class="mono" style="font-size:12px; font-weight:700; color:#f2efe6; letter-spacing:0.08em; text-transform:uppercase;">sad</div>
+            <div style="font-size:11.5px; color:#9b998f; margin-top:2px;">Could not help</div>
+          </div>
+        </div>
+        </div>
+
+        <div class="mono" style="display:flex; justify-content:space-between; align-items:center; padding-top:12px; border-top:1px solid rgba(242, 239, 230, 0.14); font-size:11px; color:#9b998f;">
+          <span>WIRE DIRECTLY TO VERCEL AI SDK <strong style="color:#f2efe6;">useChat()</strong> OR ANY STREAMING EVENT LOOP</span>
+          <span style="color:#d9f55c;">10 / 10 STATES INCLUDED</span>
+        </div>
+      </div>
+    
+    </div>
+  </foreignObject>
+  
+</svg>
