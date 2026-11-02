@@ -2,7 +2,7 @@
 
 <a href="https://pouryaak.github.io/wobnimo/">
   <picture>
-    <img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/repo-hero.svg" width="100%" alt="wobnimo — GIVE YOUR APP A FACE  ·  ~25 KB GZIP  ·  0 DEPENDENCIES">
+    <img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/repo-hero.svg?v=1e6e869d" width="100%" alt="wobnimo — GIVE YOUR APP A FACE  ·  ~25 KB GZIP  ·  0 DEPENDENCIES">
   </picture>
 </a>
 
@@ -17,7 +17,7 @@
 
 <br>
 
-<a href="https://pouryaak.github.io/wobnimo/"><picture><img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/btn-studio.svg" height="40" alt="Enter the studio"></picture></a>&nbsp;&nbsp;<a href="https://www.npmjs.com/package/wobnimo"><picture><img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/btn-npm.svg" height="40" alt="npm i wobnimo"></picture></a>&nbsp;&nbsp;<a href="https://pouryaak.github.io/wobnimo/llms.txt"><picture><img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/btn-llms.svg" height="40" alt="llms.txt for agents"></picture></a>&nbsp;&nbsp;<a href="https://github.com/Pouryaak/wobnimo/tree/main/skills/wobnimo-mascot"><picture><img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/btn-skill.svg" height="40" alt="Agent Skill"></picture></a>
+<a href="https://pouryaak.github.io/wobnimo/"><picture><img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/btn-studio.svg?v=b418a0bf" height="40" alt="Enter the studio"></picture></a>&nbsp;&nbsp;<a href="https://www.npmjs.com/package/wobnimo"><picture><img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/btn-npm.svg?v=0df30903" height="40" alt="npm i wobnimo"></picture></a>&nbsp;&nbsp;<a href="https://pouryaak.github.io/wobnimo/llms.txt"><picture><img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/btn-llms.svg?v=2d040abb" height="40" alt="llms.txt for agents"></picture></a>&nbsp;&nbsp;<a href="https://github.com/Pouryaak/wobnimo/tree/main/skills/wobnimo-mascot"><picture><img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/btn-skill.svg?v=0ce968d1" height="40" alt="Agent Skill"></picture></a>
 
 </div>
 
@@ -25,11 +25,11 @@
 
 <!-- 01 / FOR DEVELOPERS (Interactive Cream Band Code Switcher) -->
 <picture>
-  <img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/sec-01-devs.svg" width="100%" alt="01 / For Developers — Small code. Big feeling.">
+  <img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/sec-01-devs.svg?v=71fc1580" width="100%" alt="01 / For Developers — Small code. Big feeling.">
 </picture>
 
 <details name="wobnimo-dev-tabs" open>
-<summary><picture><img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/tab-dev-html-cdn.svg" width="96%" align="middle" alt="Add One in 10 Seconds (HTML / CDN)"></picture></summary>
+<summary><picture><img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/tab-dev-html-cdn.svg?v=c17effa8" width="96%" align="middle" alt="Add One in 10 Seconds (HTML / CDN)"></picture></summary>
 
 ```html
 <script type="module" src="https://cdn.jsdelivr.net/npm/wobnimo@0.2/dist/wobnimo.js"></script>
@@ -42,7 +42,7 @@
 </details>
 
 <details name="wobnimo-dev-tabs">
-<summary><picture><img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/tab-dev-react-nextjs.svg" width="96%" align="middle" alt="React &amp; Next.js Component"></picture></summary>
+<summary><picture><img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/tab-dev-react-nextjs.svg?v=54299441" width="96%" align="middle" alt="React &amp; Next.js Component"></picture></summary>
 
 ```tsx
 // npm i wobnimo
@@ -59,7 +59,7 @@ export function CopilotAvatar() {
 </details>
 
 <details name="wobnimo-dev-tabs">
-<summary><picture><img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/tab-dev-vanilla-js.svg" width="96%" align="middle" alt="JavaScript, Vue, Svelte &amp; Live Palette Control"></picture></summary>
+<summary><picture><img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/tab-dev-vanilla-js.svg?v=477d37ef" width="96%" align="middle" alt="JavaScript, Vue, Svelte &amp; Live Palette Control"></picture></summary>
 
 ```ts
 import { mount } from 'wobnimo';
@@ -78,7 +78,7 @@ mascot.setPalette({ jelly: '#ff5d8f' });          // recolour live, no rebuild
 
 <!-- 02 / GIVE YOUR AI A FACE (Moods Showcase + 10-State Engine) -->
 <picture>
-  <img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/sec-02-moods.svg" width="100%" alt="02 / Give your AI a face">
+  <img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/sec-02-moods.svg?v=11942131" width="100%" alt="02 / Give your AI a face">
 </picture>
 
 <div align="center">
@@ -88,7 +88,7 @@ mascot.setPalette({ jelly: '#ff5d8f' });          // recolour live, no rebuild
 </div>
 
 <picture>
-  <img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/panel-states.svg" width="100%" alt="Ten expressive states">
+  <img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/panel-states.svg?v=22e21aa6" width="100%" alt="Ten expressive states">
 </picture>
 
 ```tsx
@@ -103,11 +103,11 @@ const { status } = useChat(); // Vercel AI SDK
 
 <!-- 03 / DESCRIBE IT. GET IT. (The Agent Forge) -->
 <picture>
-  <img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/sec-03-forge.svg" width="100%" alt="03 / Make your own — Describe it. Get it.">
+  <img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/sec-03-forge.svg?v=7b29bf9d" width="100%" alt="03 / Make your own — Describe it. Get it.">
 </picture>
 
 <picture>
-  <img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/panel-forge.svg" width="100%" alt="Agent Forge workflow">
+  <img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/panel-forge.svg?v=47049647" width="100%" alt="Agent Forge workflow">
 </picture>
 
 ```bash
@@ -120,31 +120,31 @@ npx wobnimo preview mascots/drift.ts   # renders front, side, back, face close-u
 
 <!-- 04 / FEATHERWEIGHT ARCHITECTURE -->
 <picture>
-  <img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/sec-04-weight.svg" width="100%" alt="04 / Featherweight — Tiny by nature. Lively by design.">
+  <img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/sec-04-weight.svg?v=5012007e" width="100%" alt="04 / Featherweight — Tiny by nature. Lively by design.">
 </picture>
 
 <picture>
-  <img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/panel-weight.svg" width="100%" alt="23.7 KB Featherweight Engine">
+  <img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/panel-weight.svg?v=64dbe4f9" width="100%" alt="23.7 KB Featherweight Engine">
 </picture>
 
 <br><br>
 
 <!-- 05 / THE CAST (Interactive 20-Mascot Explorer) -->
 <picture>
-  <img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/sec-05-cast.svg" width="100%" alt="05 / The Cast — Twenty living personalities.">
+  <img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/sec-05-cast.svg?v=03de44df" width="100%" alt="05 / The Cast — Twenty living personalities.">
 </picture>
 
 <details name="wobnimo-cast" open>
-<summary><picture><img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/cast-originals-trigger.svg" width="96%" align="middle" alt="The Studio Originals (10 Mascots)"></picture></summary>
+<summary><picture><img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/cast-originals-trigger.svg?v=63a31395" width="96%" align="middle" alt="The Studio Originals (10 Mascots)"></picture></summary>
 <br>
-<picture><img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/cast-originals-stage.svg" width="100%" alt="The Studio Originals (10 Mascots)"></picture>
+<picture><img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/cast-originals-stage.svg?v=7605ddf4" width="100%" alt="The Studio Originals (10 Mascots)"></picture>
 <br>
 </details>
 
 <details name="wobnimo-cast">
-<summary><picture><img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/cast-agent-made-trigger.svg" width="96%" align="middle" alt="The Agent-Described Cast (10 Mascots from 1 Sentence Each)"></picture></summary>
+<summary><picture><img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/cast-agent-made-trigger.svg?v=365e8cbe" width="96%" align="middle" alt="The Agent-Described Cast (10 Mascots from 1 Sentence Each)"></picture></summary>
 <br>
-<picture><img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/cast-agent-made-stage.svg" width="100%" alt="The Agent-Described Cast (10 Mascots from 1 Sentence Each)"></picture>
+<picture><img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/cast-agent-made-stage.svg?v=c1b86ddd" width="100%" alt="The Agent-Described Cast (10 Mascots from 1 Sentence Each)"></picture>
 <br>
 </details>
 
@@ -153,6 +153,6 @@ npx wobnimo preview mascots/drift.ts   # renders front, side, back, face close-u
 <!-- FINALE -->
 <a href="https://github.com/Pouryaak/wobnimo">
   <picture>
-    <img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/repo-finale.svg" width="100%" alt="Bring one home — Star Wobnimo on GitHub">
+    <img src="https://raw.githubusercontent.com/Pouryaak/wobnimo/main/assets/repo-finale.svg?v=5dadccef" width="100%" alt="Bring one home — Star Wobnimo on GitHub">
   </picture>
 </a>
