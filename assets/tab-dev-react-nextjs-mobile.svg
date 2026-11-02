@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 74" width="100%" height="74" fill="none">
+  <defs>
+    <style type="text/css"><![CDATA[
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      .ghpx-root {
+        width: 400px;
+        height: 74px;
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        overflow: hidden;
+        position: relative;
+      }
+      .mono {
+        font-family: 'SF Mono', 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Menlo, Consolas, monospace;
+      }
+      
+        .dtm-row {
+          width: 100%; height: 100%; padding: 10px 16px 10px 18px;
+          display: flex; justify-content: space-between; align-items: center; gap: 10px;
+          color: #121316;
+        }
+      
+    ]]></style>
+    
+  </defs>
+  
+        <rect width="400" height="74" rx="10" fill="#f1eee6" stroke="#121316" stroke-width="1.4"/>
+        <rect x="0" y="0" width="7" height="74" rx="3.5" fill="#121316"/>
+      
+  <foreignObject x="0" y="0" width="400" height="74">
+    <div xmlns="http://www.w3.org/1999/xhtml" class="ghpx-root">
+      
+        <div class="dtm-row">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <span style="font-family:-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Helvetica Neue', Arial, sans-serif; font-size:20px; font-weight:900; color:#121316;">02</span>
+            <div>
+              <div class="mono" style="font-size:13px; font-weight:700; color:#121316; line-height:1.2;">React &amp; Next.js Component</div>
+              <div style="font-size:11.5px; color:#5f5d57; margin-top:3px; line-height:1.2;">First-class React wrapper with live state &amp; Vercel AI SDK support</div>
+            </div>
+          </div>
+          <span class="mono" style="font-size:10px; font-weight:700; background:#121316; color:#f2efe6; padding:5px 9px; border-radius:6px; flex-shrink:0;">▾</span>
+        </div>
+      
+    </div>
+  </foreignObject>
+  
+</svg>

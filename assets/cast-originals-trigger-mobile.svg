@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 74" width="100%" height="74" fill="none">
+  <defs>
+    <style type="text/css"><![CDATA[
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      .ghpx-root {
+        width: 400px;
+        height: 74px;
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        overflow: hidden;
+        position: relative;
+      }
+      .mono {
+        font-family: 'SF Mono', 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Menlo, Consolas, monospace;
+      }
+      
+        .ctm-row {
+          width: 100%; height: 100%; padding: 10px 16px;
+          display: flex; justify-content: space-between; align-items: center; gap: 10px;
+        }
+      
+    ]]></style>
+    
+  </defs>
+  
+        <rect width="400" height="74" rx="10" fill="#16181d" stroke="rgba(242, 239, 230, 0.14)" stroke-width="1.2"/>
+        <rect x="0" y="12" width="4" height="50" rx="2" fill="#d9f55c"/>
+      
+  <foreignObject x="0" y="0" width="400" height="74">
+    <div xmlns="http://www.w3.org/1999/xhtml" class="ghpx-root">
+      
+        <div class="ctm-row">
+          <div>
+            <div class="mono" style="font-size:12.5px; font-weight:700; color:#f2efe6; text-transform:uppercase;">
+              <span style="color:#d9f55c;">01 / 02</span> · The Studio Originals (10 Mascots)
+            </div>
+            <div style="font-size:11.5px; color:#9b998f; margin-top:4px; line-height:1.2;">
+              Volt, Pip, Mochi, Boo, Inky, Miso, Tad, Pebble, Rex &amp; Microduck
+            </div>
+          </div>
+          <span class="mono" style="font-size:10px; font-weight:700; color:#d9f55c; background:rgba(217,245,92,0.1); border:1px solid rgba(217,245,92,0.3); padding:5px 9px; border-radius:999px; flex-shrink:0;">
+            ▾
+          </span>
+        </div>
+      
+    </div>
+  </foreignObject>
+  
+</svg>

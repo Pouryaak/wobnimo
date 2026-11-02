@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 148" width="100%" height="148" fill="none">
+  <defs>
+    <style type="text/css"><![CDATA[
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      .ghpx-root {
+        width: 420px;
+        height: 148px;
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        overflow: hidden;
+        position: relative;
+      }
+      .mono {
+        font-family: 'SF Mono', 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Menlo, Consolas, monospace;
+      }
+      
+        .rfm-wrap {
+          width: 100%; height: 100%; padding: 18px 22px;
+          display: flex; flex-direction: column; justify-content: space-between;
+        }
+      
+    ]]></style>
+    
+  </defs>
+  
+        <rect width="420" height="148" rx="16" fill="#16181d" stroke="rgba(242, 239, 230, 0.14)" stroke-width="1.4"/>
+      
+  <foreignObject x="0" y="0" width="420" height="148">
+    <div xmlns="http://www.w3.org/1999/xhtml" class="ghpx-root">
+      
+        <div class="rfm-wrap">
+          <div>
+            <div style="font-family:-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Helvetica Neue', Arial, sans-serif; font-size:28px; font-weight:900; color:#f2efe6; letter-spacing:-0.8px;">
+              BRING ONE HOME<span style="color:#d9f55c;">.</span>
+            </div>
+            <div class="mono" style="font-size:10.5px; color:#9b998f; margin-top:4px; line-height:1.35;">
+              MIT Licensed  ·  Built with care  ·  Next: WebGPU renderer, Rust + Wasm core &amp; visual editor
+            </div>
+          </div>
+          <div class="mono" style="font-size:12px; font-weight:700; background:#d9f55c; color:#10120a; padding:10px 16px; border-radius:8px; text-align:center;">
+            ⭐ Star Wobnimo on GitHub →
+          </div>
+        </div>
+      
+    </div>
+  </foreignObject>
+  
+</svg>

@@ -74,7 +74,6 @@
       </div>
         </div>
 
-        <!-- Self-Checking Geometry Verifier Output -->
         <div class="mono" style="background:#16181d; border:1px solid rgba(242, 239, 230, 0.14); border-radius:10px; padding:12px 18px; display:flex; justify-content:space-between; align-items:center; font-size:11.5px;">
           <div style="display:flex; align-items:center; gap:18px;">
             <span style="color:#f2efe6;">$ npx wobnimo check mascots/drift.ts</span>

@@ -45,7 +45,7 @@
             ● ENGINE FOOTPRINT
           </div>
           <div>
-            <div style="font-family:'Impact','Anton','Arial Black',sans-serif; font-size:64px; font-weight:900; color:#f2efe6; line-height:0.9; letter-spacing:-1px;">
+            <div style="font-family:-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Helvetica Neue', Arial, sans-serif; font-size:58px; font-weight:900; color:#f2efe6; line-height:0.95; letter-spacing:-1.5px;">
               23.7 KB
             </div>
             <div class="mono" style="font-size:14px; color:#f2efe6; margin-top:10px;">
@@ -61,34 +61,34 @@
         <div class="wb-right">
           
       <div style="background:#16181d; border:1px solid rgba(242, 239, 230, 0.14); border-radius:12px; padding:16px 18px;">
-        <div class="mono" style="font-size:12px; font-weight:700; color:#d9f55c; letter-spacing:0.06em; text-transform:uppercase;">
+        <div class="mono" style="font-size:12px; font-weight:700; color:#d9f55c; letter-spacing:0.05em; text-transform:uppercase;">
           Real SDF 3D, Not a Sprite
         </div>
-        <div style="font-size:12px; color:#f2efe6; opacity:0.85; line-height:1.5; margin-top:6px;">
+        <div style="font-size:12px; color:#f2efe6; opacity:0.88; line-height:1.45; margin-top:4px;">
           Characters are signed-distance 3D with studio softbox lighting, subsurface scattering &amp; spring physics — crisp at any resolution.
         </div>
       </div>
       <div style="background:#16181d; border:1px solid rgba(242, 239, 230, 0.14); border-radius:12px; padding:16px 18px;">
-        <div class="mono" style="font-size:12px; font-weight:700; color:#d9f55c; letter-spacing:0.06em; text-transform:uppercase;">
+        <div class="mono" style="font-size:12px; font-weight:700; color:#d9f55c; letter-spacing:0.05em; text-transform:uppercase;">
           Characters Are Plain Data
         </div>
-        <div style="font-size:12px; color:#f2efe6; opacity:0.85; line-height:1.5; margin-top:6px;">
+        <div style="font-size:12px; color:#f2efe6; opacity:0.88; line-height:1.45; margin-top:4px;">
           Every mascot is declarative JSON — parts, materials, bones. Recolour live with setPalette(), remix with variant(), or generate via agents.
         </div>
       </div>
       <div style="background:#16181d; border:1px solid rgba(242, 239, 230, 0.14); border-radius:12px; padding:16px 18px;">
-        <div class="mono" style="font-size:12px; font-weight:700; color:#d9f55c; letter-spacing:0.06em; text-transform:uppercase;">
+        <div class="mono" style="font-size:12px; font-weight:700; color:#d9f55c; letter-spacing:0.05em; text-transform:uppercase;">
           Built for Coding Agents
         </div>
-        <div style="font-size:12px; color:#f2efe6; opacity:0.85; line-height:1.5; margin-top:6px;">
+        <div style="font-size:12px; color:#f2efe6; opacity:0.88; line-height:1.45; margin-top:4px;">
           Includes Copy-for-Agent prompts on the playground, llms.txt documentation, and an embedded AGENTS.md inside the npm package.
         </div>
       </div>
       <div style="background:#16181d; border:1px solid rgba(242, 239, 230, 0.14); border-radius:12px; padding:16px 18px;">
-        <div class="mono" style="font-size:12px; font-weight:700; color:#d9f55c; letter-spacing:0.06em; text-transform:uppercase;">
+        <div class="mono" style="font-size:12px; font-weight:700; color:#d9f55c; letter-spacing:0.05em; text-transform:uppercase;">
           Respectful by Default
         </div>
-        <div style="font-size:12px; color:#f2efe6; opacity:0.85; line-height:1.5; margin-top:6px;">
+        <div style="font-size:12px; color:#f2efe6; opacity:0.88; line-height:1.45; margin-top:4px;">
           Honours prefers-reduced-motion, automatically sleeps when scrolled off-screen, and shares a single WebGL context across a whole cast.
         </div>
       </div>

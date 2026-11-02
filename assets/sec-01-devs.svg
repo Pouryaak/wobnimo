@@ -28,8 +28,8 @@
         color: #5f5d57;
       }
       .rs-title {
-        font-family: 'Impact', 'Anton', 'Arial Black', -apple-system, sans-serif;
-        font-size: 34px; font-weight: 900; letter-spacing: -0.6px;
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Helvetica Neue', Arial, sans-serif;
+        font-size: 32px; font-weight: 900; letter-spacing: -0.8px;
         color: #121316; line-height: 1;
       }
     
@@ -45,7 +45,7 @@
       <div class="rs-wrap">
         <div class="rs-top mono">
           <span>01 / FOR DEVELOPERS</span>
-          <span>React, Web Component, Vanilla JS &amp; CDN — click any tab below</span>
+          <span>React, Web Component, Vanilla JS &amp; CDN — tap any tab below</span>
         </div>
         <div class="rs-title">
           Small code. Big feeling.<span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#d9f55c; margin-left:6px;"></span>

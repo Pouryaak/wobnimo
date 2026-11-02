@@ -35,8 +35,8 @@
         margin: 12px 0;
       }
       .rh-mega {
-        font-family: 'Impact', 'Anton', 'Arial Black', -apple-system, BlinkMacSystemFont, sans-serif;
-        font-size: 62px; font-weight: 900; line-height: 0.92; letter-spacing: -1.5px;
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Helvetica Neue', Arial, sans-serif;
+        font-size: 58px; font-weight: 900; line-height: 0.94; letter-spacing: -2px;
         text-transform: uppercase; color: #f2efe6;
       }
       .rh-foot {

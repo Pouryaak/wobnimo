@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 108" width="100%" height="108" fill="none">
+  <defs>
+    <style type="text/css"><![CDATA[
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      .ghpx-root {
+        width: 420px;
+        height: 108px;
+        font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        overflow: hidden;
+        position: relative;
+      }
+      .mono {
+        font-family: 'SF Mono', 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Menlo, Consolas, monospace;
+      }
+      
+        .rsm-wrap {
+          width: 100%; height: 100%; padding: 14px 20px;
+          display: flex; flex-direction: column; justify-content: space-between;
+        }
+      
+    ]]></style>
+    
+  </defs>
+  
+        <rect width="420" height="108" rx="14" fill="#f1eee6" stroke="rgba(18, 19, 22, 0.16)" stroke-width="1.2"/>
+      
+  <foreignObject x="0" y="0" width="420" height="108">
+    <div xmlns="http://www.w3.org/1999/xhtml" class="ghpx-root">
+      
+        <div class="rsm-wrap">
+          <div class="mono" style="font-size:10.5px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#5f5d57;">
+            01 / FOR DEVELOPERS
+          </div>
+          <div style="font-family:-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Helvetica Neue', Arial, sans-serif; font-size:26px; font-weight:900; letter-spacing:-0.6px; color:#121316; line-height:1.05;">
+            Small code. Big feeling.<span style="display:inline-block; width:7px; height:7px; border-radius:50%; background:#d9f55c; margin-left:5px;"></span>
+          </div>
+          <div style="font-size:12px; color:#5f5d57; line-height:1.25;">
+            React, Web Component, Vanilla JS &amp; CDN — tap any tab below
+          </div>
+        </div>
+      
+    </div>
+  </foreignObject>
+  
+</svg>
