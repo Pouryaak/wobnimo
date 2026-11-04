@@ -1,0 +1,113 @@
+<title>Wobnimo Studio</title>
+<meta name="description" content="Describe a mascot in one sentence and watch it get built: clay, a face, colour, a check, and then it comes alive.">
+<meta name="theme-color" content="#0e0f12">
+<meta property="og:title" content="Wobnimo Studio: describe it, get it">
+<meta property="og:description" content="Type one sentence. Watch a living 3D mascot get built, checked and brought to life.">
+<meta property="og:image" content="https://pouryaak.github.io/wobnimo/media/social.png">
+<meta property="og:url" content="https://pouryaak.github.io/wobnimo/studio/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E %3Crect width='64' height='64' rx='16' fill='%230e0f12'/%3E %3Cpath d='M32 12c-13 0-21 14-22 28-.6 8 5 12 22 12s22.6-4 22-12C53 26 45 12 32 12z' fill='%23d9f55c'/%3E %3Cpath d='M32 12c3-5 8-6 11-4-2 3-6 5-11 4z' fill='%23d9f55c'/%3E %3Cellipse cx='24.5' cy='34' rx='3' ry='4' fill='%230e0f12'/%3E %3Cellipse cx='39.5' cy='34' rx='3' ry='4' fill='%230e0f12'/%3E %3Cpath d='M27.5 42c2.8 2.6 6.2 2.6 9 0' fill='none' stroke='%230e0f12' stroke-width='2.6' stroke-linecap='round'/%3E %3C/svg%3E">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="preload" href="../fonts/anton.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fonts/jetbrains-mono.woff2" as="font" type="font/woff2" crossorigin>
+<style>/*__CSS__*/</style>
+
+<div class="page studio-app">
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="logo" href="../" aria-label="Wobnimo home">wobnimo<i aria-hidden="true">.</i></a>
+      <span class="crumb mono" aria-hidden="true">/ Studio</span>
+      <nav class="links" aria-label="Site">
+        <a href="../#studio">Playground</a>
+        <a href="../#cast">The cast</a>
+        <a href="../#developers">Developers</a>
+      </nav>
+      <a class="star" href="https://github.com/Pouryaak/wobnimo" target="_blank" rel="noopener" aria-label="Star Wobnimo on GitHub">
+        <span class="star-main">
+          <svg class="gh" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+          <span class="star-label">Star<span class="star-long"> on GitHub</span></span>
+        </span>
+        <span class="star-count" hidden><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 .25a.75.75 0 0 1 .67.42l1.88 3.81 4.21.61a.75.75 0 0 1 .42 1.28l-3.05 2.97.72 4.19a.75.75 0 0 1-1.09.79L8 12.35l-3.77 1.98a.75.75 0 0 1-1.09-.79l.72-4.19L.82 6.37a.75.75 0 0 1 .42-1.28l4.21-.61L7.33.67A.75.75 0 0 1 8 .25z"/></svg><b id="star-count"></b></span>
+      </a>
+    </div>
+  </header>
+
+  <main class="workspace wrap">
+    <!-- the conversation -->
+    <section class="chat" aria-labelledby="chat-title">
+      <div class="chat-head">
+        <h2 id="chat-title" class="mono">Describe your mascot</h2>
+        <button type="button" class="ghost-button small" id="new"><span aria-hidden="true">+</span> New</button>
+      </div>
+
+      <div class="chat-log" id="log" role="log" aria-live="polite" aria-relevant="additions">
+        <div class="intro" id="intro">
+          <h1 class="big">Describe it<span class="lime">.</span><br>Get it<span class="lime">.</span></h1>
+          <p class="intro-lede">One sentence in. The studio designs your mascot as data, builds it shape by shape, checks every part against the engine, and brings it to life.</p>
+          <p class="mono label">Try one <span class="hand" aria-hidden="true">or write your own ↓</span></p>
+          <div class="ideas" id="ideas" role="group" aria-label="Ideas to try"></div>
+        </div>
+      </div>
+
+      <form class="composer" id="composer">
+        <label class="visually-hidden" for="prompt">Describe your mascot</label>
+        <textarea id="prompt" rows="1" maxlength="280" autocomplete="off" spellcheck="true" placeholder="A sleepy cloud wearing headphones…"></textarea>
+        <div class="composer-bar">
+          <span class="engine-tag mono"><i aria-hidden="true"></i><span id="engine-label">Demo</span></span>
+          <span class="count mono" id="count" aria-hidden="true">0/280</span>
+          <span class="keys mono" aria-hidden="true"><kbd>↵</kbd> build</span>
+          <button type="submit" class="send" id="send" aria-label="Build it">
+            <svg class="i-send" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 15.5v-11M5 9l5-5 5 5"/></svg>
+            <svg class="i-stop" viewBox="0 0 20 20" aria-hidden="true"><rect x="6" y="6" width="8" height="8" rx="1.5"/></svg>
+          </button>
+        </div>
+      </form>
+      <p class="demo-note mono" id="demo-note" hidden>Preview: the AI isn't wired up yet, so the studio replays the closest cast member.</p>
+    </section>
+
+    <!-- the stage -->
+    <section class="bench-col" aria-labelledby="bench-name">
+      <div class="bench" id="bench" data-phase="empty">
+        <div class="bench-top">
+          <div class="bench-title">
+            <span class="mono" id="bench-kicker">Stage</span>
+            <h2 id="bench-name">Your mascot</h2>
+          </div>
+          <ol class="rail mono" id="rail" aria-label="Build progress">
+            <li data-step="clay" data-state="todo"><b>01</b>Clay</li>
+            <li data-step="face" data-state="todo"><b>02</b>Face</li>
+            <li data-step="colour" data-state="todo"><b>03</b>Colour</li>
+            <li data-step="check" data-state="todo"><b>04</b>Check</li>
+            <li data-step="alive" data-state="todo"><b>05</b>Alive</li>
+          </ol>
+        </div>
+        <div class="bench-stage" id="stage"></div>
+        <div class="placeholder" id="placeholder">
+          <svg viewBox="0 0 200 200" aria-hidden="true"><path d="M100 34c-38 0-62 38-64 78-1.6 24 15 36 64 36s65.6-12 64-36c-2-40-26-78-64-78z"/><path d="M100 34c8-14 22-17 31-11-6 9-17 14-31 11z"/><ellipse cx="80" cy="104" rx="7" ry="9"/><ellipse cx="120" cy="104" rx="7" ry="9"/><path d="M88 124c7 6 17 6 24 0"/><ellipse class="floor" cx="100" cy="166" rx="58" ry="7"/></svg>
+          <p class="note" id="placeholder-note">your mascot<br>lands here</p>
+        </div>
+        <p class="bench-status mono" id="status" aria-live="off">ready when you are</p>
+      </div>
+
+      <div class="dock is-off" id="dock" inert>
+        <div class="moods" id="moods" role="group" aria-label="Try a mood"></div>
+        <div class="dock-actions">
+          <button type="button" class="button lime-button" id="copy-agent">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="6.5" y="6.5" width="9" height="9" rx="1.5"/><path d="M13.5 4.5h-8a1 1 0 0 0-1 1v8"/></svg>
+            Copy for agent
+          </button>
+          <button type="button" class="ghost-button" id="copy-code">Copy React</button>
+          <button type="button" class="ghost-button" id="download">Download spec</button>
+        </div>
+      </div>
+
+      <div class="shelf-wrap" id="shelf-wrap" hidden>
+        <span class="mono label">Made this visit</span>
+        <div class="shelf" id="shelf" role="group" aria-label="Your builds"></div>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</div>
+<script>/*__JS__*/</script>

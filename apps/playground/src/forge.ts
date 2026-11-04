@@ -9,7 +9,8 @@
    built while the page is idle, and the replay only advances while the
    section is on screen. */
 
-import { Mascot, isSupported, warm, type CharacterSpec, type MascotState, type Palette, type PartSpec, type Reveal } from '@wobnimo/engine';
+import { Mascot, isSupported, warm, type CharacterSpec, type MascotState, type Palette, type Reveal } from '@wobnimo/engine';
+import { planBuild, type BuildPlan } from './shared/build-plan';
 
 /** The sentence each of the described characters was made from. */
 export const PROMPTS: Record<string, string> = {
@@ -25,64 +26,6 @@ export const PROMPTS: Record<string, string> = {
   hop: 'A white bunny with long floppy ears',
 };
 
-const CLAY = '#b8b0a2';
-const MAX_STAGES = 6;
-/* a family with more parts than this is shaped in two passes */
-const SPLIT = 7;
-
-interface Stage {
-  /** How many of the spec's parts are shaped by the end of this stage. */
-  parts: number;
-  label: string;
-  shapes: string;
-}
-
-interface Build {
-  stages: Stage[];
-  clay: Palette;
-}
-
-/* a bone's family name: earL and earR are both "ear", tentacle3 is "tentacle" */
-const family = (bone: string) => bone.replace(/([a-z])(L|R|\d+)$/, '$1').replace(/([A-Z])/g, ' $1').toLowerCase();
-
-function plan(spec: CharacterSpec): Build {
-  /* runs of parts on one family of bones, in the order the spec lists them */
-  const runs: Array<{ label: string; end: number; size: number }> = [];
-  spec.parts.forEach((p, i) => {
-    const label = family(p.bone);
-    const last = runs[runs.length - 1];
-    if (last?.label === label) (last.end = i + 1), last.size++;
-    else runs.push({ label, end: i + 1, size: 1 });
-  });
-  /* big runs take two passes, the second one the detail */
-  const passes = runs.flatMap((r) =>
-    r.size > SPLIT ? [{ label: r.label, end: r.end - Math.floor(r.size / 2), size: Math.ceil(r.size / 2) }, { label: `${r.label} detail`, end: r.end, size: Math.floor(r.size / 2) }] : [r],
-  );
-  /* too many passes: fold the smallest into the one before it */
-  while (passes.length > MAX_STAGES) {
-    let k = 1;
-    for (let i = 2; i < passes.length; i++) if (passes[i].size < passes[k].size) k = i;
-    passes[k - 1] = { label: passes[k - 1].label, end: passes[k].end, size: passes[k - 1].size + passes[k].size };
-    passes.splice(k, 1);
-  }
-  let start = 0;
-  const stages = passes.map((pass): Stage => {
-    const stage = { parts: pass.end, label: pass.label, shapes: count(spec.parts.slice(start, pass.end)) };
-    start = pass.end;
-    return stage;
-  });
-  return { stages, clay: Object.fromEntries(Object.keys(spec.materials).map((m) => [m, CLAY])) };
-}
-
-function count(parts: PartSpec[]): string {
-  const n = new Map<string, number>();
-  for (const p of parts) {
-    const key = p.op === 'sub' ? `${p.shape} cut` : p.shape;
-    n.set(key, (n.get(key) ?? 0) + 1);
-  }
-  return [...n].map(([k, v]) => (v > 1 ? `${k} ×${v}` : k)).join(' · ');
-}
-
 class Aborted extends Error {}
 
 export interface ForgeElements {
@@ -96,8 +39,8 @@ export interface ForgeElements {
 export function startForge(cast: CharacterSpec[], el: ForgeElements, stillUrl: (spec: CharacterSpec) => string) {
   const animated = isSupported();
   const order = cast.filter((c) => PROMPTS[c.id]);
-  const builds = new Map<string, Build>();
-  const build = (spec: CharacterSpec) => builds.get(spec.id) ?? builds.set(spec.id, plan(spec)).get(spec.id)!;
+  const builds = new Map<string, BuildPlan>();
+  const build = (spec: CharacterSpec) => builds.get(spec.id) ?? builds.set(spec.id, planBuild(spec)).get(spec.id)!;
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   let mascot: Mascot | null = null;
@@ -194,9 +137,9 @@ export function startForge(cast: CharacterSpec[], el: ForgeElements, stillUrl: (
     await wait(260, token);
 
     /* bare stages: no paint, no face, no effects, so only the shapes show */
-    for (const [i, s] of b.stages.entries()) {
+    for (const [i, s] of b.steps.entries()) {
       show(spec, b.clay, 'idle', { parts: s.parts, face: false, paints: false });
-      status(`shaping ${i + 1}/${b.stages.length}`, 'clay');
+      status(`shaping ${i + 1}/${b.steps.length}`, 'clay');
       line(`<span class="add">+</span> ${s.label.padEnd(15, ' ')}<span class="dim">${s.shapes}</span>`);
       await wait(still ? 0 : 560, token);
     }

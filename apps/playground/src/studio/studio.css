@@ -1,0 +1,954 @@
+/* The studio: a conversation on the left, a cream stage on the right that
+   the mascot is built on. On a desktop it fills the screen like an app;
+   on a phone the stage comes first and the conversation follows. */
+
+.studio-app {
+  height: 100dvh;
+  min-height: 680px;
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(50% 40% at 72% 30%, rgba(217, 245, 92, 0.06), transparent 70%),
+    var(--ink);
+}
+
+.studio-app .nav-inner {
+  gap: 20px;
+  padding-block: 18px;
+}
+
+.studio-app .logo {
+  margin-right: 0;
+}
+
+.crumb {
+  margin-right: auto;
+  white-space: nowrap;
+  font-size: 12px;
+  color: var(--mute);
+}
+
+.label {
+  font-size: 10px;
+  color: var(--mute);
+}
+
+.hand {
+  margin-left: 10px;
+  font: 600 18px/1 var(--hand);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--lime);
+}
+
+.ghost-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: transparent;
+  font: 500 13px/1 var(--mono);
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    color 0.2s;
+}
+
+.ghost-button:hover {
+  border-color: var(--lime);
+  color: var(--lime);
+}
+
+.ghost-button.small {
+  padding: 8px 12px;
+  font-size: 12px;
+}
+
+button.button {
+  border: 0;
+  cursor: pointer;
+}
+
+.button svg {
+  width: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+}
+
+/* ---------- the workspace ---------- */
+
+.workspace {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(340px, 440px) minmax(0, 1fr);
+  gap: clamp(16px, 2vw, 28px);
+  /* fills the screen under the nav; each column scrolls on its own */
+  min-height: 0;
+  padding-bottom: clamp(16px, 2vw, 28px);
+}
+
+/* ---------- the conversation ---------- */
+
+.chat {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--ink-2);
+  overflow: hidden;
+}
+
+.chat-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px 12px 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.chat-head h2 {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.chat-log {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 22px 20px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ink-3) transparent;
+}
+
+.intro .big {
+  margin: 0;
+  font: 400 clamp(56px, 5.6vw, 88px) / 0.9 var(--display);
+  letter-spacing: -0.005em;
+}
+
+.intro-lede {
+  margin: 18px 0 26px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--mute);
+}
+
+.ideas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.idea,
+.chip {
+  padding: 8px 13px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  font-size: 12px;
+  line-height: 1.25;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    color 0.2s,
+    transform 0.2s;
+}
+
+.idea:hover,
+.chip:hover {
+  border-color: var(--lime);
+  color: var(--lime);
+  transform: translateY(-1px);
+}
+
+/* messages */
+.msg {
+  animation: msg-in 0.32s cubic-bezier(0.2, 1, 0.4, 1) both;
+}
+
+@keyframes msg-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.msg-user {
+  align-self: flex-end;
+  max-width: 86%;
+  padding: 11px 15px;
+  border-radius: 16px 16px 4px 16px;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.msg-user p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.msg-build {
+  display: grid;
+  gap: 12px;
+  padding: 14px 16px 16px;
+  border: 1px solid var(--line);
+  border-radius: 4px 16px 16px 16px;
+  background: var(--ink);
+}
+
+.build-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13px;
+}
+
+.build-head b {
+  font-weight: 600;
+}
+
+.build-mark {
+  width: 18px;
+  height: 18px;
+  border-radius: 50% 50% 46% 46%;
+  background: var(--lime);
+  box-shadow: inset -3px -3px 0 rgba(16, 18, 10, 0.18);
+}
+
+.is-working .build-mark {
+  animation: mark-bob 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes mark-bob {
+  to {
+    transform: translateY(-3px) scale(1.06, 0.94);
+  }
+}
+
+.build-label {
+  margin-left: auto;
+  font-size: 9.5px;
+  color: var(--mute);
+}
+
+.build-body {
+  display: grid;
+  gap: 12px;
+}
+
+.build-body:empty {
+  display: none;
+}
+
+.build-plan {
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--ink-3);
+}
+
+.plan-kicker {
+  font-size: 9.5px;
+  color: var(--mute);
+}
+
+.plan-name {
+  font: 400 30px/1 var(--display);
+  letter-spacing: 0.01em;
+}
+
+.plan-summary {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--mute);
+}
+
+.plan-swatches {
+  display: flex;
+  gap: 5px;
+  margin-top: 6px;
+}
+
+.plan-swatches i {
+  width: 16px;
+  height: 16px;
+  border-radius: 5px;
+  background: var(--c);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+  animation: msg-in 0.3s ease-out both;
+}
+
+.plan-swatches i:nth-child(2) { animation-delay: 60ms; }
+.plan-swatches i:nth-child(3) { animation-delay: 120ms; }
+.plan-swatches i:nth-child(4) { animation-delay: 180ms; }
+.plan-swatches i:nth-child(5) { animation-delay: 240ms; }
+.plan-swatches i:nth-child(6) { animation-delay: 300ms; }
+
+.build-lines {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 12px;
+  display: grid;
+  gap: 3px;
+  border-left: 1px solid var(--line);
+  font: 400 11.5px/1.5 var(--mono);
+  color: var(--mute);
+}
+
+.build-lines li {
+  overflow-wrap: anywhere;
+  animation: msg-in 0.25s ease-out both;
+}
+
+.build-lines .line-add::first-letter,
+.build-lines .line-ok {
+  color: var(--lime);
+}
+
+.build-lines .line-warn {
+  color: #ffc56a;
+}
+
+.build-lines .line-err {
+  color: #ff8a6a;
+}
+
+/* the line being worked on shimmers */
+.build-lines .now {
+  color: var(--paper);
+  background: linear-gradient(90deg, var(--paper) 30%, var(--mute) 50%, var(--paper) 70%) 0 0 / 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation:
+    msg-in 0.25s ease-out both,
+    shimmer 1.6s linear infinite;
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -300% 0;
+  }
+}
+
+.build-reply {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+
+.is-failed .build-reply {
+  color: #ff8a6a;
+}
+
+.follow-ups {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.follow-ups:empty {
+  display: none;
+}
+
+/* the composer */
+.composer {
+  margin: 0 12px 12px;
+  padding: 12px 12px 10px 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--ink);
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.composer:focus-within {
+  border-color: rgba(217, 245, 92, 0.5);
+  box-shadow: 0 0 0 4px rgba(217, 245, 92, 0.08);
+}
+
+.composer textarea {
+  display: block;
+  width: 100%;
+  min-height: 46px;
+  padding: 2px 0;
+  border: 0;
+  background: none;
+  color: var(--paper);
+  font: 400 15px/1.5 var(--mono);
+  resize: none;
+  outline: none;
+}
+
+.composer textarea::placeholder {
+  color: var(--mute);
+}
+
+.composer-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 6px;
+}
+
+.engine-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-right: auto;
+  font-size: 9.5px;
+  color: var(--mute);
+}
+
+.engine-tag i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--lime);
+  box-shadow: 0 0 8px var(--lime);
+}
+
+.count,
+.keys {
+  font-size: 9.5px;
+  color: var(--mute);
+}
+
+.keys kbd {
+  padding: 1px 5px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font: inherit;
+}
+
+.send {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--ink-3);
+  color: var(--mute);
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    color 0.2s,
+    transform 0.15s;
+}
+
+.send svg {
+  width: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.send .i-stop {
+  display: none;
+  fill: currentColor;
+  stroke: none;
+}
+
+.has-text .send,
+.is-building .send {
+  background: var(--lime);
+  color: var(--lime-ink);
+}
+
+.has-text .send:hover {
+  transform: translateY(-2px);
+}
+
+/* while building with nothing new typed, the button stops the build */
+.is-building:not(.has-text) .i-send {
+  display: none;
+}
+
+.is-building:not(.has-text) .i-stop {
+  display: block;
+}
+
+.demo-note {
+  margin: -4px 16px 12px;
+  font-size: 9.5px;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+  color: var(--mute);
+}
+
+/* ---------- the stage ---------- */
+
+.bench-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 0;
+  min-width: 0;
+}
+
+.bench {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  background: var(--cream);
+  color: var(--cream-ink);
+  overflow: hidden;
+}
+
+/* a drafting grid while the clay goes up */
+.bench::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(18, 19, 22, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(18, 19, 22, 0.07) 1px, transparent 1px);
+  background-size: 32px 32px;
+  background-position: center;
+  mask-image: radial-gradient(closest-side, #000 45%, transparent);
+  opacity: 0;
+  transition: opacity 0.6s;
+}
+
+.bench[data-phase='empty']::before,
+.bench[data-phase='thinking']::before,
+.bench[data-phase='clay']::before,
+.bench[data-phase='face']::before,
+.bench[data-phase='colour']::before {
+  opacity: 1;
+}
+
+/* and a warm glow when it comes alive */
+.bench::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(40% 40% at 50% 55%, rgba(217, 245, 92, 0.45), transparent 70%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.8s;
+}
+
+.bench[data-phase='alive']::after {
+  opacity: 1;
+}
+
+.bench-top {
+  position: absolute;
+  z-index: 2;
+  inset: 0 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px 20px;
+  padding: 20px 22px;
+  pointer-events: none;
+}
+
+.bench-title {
+  display: grid;
+  gap: 6px;
+}
+
+.bench-title .mono {
+  font-size: 10px;
+  color: var(--cream-mute);
+}
+
+.bench-title h2 {
+  margin: 0;
+  font: 400 clamp(34px, 3.6vw, 56px) / 0.92 var(--display);
+  letter-spacing: 0.005em;
+}
+
+.rail {
+  list-style: none;
+  display: flex;
+  gap: 4px;
+  margin: 0;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(18, 19, 22, 0.06);
+  font-size: 9.5px;
+}
+
+.rail li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 11px;
+  border-radius: 999px;
+  color: var(--cream-mute);
+  transition:
+    background 0.3s,
+    color 0.3s;
+}
+
+.rail b {
+  font-weight: 500;
+  opacity: 0.6;
+}
+
+.rail [data-state='now'] {
+  background: var(--cream-ink);
+  color: var(--cream);
+}
+
+.rail [data-state='now'] b {
+  opacity: 1;
+  color: var(--lime);
+}
+
+.rail [data-state='done'] {
+  color: var(--cream-ink);
+}
+
+.rail [data-state='done'] b {
+  opacity: 1;
+}
+
+.rail [data-step='alive'][data-state='done'] {
+  background: var(--lime);
+  color: var(--lime-ink);
+}
+
+.bench-stage {
+  position: relative;
+  z-index: 1;
+  width: min(92%, 78vh, 640px);
+  aspect-ratio: 1;
+  opacity: 0;
+  transform: scale(0.96);
+  transition:
+    opacity 0.6s,
+    transform 0.9s cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+
+.bench-stage.is-ready {
+  opacity: 1;
+  transform: none;
+}
+
+.bench-stage canvas,
+.bench-stage img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+/* nothing built yet: a pencilled outline where the mascot will stand */
+.placeholder {
+  position: absolute;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: min(46%, 300px);
+  aspect-ratio: 1;
+}
+
+.placeholder svg {
+  width: 100%;
+  fill: none;
+  stroke: rgba(18, 19, 22, 0.28);
+  stroke-width: 1.6;
+  stroke-dasharray: 5 6;
+  stroke-linecap: round;
+  animation: hover 4.5s ease-in-out infinite alternate;
+}
+
+@keyframes hover {
+  to {
+    transform: translateY(-8px) rotate(1.5deg);
+  }
+}
+
+.placeholder .floor {
+  stroke-dasharray: 2 6;
+}
+
+.placeholder .note {
+  left: 82%;
+  top: 2%;
+  color: var(--cream-ink);
+  text-shadow: none;
+  font-size: clamp(20px, 2vw, 28px);
+  transform: rotate(8deg);
+}
+
+.bench-status {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  bottom: 18px;
+  margin: 0;
+  max-width: calc(100% - 32px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transform: translateX(-50%);
+  padding: 8px 15px;
+  border-radius: 999px;
+  background: var(--cream-ink);
+  color: var(--cream);
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.bench-status::before {
+  content: '';
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 9px;
+  border-radius: 50%;
+  background: var(--lime);
+}
+
+.bench:not([data-phase='empty']):not([data-phase='alive']) .bench-status::before {
+  animation: blink 1s steps(1) infinite;
+}
+
+.bench[data-phase='error'] .bench-status::before {
+  background: #ff8a6a;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* ---------- after a build ---------- */
+
+.dock {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--ink-2);
+  transition: opacity 0.3s;
+}
+
+.dock.is-off {
+  opacity: 0.35;
+}
+
+.moods {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.mood {
+  padding: 7px 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  font-size: 12px;
+  color: var(--mute);
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+
+.mood:hover {
+  color: var(--paper);
+  background: var(--ink-3);
+}
+
+.mood[aria-pressed='true'] {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.dock-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.dock-actions .button {
+  padding: 12px 16px;
+  font-size: 13px;
+  gap: 9px;
+}
+
+.shelf-wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+
+.shelf {
+  display: flex;
+  gap: 8px;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.shelf-item {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px 4px 4px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--ink-2);
+  font-size: 12px;
+  cursor: pointer;
+  animation: msg-in 0.35s cubic-bezier(0.2, 1, 0.4, 1) both;
+  transition: border-color 0.2s;
+}
+
+.shelf-item:hover {
+  border-color: var(--lime);
+}
+
+.shelf-item img {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--cream);
+  object-fit: cover;
+}
+
+/* ---------- smaller screens ---------- */
+
+@media (max-width: 1080px) {
+  .star-note,
+  .links {
+    display: none;
+  }
+
+  .workspace {
+    grid-template-columns: minmax(300px, 380px) minmax(0, 1fr);
+  }
+
+  .bench-top {
+    flex-direction: column;
+  }
+}
+
+/* a phone or a narrow window: the stage first, then the conversation, and the page scrolls */
+@media (max-width: 820px) {
+  .studio-app {
+    height: auto;
+    min-height: 100dvh;
+  }
+
+  .workspace {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .bench-col {
+    order: -1;
+  }
+
+  .bench {
+    flex: none;
+    aspect-ratio: 1 / 1.08;
+  }
+
+  .bench-stage {
+    width: min(86%, 520px);
+    margin-top: 40px;
+  }
+
+  .bench-top {
+    padding: 16px;
+  }
+
+  .rail li {
+    padding: 6px 8px;
+  }
+
+  .rail b {
+    display: none;
+  }
+
+  .chat {
+    min-height: 420px;
+  }
+
+  /* nothing to act on yet: keep the conversation close to the stage */
+  .dock.is-off {
+    display: none;
+  }
+
+  .chat-log {
+    max-height: 60vh;
+  }
+
+  .dock-actions,
+  .dock-actions .button,
+  .dock-actions .ghost-button {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+
+  .star-long,
+  .keys {
+    display: none;
+  }
+}
+
+@media (max-width: 420px) {
+  .rail {
+    font-size: 8.5px;
+  }
+
+  .rail li {
+    padding: 5px 6px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .msg,
+  .build-lines li,
+  .shelf-item,
+  .plan-swatches i,
+  .placeholder svg,
+  .is-working .build-mark {
+    animation: none;
+  }
+
+  .build-lines .now {
+    animation: none;
+    -webkit-text-fill-color: currentColor;
+    background: none;
+  }
+}

@@ -1,0 +1,17 @@
+# The studio API: one Cloudflare Worker that holds the model key and the
+# design skill. Deploy with `npm run deploy -w @wobnimo/studio-api` after
+# `npx wrangler@4 secret put DEEPSEEK_API_KEY`.
+name = "wobnimo-studio-api"
+main = "src/index.ts"
+compatibility_date = "2026-10-01"
+
+[vars]
+# Pages allowed to call it, comma separated.
+ALLOWED_ORIGINS = "https://pouryaak.github.io,http://localhost:8765"
+DEEPSEEK_MODEL = "deepseek-chat"
+
+# the skill's markdown is bundled into the worker as text
+[[rules]]
+type = "Text"
+globs = ["**/*.md"]
+fallthrough = true

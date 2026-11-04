@@ -1,0 +1,11 @@
+{
+  "name": "@wobnimo/studio-api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "esbuild src/index.ts --bundle --format=esm --loader:.md=text --outfile=dist/worker.js --log-level=warning",
+    "dev": "npx wrangler@4 dev",
+    "deploy": "npx wrangler@4 deploy"
+  }
+}
